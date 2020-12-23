@@ -1,8 +1,10 @@
 package com.liuweiwei.controller;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.TypeReference;
+import com.liuweiwei.model.TbToken;
 import com.liuweiwei.security.JwtAuthenticatioToken;
 import com.liuweiwei.utils.SecurityUtils;
-import com.liuweiwei.vo.HttpResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -28,31 +30,32 @@ public class TbLoginController {
      * 登录接口
      */
     @GetMapping(value = "/login")
-    public HttpResult login(@RequestParam(name = "username", defaultValue = "abc") @Valid String username,
-                            @RequestParam(name = "password", defaultValue = "123") @Valid String password,
-                            HttpServletRequest request) throws IOException {
+    public TbToken login(@RequestParam(name = "username", defaultValue = "abc") @Valid String username,
+                        @RequestParam(name = "password", defaultValue = "123") @Valid String password,
+                        HttpServletRequest request) throws IOException {
         /**
          * 系统登录认证
          */
         JwtAuthenticatioToken token = SecurityUtils.login(request, username, password, authenticationManager);
-        return HttpResult.ok(token);
+        TbToken tbToken = JSON.parseObject(JSON.toJSONString(token), new TypeReference<TbToken>() {});
+        return tbToken;
     }
 
     @PreAuthorize("hasAuthority('sys:user:view')")
-    @GetMapping(value="/findAll")
-    public HttpResult findAll() {
-        return HttpResult.ok("the findAll service is called success.");
+    @GetMapping(value = "/findAll")
+    public String findAll() {
+        return "the findAll service is called success";
     }
 
     @PreAuthorize("hasAuthority('sys:user:edit')")
-    @GetMapping(value="/edit")
-    public HttpResult edit() {
-        return HttpResult.ok("the edit service is called success.");
+    @GetMapping(value = "/edit")
+    public String edit() {
+        return "the edit service is called success";
     }
 
     @PreAuthorize("hasAuthority('sys:user:delete')")
-    @GetMapping(value="/delete")
-    public HttpResult delete() {
-        return HttpResult.ok("the delete service is called success.");
+    @GetMapping(value = "/delete")
+    public String delete() {
+        return "the delete service is called success";
     }
 }

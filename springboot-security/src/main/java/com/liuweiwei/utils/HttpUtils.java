@@ -1,7 +1,6 @@
 package com.liuweiwei.utils;
 
 import com.alibaba.fastjson.JSONObject;
-import com.liuweiwei.vo.HttpResult;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
@@ -32,8 +31,7 @@ public class HttpUtils {
 	 */
 	public static void write(HttpServletResponse response, Object data) throws IOException {
 		response.setContentType("application/json; charset=utf-8");
-        HttpResult result = HttpResult.ok(data);
-        String json = JSONObject.toJSONString(result);
+        String json = JSONObject.toJSONString(data);
         response.getWriter().print(json);
         response.getWriter().flush();
         response.getWriter().close();
