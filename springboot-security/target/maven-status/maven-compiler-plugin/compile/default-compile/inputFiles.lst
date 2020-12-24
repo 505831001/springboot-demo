@@ -6,7 +6,6 @@ D:\workspace-idea\springboot-demo\springboot-security\src\main\java\com\liuweiwe
 D:\workspace-idea\springboot-demo\springboot-security\src\main\java\com\liuweiwei\security\JwtLoginFilter.java
 D:\workspace-idea\springboot-demo\springboot-security\src\main\java\com\liuweiwei\controller\TbLoginController.java
 D:\workspace-idea\springboot-demo\springboot-security\src\main\java\com\liuweiwei\security\UserDetailsServiceImpl.java
-D:\workspace-idea\springboot-demo\springboot-security\src\main\java\com\liuweiwei\utils\JwtTokenUtils.java
 D:\workspace-idea\springboot-demo\springboot-security\src\main\java\com\liuweiwei\security\GrantedAuthorityImpl.java
 D:\workspace-idea\springboot-demo\springboot-security\src\main\java\com\liuweiwei\security\JwtUserDetails.java
 D:\workspace-idea\springboot-demo\springboot-security\src\main\java\com\liuweiwei\service\UserService.java

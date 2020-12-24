@@ -17,4 +17,3 @@ com\liuweiwei\security\GrantedAuthorityImpl.class
 com\liuweiwei\controller\TbLoginController.class
 com\liuweiwei\component\WebMvcInterceptor.class
 com\liuweiwei\config\WebSecurityConfig.class
-com\liuweiwei\utils\JwtTokenUtils.class
