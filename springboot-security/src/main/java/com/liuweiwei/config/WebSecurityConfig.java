@@ -1,6 +1,7 @@
 package com.liuweiwei.config;
 
 import com.liuweiwei.component.Jwt01UserDetailsService;
+import com.liuweiwei.component.Jwt02AuthenticationProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -21,6 +22,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
     private Jwt01UserDetailsService userDetailsService;
+    @Autowired
+    private Jwt02AuthenticationProvider authenticationProvider;
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -45,7 +48,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         http
                 .authorizeRequests()
                 .antMatchers( "/css/**", "/error404").permitAll()
-                .antMatchers("/user/**").hasRole("USER")
+                .antMatchers("/user/**").hasRole("guest")
                 .anyRequest().authenticated()
                 .and();
     }
@@ -57,8 +60,12 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .withUser("linyiming").password(passwordEncoder().encode("123456")).roles("guest");
     }
 
-    @Override
-    public void configure(AuthenticationManagerBuilder auth) throws Exception {
+    public void configure02(AuthenticationManagerBuilder auth) throws Exception {
         auth.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder());
+    }
+
+    @Override
+    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+        auth.authenticationProvider(authenticationProvider);
     }
 }

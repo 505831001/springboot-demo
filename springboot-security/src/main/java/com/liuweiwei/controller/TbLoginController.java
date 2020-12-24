@@ -1,7 +1,9 @@
 package com.liuweiwei.controller;
 
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 /**
  * @author liuweiwei
@@ -23,5 +25,11 @@ public class TbLoginController {
     @GetMapping("/loginError")
     public String error() {
         return "error_page";
+    }
+
+    @GetMapping("/what")
+    @ResponseBody
+    public Object whoIm() {
+        return SecurityContextHolder.getContext().getAuthentication().getPrincipal();
     }
 }
