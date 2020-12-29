@@ -1,19 +1,25 @@
 server:
   port: 8080
+
 spring:
+#  profiles:
+#    active: dev
   datasource:
     driverClassName: com.mysql.jdbc.Driver
     url: jdbc:mysql://localhost:3306/springboot?useUnicode=true&zeroDateTimeBehavior=convertToNull&autoReconnect=true&characterEncoding=utf-8
     username: root
     password: 123456
 
+#logging:
+#  # level: trace
+#  # path: D:/logs/logback
+#  # file: D:/logs/logback-spring.log
+#  file:
+#    path: D:/logs/logback
+#    name: D:/logs/logback/logback-spring.log
+#  pattern:
+#    console: "%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level %highlight() [%thread]  %logger{50} -%msg %n"
+##    file: "%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level %highlight() [%thread]  %logger{50} %msg %n"
+
 logging:
-  # level: trace
-  # file: D:/logs/log4j2.log
-  # path: D:/logs/log4j2
-  file:
-    path: D:/logs/log4j2
-    name: D:/logs/log4j2/log4j2.log
-  pattern:
-    console: "%d{yyyy-MM-dd} [%thread] %-5level %logger{50} -%msg%n"
-#    file: "%d{yyyy/MM/dd HH:mm:ss.SSS} [%thread] %-5level %logger{50} %msg%n"
+  config: classpath:logback-spring.xml

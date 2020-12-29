@@ -21,9 +21,19 @@ import springfox.documentation.spring.web.plugins.Docket;
 public class SwaggerConfig {
 
     /**
+     * SpringBoot 默认的日志框架是：Slf4j + Logback。
+     *
+     * 日志框架配置文档如下：
+     *      Logback - logback-spring.xml, logback.xml, logback-spring.groovy, logback.groovy
+     *      Log4j   - log4j-spring.xml, log4j.xml, log4j-spring.properties, log4j.properties
+     *      Log4j2  - log4j2-spring.xml, log4j2.xml
+     *      JDK (Java Util Logging) - logging.properties
+     *
+     *   # file: D:/logs/log4j.log
      * SpringBoot 整合常用两大日志框架：
      *      org.slf4j日志框架；
      *      org.apache.log4j日志框架。
+     *
      * SpringBoot 整合常用两大日志框架实现方式：
      *  注解方式：
      *      @Log4j；
@@ -32,6 +42,7 @@ public class SwaggerConfig {
      *      org.slf4j.Logger；
      *      org.apache.log4j.Logger；
      *      org.apache.logging.log4j.Logger。
+     * 日志级别总共有：TRACE < DEBUG < INFO(默认级别) < WARN < ERROR < FATAL。
      */
     private static final org.slf4j.Logger slf4j = org.slf4j.LoggerFactory.getLogger(SwaggerConfig.class);
 
