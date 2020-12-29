@@ -22,6 +22,13 @@ public class SwaggerConfig {
 
     /**
      * SpringBoot 默认的日志框架是：Slf4j + Logback。
+     * 1. <artifactId>spring-boot-starter-web</artifactId>
+     * 2. <artifactId>spring-boot-starter</artifactId>
+     * 3. <artifactId>spring-boot-starter-logging</artifactId>
+     * 4.1 <groupId>ch.qos.logback</groupId>
+     * 4.2 <groupId>org.apache.logging.log4j</groupId>
+     * 4.3 <groupId>org.slf4j</groupId>
+     *
      * <p>
      * 日志框架配置文档如下：
      * Logback - logback-spring.xml, logback.xml, logback-spring.groovy, logback.groovy
