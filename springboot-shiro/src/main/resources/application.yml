@@ -10,16 +10,20 @@ spring:
     username: root
     password: 123456
 
-#logging:
-#  # level: trace
-#  # path: D:/logs/logback
-#  # file: D:/logs/logback-spring.log
-#  file:
-#    path: D:/logs/logback
-#    name: D:/logs/logback/logback-spring.log
-#  pattern:
-#    console: "%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level %highlight() [%thread]  %logger{50} -%msg %n"
-##    file: "%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level %highlight() [%thread]  %logger{50} %msg %n"
-
 logging:
-  config: classpath:logback-spring.xml
+  # level: trace
+  # path: D:/logs/logback
+  # file: D:/logs/logback-spring.log
+  file:
+    path: D:/logs/logback
+    name: D:/logs/logback/logback-spring.log
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level [%thread]  %logger{50} -%msg %n"
+    file: "%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level [%thread]  %logger{50} %msg %n"
+
+#logging:
+#  config: classpath:logback-spring.xml
+#  level:
+#    dao: debug
+#    org:
+#      mybatis: debug

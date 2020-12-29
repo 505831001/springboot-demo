@@ -27,6 +27,19 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
+            <!-- 排除自带默认日志框架：Logback。如果找不到spring-boot-starter则查找spring-boot-starter-web -->
+            <exclusions>
+                <!-- SpringBoot需要注意的是只有1.3.x和1.3.x以下版本才支持log4j的日志配置。1.3.x以上版本只支持log4j2 -->
+                <exclusion>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-starter-logging</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <!-- spring security -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-security</artifactId>
         </dependency>
         <!-- 页面模板依赖：thymeleaf -->
         <dependency>
@@ -38,11 +51,6 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-devtools</artifactId>
             <scope>runtime</scope>
-        </dependency>
-        <!-- 默认日志和其它日志 -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-log4j2</artifactId>
         </dependency>
         <!-- test -->
         <dependency>
@@ -63,12 +71,6 @@
             <version>2.9.2</version>
         </dependency>
 
-        <!-- spring security -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-security</artifactId>
-        </dependency>
-
         <!-- fastjson -->
         <dependency>
             <groupId>com.alibaba</groupId>
@@ -86,6 +88,18 @@
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <optional>true</optional>
+        </dependency>
+
+        <!-- 因为log4j2对于log4j来说有很多变动，如果不喜欢用log4j2，1.3.x版本以上的springboot框架也可以引入以下两个包使用log4j -->
+        <dependency>
+            <groupId>commons-logging</groupId>
+            <artifactId>commons-logging</artifactId>
+            <version>1.2</version>
+        </dependency>
+        <dependency>
+            <groupId>log4j</groupId>
+            <artifactId>log4j</artifactId>
+            <version>1.2.17</version>
         </dependency>
     </dependencies>
 

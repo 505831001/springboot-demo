@@ -1,6 +1,9 @@
 server:
   port: 8084
+
 spring:
+  profiles:
+    active: dev
   thymeleaf:
     prefix: classpath:/templates/
     suffix: .html
@@ -19,8 +22,8 @@ security:
 
 logging:
   # level: trace
-  # file: D:/logs/log4j.log
   # path: D:/logs/log4j
+  # file: D:/logs/log4j.log
   file:
     path: D:/logs/log4j
     name: D:/logs/log4j/log4j.log
