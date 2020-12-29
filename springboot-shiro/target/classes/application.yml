@@ -7,3 +7,13 @@ spring:
     username: root
     password: 123456
 
+logging:
+  # level: trace
+  # file: D:/logs/log4j2.log
+  # path: D:/logs/log4j2
+  file:
+    path: D:/logs/log4j2
+    name: D:/logs/log4j2/log4j2.log
+  pattern:
+    console: "%d{yyyy-MM-dd} [%thread] %-5level %logger{50} -%msg%n"
+#    file: "%d{yyyy/MM/dd HH:mm:ss.SSS} [%thread] %-5level %logger{50} %msg%n"

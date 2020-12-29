@@ -17,3 +17,13 @@ security:
   basic:
     enabled: false
 
+logging:
+  # level: trace
+  # file: D:/logs/log4j.log
+  # path: D:/logs/log4j
+  file:
+    path: D:/logs/log4j
+    name: D:/logs/log4j/log4j.log
+  pattern:
+    console: "%d{yyyy-MM-dd} [%thread] %-5level %logger{50} -%msg%n"
+#    file: "%d{yyyy/MM/dd HH:mm:ss.SSS} [%thread] %-5level %logger{50} %msg%n"

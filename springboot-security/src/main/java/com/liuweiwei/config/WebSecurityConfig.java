@@ -2,6 +2,10 @@ package com.liuweiwei.config;
 
 import com.liuweiwei.component.Jwt01UserDetailsService;
 import com.liuweiwei.component.Jwt02AuthenticationProvider;
+import lombok.extern.log4j.Log4j;
+import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -18,7 +22,11 @@ import org.springframework.security.crypto.password.PasswordEncoder;
  */
 @Configuration
 @EnableGlobalMethodSecurity(prePostEnabled = true)
+@Slf4j
+@Log4j
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(WebSecurityConfig.class);
 
     @Autowired
     private Jwt01UserDetailsService userDetailsService;
