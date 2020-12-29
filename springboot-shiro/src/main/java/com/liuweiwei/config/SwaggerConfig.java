@@ -20,6 +20,19 @@ import springfox.documentation.spring.web.plugins.Docket;
 @Slf4j
 public class SwaggerConfig {
 
+    /**
+     * SpringBoot 整合常用两大日志框架：
+     *      org.slf4j日志框架；
+     *      org.apache.log4j日志框架。
+     * SpringBoot 整合常用两大日志框架实现方式：
+     *  注解方式：
+     *      @Log4j；
+     *      @Slf4j。
+     *  代码方式：
+     *      org.slf4j.Logger；
+     *      org.apache.log4j.Logger；
+     *      org.apache.logging.log4j.Logger。
+     */
     private static final org.slf4j.Logger slf4j = org.slf4j.LoggerFactory.getLogger(SwaggerConfig.class);
 
     private final org.apache.log4j.Logger log4j = org.apache.log4j.LogManager.getLogger(this.getClass());

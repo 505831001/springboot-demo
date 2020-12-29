@@ -16,6 +16,20 @@ import springfox.documentation.spring.web.plugins.Docket;
 @Configuration
 public class SwaggerConfig {
 
+    /**
+     * SpringBoot 整合常用两大日志框架：
+     *      org.slf4j日志框架；
+     *      org.apache.log4j日志框架。
+     * SpringBoot 整合常用两大日志框架实现方式：
+     *  注解方式：
+     *      @Log4j；
+     *      @Slf4j。
+     *  代码方式：
+     *      org.slf4j.Logger；
+     *      org.apache.log4j.Logger；
+     *      org.apache.logging.log4j.Logger。
+     */
+
     @Bean
     public Docket createRestApi(){
         return new Docket(DocumentationType.SWAGGER_2)
