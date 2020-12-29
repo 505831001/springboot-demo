@@ -43,20 +43,28 @@ public class SwaggerConfig {
      * org.apache.logging.log4j.Logger。
      * 日志级别总共有：TRACE < DEBUG < INFO(默认级别) < WARN < ERROR < FATAL。
      */
+
+    /**
+     * @Slf4j
+     */
     private static final org.slf4j.Logger slf4j = org.slf4j.LoggerFactory.getLogger(SwaggerConfig.class);
 
+    /**
+     * @Slf4j
+     */
     private final org.apache.log4j.Logger log4j = org.apache.log4j.LogManager.getLogger(this.getClass());
 
     /**
-     *  <exclusions>
-     *      SpringBoot需要注意的是只有1.3.x和1.3.x以下版本才支持log4j的日志配置。1.3.x以上版本只支持log4j2
-     *      <exclusion>
-     *          <groupId>org.springframework.boot</groupId>
-     *          <artifactId>spring-boot-starter-logging</artifactId>
-     *      </exclusion>
-     *  </exclusions>
+     * @Slf4j
+     * <exclusions>
+     *     SpringBoot需要注意的是只有1.3.x和1.3.x以下版本才支持log4j的日志配置。1.3.x以上版本只支持log4j2
+     *     <exclusion>
+     *         <groupId>org.springframework.boot</groupId>
+     *         <artifactId>spring-boot-starter-logging</artifactId>
+     *     </exclusion>
+     * </exclusions>
      */
-    // private final org.apache.logging.log4j.Logger log4j2 = org.apache.logging.log4j.LogManager.getLogger(this.getClass());
+    private final org.apache.logging.log4j.Logger log4j2 = org.apache.logging.log4j.LogManager.getLogger(this.getClass());
 
     @Bean
     public Docket createRestApi() {
