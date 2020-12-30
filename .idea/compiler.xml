@@ -7,17 +7,27 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
+        <module name="spring-oauth-client" />
         <module name="springboot-security" />
+        <module name="spring-oauth-client2" />
         <module name="springboot-shiro" />
+        <module name="spring-oauth-server" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
+      <module name="spring-oauth-client" target="1.8" />
+      <module name="spring-oauth-client2" target="1.8" />
+      <module name="spring-oauth-server" target="1.8" />
       <module name="springboot-security" target="1.8" />
+      <module name="springboot-security-oauth2" target="1.8" />
       <module name="springboot-shiro" target="1.8" />
     </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="spring-oauth-client" options="-parameters" />
+      <module name="spring-oauth-client2" options="-parameters" />
+      <module name="spring-oauth-server" options="-parameters" />
       <module name="springboot-security" options="-parameters" />
       <module name="springboot-shiro" options="-parameters" />
     </option>

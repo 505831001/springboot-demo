@@ -6,11 +6,17 @@
     <option name="priority" value="Medium" />
     <option name="excludeFilter" value="" />
   </component>
+  <component name="FrameworkDetectionExcludesConfiguration">
+    <file type="web" url="file://$PROJECT_DIR$/springboot-security-oauth2/spring-oauth-client" />
+    <file type="web" url="file://$PROJECT_DIR$/springboot-security-oauth2/spring-oauth-client2" />
+    <file type="web" url="file://$PROJECT_DIR$/springboot-security-oauth2/spring-oauth-server" />
+  </component>
   <component name="MavenProjectsManager">
     <option name="originalFiles">
       <list>
         <option value="$PROJECT_DIR$/springboot-shiro/pom.xml" />
         <option value="$PROJECT_DIR$/springboot-security/pom.xml" />
+        <option value="$PROJECT_DIR$/springboot-security-oauth2/pom.xml" />
       </list>
     </option>
   </component>
