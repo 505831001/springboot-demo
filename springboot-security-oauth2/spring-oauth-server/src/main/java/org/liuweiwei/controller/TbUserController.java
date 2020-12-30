@@ -7,7 +7,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import java.security.Principal;
 
 /**
- * @author Administrator
+ * @author Liuweiwei
+ * @since 2020-12-23
  */
 @Controller
 public class TbUserController {
