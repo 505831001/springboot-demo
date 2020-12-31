@@ -18,6 +18,8 @@ import org.liuweiwei.component.JwtAuthenticatioToken;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 
 /**
  * JWT工具类
@@ -58,10 +60,21 @@ public class JwtTokenUtils implements Serializable {
      */
     public static String generateToken(Authentication authentication) {
         Map<String, Object> claims = new HashMap<>(3);
-        claims.put(USERNAME, SecurityUtils.getUsername(authentication));
+        claims.put(USERNAME, getUsername(authentication));
         claims.put(CREATED, new Date());
         claims.put(AUTHORITIES, authentication.getAuthorities());
         return generateToken(claims);
+    }
+
+    public static String getUsername(Authentication authentication) {
+        String username = null;
+        if (authentication != null) {
+            Object principal = authentication.getPrincipal();
+            if (principal != null && principal instanceof UserDetails) {
+                username = ((UserDetails) principal).getUsername();
+            }
+        }
+        return username;
     }
 
     /**
@@ -104,7 +117,7 @@ public class JwtTokenUtils implements Serializable {
         String token = JwtTokenUtils.getToken(request);
         if (token != null) {
             // 请求令牌不能为空
-            if (SecurityUtils.getAuthentication() == null) {
+            if (getAuthentication() == null) {
                 // 上下文中Authentication为空
                 Claims claims = getClaimsFromToken(token);
                 if (claims == null) {
@@ -126,12 +139,32 @@ public class JwtTokenUtils implements Serializable {
                 }
                 authentication = new JwtAuthenticatioToken(username, null, authorities, token);
             } else {
-                if (validateToken(token, SecurityUtils.getUsername())) {
+                if (validateToken(token, getUsername())) {
                     // 如果上下文中Authentication非空，且请求令牌合法，直接返回当前登录认证信息
-                    authentication = SecurityUtils.getAuthentication();
+                    authentication = getAuthentication();
                 }
             }
         }
+        return authentication;
+    }
+
+    public static String getUsername() {
+        String username = null;
+        Authentication authentication = getAuthentication();
+        if (authentication != null) {
+            Object principal = authentication.getPrincipal();
+            if (principal != null && principal instanceof UserDetails) {
+                username = ((UserDetails) principal).getUsername();
+            }
+        }
+        return username;
+    }
+
+    public static Authentication getAuthentication() {
+        if (SecurityContextHolder.getContext() == null) {
+            return null;
+        }
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         return authentication;
     }
 
