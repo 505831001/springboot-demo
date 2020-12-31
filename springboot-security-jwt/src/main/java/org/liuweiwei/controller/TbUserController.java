@@ -4,7 +4,7 @@ import com.alibaba.fastjson.JSON;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
-import org.liuweiwei.component.JwtAuthenticatioToken;
+import org.liuweiwei.component.JwtAuthenticationToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -49,7 +49,7 @@ public class TbUserController {
                         HttpServletRequest request) throws IOException {
         WebAuthenticationDetails details = new WebAuthenticationDetailsSource().buildDetails(request);
         // 系统登录认证
-        JwtAuthenticatioToken token = new JwtAuthenticatioToken(username, password);
+        JwtAuthenticationToken token = new JwtAuthenticationToken(username, password);
         token.setDetails(details);
 
         Authentication authentic = authenticationManager.authenticate(token);
