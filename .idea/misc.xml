@@ -17,6 +17,7 @@
         <option value="$PROJECT_DIR$/springboot-shiro/pom.xml" />
         <option value="$PROJECT_DIR$/springboot-security/pom.xml" />
         <option value="$PROJECT_DIR$/springboot-security-oauth2/pom.xml" />
+        <option value="$PROJECT_DIR$/springboot-security-jwt/pom.xml" />
       </list>
     </option>
   </component>
