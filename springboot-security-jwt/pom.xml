@@ -15,7 +15,7 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
 
-    <name>springboot-security</name>
+    <name>springboot-security-jwt</name>
     <description>Spring security json web token project for Spring Boot</description>
 
     <properties>
@@ -27,6 +27,11 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+        <!-- thymeleaf -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-thymeleaf</artifactId>
         </dependency>
         <!-- spring security -->
         <dependency>

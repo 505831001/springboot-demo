@@ -2,6 +2,14 @@ server:
   servlet:
     context-path: /auth
 
+spring:
+  thymeleaf:
+    prefix: classpath:/templates/
+    suffix: .ftl
+    servlet:
+      content-type: text/html
+    mode: HTML5
+
 logging:
   file:
     path: D:/logs/log4j

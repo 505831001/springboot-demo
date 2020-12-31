@@ -36,6 +36,7 @@ public class Swagger2Config {
                 .required(false)
                 .build();
         parameters.add(parameterBuilder.build());
+
         return new Docket(DocumentationType.SWAGGER_2)
                 .apiInfo(apiInfo())
                 .select()

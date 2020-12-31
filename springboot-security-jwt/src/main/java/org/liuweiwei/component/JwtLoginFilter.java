@@ -22,7 +22,6 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import org.liuweiwei.utils.HttpUtils;
 import org.liuweiwei.utils.JwtTokenUtils;
 
 /**
@@ -89,7 +88,15 @@ public class JwtLoginFilter extends UsernamePasswordAuthenticationFilter {
         }
         // 生成并返回token给客户端，后续访问携带此token
         JwtAuthenticatioToken token = new JwtAuthenticatioToken(null, null, JwtTokenUtils.generateToken(authResult));
-        HttpUtils.write(response, token);
+        write(response, token);
+    }
+
+    public static void write(HttpServletResponse response, Object data) throws IOException {
+        response.setContentType("application/json; charset=utf-8");
+        String json = JSONObject.toJSONString(data);
+        response.getWriter().print(json);
+        response.getWriter().flush();
+        response.getWriter().close();
     }
 
     /**

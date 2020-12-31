@@ -2,7 +2,6 @@ package org.liuweiwei.controller;
 
 import com.alibaba.fastjson.JSON;
 import org.liuweiwei.component.JwtAuthenticatioToken;
-import org.liuweiwei.model.TbUser;
 import org.liuweiwei.utils.JwtTokenUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -12,10 +11,8 @@ import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
@@ -24,7 +21,7 @@ import java.io.IOException;
  * @author Liuweiwei
  * @since 2020-12-31
  */
-@RestController
+@Controller
 public class TbUserController {
 
     @Autowired
@@ -33,11 +30,12 @@ public class TbUserController {
     /**
      * 登录接口
      */
-    @PostMapping(value = "/login")
-    public String login(@RequestBody TbUser tbUser, HttpServletRequest request) throws IOException {
+    @GetMapping(value = "/login")
+    @ResponseBody
+    public String login(@RequestParam(name = "username", defaultValue = "abc") String username,
+                        @RequestParam(name = "password", defaultValue = "123") String password,
+                        HttpServletRequest request) throws IOException {
         WebAuthenticationDetails details = new WebAuthenticationDetailsSource().buildDetails(request);
-        String username = tbUser.getUsername();
-        String password = tbUser.getPassword();
         // 系统登录认证
         JwtAuthenticatioToken token = new JwtAuthenticatioToken(username, password);
         token.setDetails(details);
@@ -53,20 +51,20 @@ public class TbUserController {
     }
 
     @PreAuthorize("hasAuthority('sys:user:view')")
-    @GetMapping(value = "/user/findAll")
-    public String findAll() {
-        return "查询服务操作成功。";
+    @PostMapping(value = "/user/findAll")
+    public String success() {
+        return "success";
     }
 
     @PreAuthorize("hasAuthority('sys:user:edit')")
-    @GetMapping(value = "/user/edit")
+    @PutMapping(value = "/user/edit")
     public String edit() {
-        return "编辑服务操作成功。";
+        return "edit";
     }
 
     @PreAuthorize("hasAuthority('sys:user:delete')")
-    @GetMapping(value = "/user/delete")
+    @DeleteMapping(value = "/user/delete")
     public String delete() {
-        return "删除服务操作成功。";
+        return "delete";
     }
 }
