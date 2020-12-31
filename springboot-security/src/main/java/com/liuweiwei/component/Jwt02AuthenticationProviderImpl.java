@@ -19,10 +19,10 @@ import java.util.Collection;
  * @since 2020-05-20
  */
 @Component
-public class Jwt02AuthenticationProvider implements AuthenticationProvider {
+public class Jwt02AuthenticationProviderImpl implements AuthenticationProvider {
 
     @Autowired
-    private Jwt01UserDetailsService userDetailsService;
+    private Jwt01UserDetailsServiceImpl userDetailsServiceImpl;
     @Autowired
     private PasswordEncoder passwordEncoder;
 
@@ -31,7 +31,7 @@ public class Jwt02AuthenticationProvider implements AuthenticationProvider {
         String userName = authentication.getName();
         String password = (String) authentication.getCredentials();
 
-        UserDetails info = userDetailsService.loadUserByUsername(userName);
+        UserDetails info = userDetailsServiceImpl.loadUserByUsername(userName);
         if (ObjectUtils.isEmpty(info)) {
             throw new BadCredentialsException("用户不存在！");
         }

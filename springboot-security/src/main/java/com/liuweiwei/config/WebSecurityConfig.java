@@ -1,7 +1,7 @@
 package com.liuweiwei.config;
 
-import com.liuweiwei.component.Jwt01UserDetailsService;
-import com.liuweiwei.component.Jwt02AuthenticationProvider;
+import com.liuweiwei.component.Jwt01UserDetailsServiceImpl;
+import com.liuweiwei.component.Jwt02AuthenticationProviderImpl;
 import lombok.extern.log4j.Log4j;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
@@ -29,9 +29,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     private static final Logger LOGGER = LoggerFactory.getLogger(WebSecurityConfig.class);
 
     @Autowired
-    private Jwt01UserDetailsService userDetailsService;
+    private Jwt01UserDetailsServiceImpl userDetailsServiceImpl;
     @Autowired
-    private Jwt02AuthenticationProvider authenticationProvider;
+    private Jwt02AuthenticationProviderImpl authenticationProviderImpl;
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -69,11 +69,11 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     public void configure02(AuthenticationManagerBuilder auth) throws Exception {
-        auth.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder());
+        auth.userDetailsService(userDetailsServiceImpl).passwordEncoder(passwordEncoder());
     }
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.authenticationProvider(authenticationProvider);
+        auth.authenticationProvider(authenticationProviderImpl);
     }
 }
