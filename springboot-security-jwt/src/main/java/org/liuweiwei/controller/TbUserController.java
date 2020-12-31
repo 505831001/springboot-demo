@@ -76,8 +76,8 @@ public class TbUserController {
     }
 
     private String generateToken(Map<String, Object> claims) {
-        Date expirationDate = new Date(System.currentTimeMillis() + EXPIRE_TIME);
-        String compact = Jwts.builder().setClaims(claims).setExpiration(expirationDate).signWith(SignatureAlgorithm.HS512, SECRET).compact();
+        Date date = new Date(System.currentTimeMillis() + EXPIRE_TIME);
+        String compact = Jwts.builder().setClaims(claims).setExpiration(date).signWith(SignatureAlgorithm.HS512, SECRET).compact();
         return compact;
     }
 
