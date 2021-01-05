@@ -14,7 +14,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
  * @since 2020-05-20
  */
 @Configuration
-public class WebMvcConfig extends WebMvcAutoConfiguration implements WebMvcConfigurer {
+public class WebMvcAutoConfig extends WebMvcAutoConfiguration implements WebMvcConfigurer {
 
     @Autowired
     private Web01MvcInterceptor mvcInterceptor;

@@ -1,0 +1,6 @@
+server:
+  port: 8282
+
+spring:
+  profiles:
+    active: dev
