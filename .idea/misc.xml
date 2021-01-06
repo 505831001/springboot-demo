@@ -19,6 +19,7 @@
         <option value="$PROJECT_DIR$/springboot-security-oauth2/pom.xml" />
         <option value="$PROJECT_DIR$/springboot-security-jwt/pom.xml" />
         <option value="$PROJECT_DIR$/springboot-swagger2/pom.xml" />
+        <option value="$PROJECT_DIR$/springboot-druid/pom.xml" />
       </list>
     </option>
   </component>
