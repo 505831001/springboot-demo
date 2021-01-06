@@ -24,6 +24,8 @@ spring:
       connectionProperties: druid.stat.mergeSql=true;druid.stat.slowSqlMillis=5000 #通过connectProperties属性来打开mergeSql功能；慢SQL记录
       useGlobalDataSourceStat: false  #合并多个DruidDataSource的监控数据
 
+## resources/mapper 非<配置在pom.xml中>：java/mapper ##
+## org.apache.ibatis.binding.BindingException: Invalid bound statement (not found):  ##
 mybatis:
   mapper-locations: classpath*:mapper/*.xml
   type-aliases-package: org.liuweiwei.dao

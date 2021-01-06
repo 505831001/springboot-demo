@@ -10,6 +10,7 @@
     <file url="file://$PROJECT_DIR$/springboot-security-oauth2/spring-oauth-server/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/springboot-security/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/springboot-shiro/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/springboot-springdata-jpa/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/springboot-swagger2/src/main/java" charset="UTF-8" />
   </component>
 </project>

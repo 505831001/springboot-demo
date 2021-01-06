@@ -3,17 +3,6 @@
 <mapper namespace="org.liuweiwei.dao.TbUserMapper">
 
     <!-- 通用查询映射结果 -->
-    <resultMap id="BaseResultMap" type="org.liuweiwei.model.TbUser">
-        <id column="id" property="id" />
-        <result column="username" property="username" />
-        <result column="password" property="password" />
-        <result column="role" property="role" />
-        <result column="phone" property="phone" />
-        <result column="email" property="email" />
-        <result column="created" property="created" />
-        <result column="updated" property="updated" />
-    </resultMap>
-
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
         id,
@@ -34,6 +23,12 @@
         SELECT *
         FROM tb_user
         WHERE 1=1
+    </select>
+
+    <select id="selectByUserId" resultType="org.liuweiwei.model.TbUser">
+        SELECT *
+        FROM tb_user
+        WHERE id=#{userId}
     </select>
 
 </mapper>

@@ -11,6 +11,7 @@
         <module name="springboot-mybatis-plus-generator" />
         <module name="spring-oauth-client" />
         <module name="springboot-swagger2" />
+        <module name="springboot-springdata-jpa" />
         <module name="springboot-druid" />
         <module name="springboot-security" />
         <module name="spring-oauth-client2" />
@@ -30,6 +31,7 @@
       <module name="springboot-security-jwt" target="1.8" />
       <module name="springboot-security-oauth2" target="1.8" />
       <module name="springboot-shiro" target="1.8" />
+      <module name="springboot-springdata-jpa" target="1.8" />
       <module name="springboot-swagger2" target="1.8" />
     </bytecodeTargetLevel>
   </component>
@@ -44,6 +46,7 @@
       <module name="springboot-security" options="-parameters" />
       <module name="springboot-security-jwt" options="-parameters" />
       <module name="springboot-shiro" options="-parameters" />
+      <module name="springboot-springdata-jpa" options="-parameters" />
       <module name="springboot-swagger2" options="-parameters" />
     </option>
   </component>
