@@ -67,7 +67,7 @@
             <optional>true</optional>
         </dependency>
 
-        <!-- mybatis-generator-code 代码生成方式 -->
+        <!-- mybatis-plus-generator-code 代码生成方式 -->
         <dependency>
             <groupId>com.baomidou</groupId>
             <artifactId>mybatis-plus</artifactId>
