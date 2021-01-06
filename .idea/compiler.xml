@@ -8,11 +8,13 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="springboot-security-jwt" />
+        <module name="springboot-mybatis-plus-generator" />
         <module name="spring-oauth-client" />
         <module name="springboot-swagger2" />
         <module name="springboot-druid" />
         <module name="springboot-security" />
         <module name="spring-oauth-client2" />
+        <module name="springboot-mybatis-generator" />
         <module name="springboot-shiro" />
         <module name="spring-oauth-server" />
       </profile>
@@ -22,6 +24,8 @@
       <module name="spring-oauth-client2" target="1.8" />
       <module name="spring-oauth-server" target="1.8" />
       <module name="springboot-druid" target="1.8" />
+      <module name="springboot-mybatis-generator" target="1.8" />
+      <module name="springboot-mybatis-plus-generator" target="1.8" />
       <module name="springboot-security" target="1.8" />
       <module name="springboot-security-jwt" target="1.8" />
       <module name="springboot-security-oauth2" target="1.8" />
@@ -35,6 +39,8 @@
       <module name="spring-oauth-client2" options="-parameters" />
       <module name="spring-oauth-server" options="-parameters" />
       <module name="springboot-druid" options="-parameters" />
+      <module name="springboot-mybatis-generator" options="-parameters" />
+      <module name="springboot-mybatis-plus-generator" options="-parameters" />
       <module name="springboot-security" options="-parameters" />
       <module name="springboot-security-jwt" options="-parameters" />
       <module name="springboot-shiro" options="-parameters" />
