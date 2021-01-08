@@ -1,16 +1,21 @@
 package org.liuweiwei.dao;
 
-import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.liuweiwei.model.TbUser;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
 /**
+ * Action:
+ * Consider defining a bean of type 'org.liuweiwei.dao.TbUserMapper' in your configuration.
+ * 1. 通过配置扫描注解：@MapperScan(basePackages = "org.example.dao")
+ * 2. 通过注释：@Mapper
+ *
  * @author Liuweiwei
  * @since 2021-01-06
  */
-@Mapper
+@Repository
 public interface TbUserMapper {
 
     /**

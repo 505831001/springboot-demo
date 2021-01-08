@@ -25,6 +25,7 @@ spring:
       useGlobalDataSourceStat: false  #合并多个DruidDataSource的监控数据
 
 ## resources/mapper 非<配置在pom.xml中>：java/mapper ##
+## Action: ##
 ## org.apache.ibatis.binding.BindingException: Invalid bound statement (not found):  ##
 mybatis:
   mapper-locations: classpath*:mapper/*.xml
