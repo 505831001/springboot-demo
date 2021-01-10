@@ -15,6 +15,7 @@
         <module name="springboot-mybatis-generator" />
         <module name="springboot-shiro" />
         <module name="spring-oauth-server" />
+        <module name="springboot-jdbc" />
         <module name="springboot-security-jwt" />
         <module name="springboot-swagger2" />
         <module name="springboot-mybatis" />
@@ -27,6 +28,7 @@
       <module name="spring-oauth-client2" target="1.8" />
       <module name="spring-oauth-server" target="1.8" />
       <module name="springboot-druid" target="1.8" />
+      <module name="springboot-jdbc" target="1.8" />
       <module name="springboot-mybatis" target="1.8" />
       <module name="springboot-mybatis-generator" target="1.8" />
       <module name="springboot-mybatis-plus" target="1.8" />
@@ -45,6 +47,7 @@
       <module name="spring-oauth-client2" options="-parameters" />
       <module name="spring-oauth-server" options="-parameters" />
       <module name="springboot-druid" options="-parameters" />
+      <module name="springboot-jdbc" options="-parameters" />
       <module name="springboot-mybatis" options="-parameters" />
       <module name="springboot-mybatis-generator" options="-parameters" />
       <module name="springboot-mybatis-plus" options="-parameters" />
