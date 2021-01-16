@@ -4,8 +4,8 @@ server:
     uri-encoding: UTF-8
     max-threads: 1000
     min-spare-threads: 30
-  port: 8080
-    #context-path: /springboot
+  port: 8280
+  #context-path: /springboot
 
 # Profiles
 spring:

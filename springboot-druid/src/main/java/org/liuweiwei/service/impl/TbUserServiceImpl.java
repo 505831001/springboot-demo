@@ -1,8 +1,8 @@
 package org.liuweiwei.service.impl;
 
 import org.liuweiwei.dao.TbUserMapper;
-import org.liuweiwei.model.TbUser;
 import org.liuweiwei.service.TbUserService;
+import org.liuweiwei.model.TbUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
