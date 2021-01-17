@@ -1,0 +1,6 @@
+server:
+  port: 8858
+
+spring:
+  profiles:
+    active: dev
