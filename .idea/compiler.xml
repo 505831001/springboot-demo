@@ -8,21 +8,29 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="springboot-log4j" />
+        <module name="springcloud-nacos-producer" />
         <module name="springboot-mybatis-plus-generator" />
+        <module name="springboot-nacos-config" />
         <module name="springboot-mybatis-plus" />
         <module name="spring-oauth-client" />
         <module name="springboot-springdata-jpa" />
+        <module name="springboot-nacos-producer" />
         <module name="springboot-druid" />
         <module name="springboot-mybatis-generator" />
         <module name="springboot-shiro" />
         <module name="spring-oauth-server" />
         <module name="springboot-jdbc" />
         <module name="springboot-logback" />
+        <module name="springboot-nacos-consumer" />
         <module name="springboot-security-jwt" />
+        <module name="springboot-mybatis-dynamic-table" />
         <module name="springboot-swagger2" />
         <module name="springboot-mybatis" />
+        <module name="springcloud-nacos-config" />
+        <module name="springcloud-nacos-consumer" />
         <module name="springboot-security" />
         <module name="spring-oauth-client2" />
+        <module name="springboot-mybatis-dynamic-datasource" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
@@ -34,15 +42,25 @@
       <module name="springboot-log4j" target="1.8" />
       <module name="springboot-logback" target="1.8" />
       <module name="springboot-mybatis" target="1.8" />
+      <module name="springboot-mybatis-dynamic-datasource" target="1.8" />
+      <module name="springboot-mybatis-dynamic-table" target="1.8" />
       <module name="springboot-mybatis-generator" target="1.8" />
       <module name="springboot-mybatis-plus" target="1.8" />
       <module name="springboot-mybatis-plus-generator" target="1.8" />
+      <module name="springboot-nacos" target="1.8" />
+      <module name="springboot-nacos-config" target="1.8" />
+      <module name="springboot-nacos-consumer" target="1.8" />
+      <module name="springboot-nacos-producer" target="1.8" />
       <module name="springboot-security" target="1.8" />
       <module name="springboot-security-jwt" target="1.8" />
       <module name="springboot-security-oauth2" target="1.8" />
       <module name="springboot-shiro" target="1.8" />
       <module name="springboot-springdata-jpa" target="1.8" />
       <module name="springboot-swagger2" target="1.8" />
+      <module name="springcloud-nacos" target="1.8" />
+      <module name="springcloud-nacos-config" target="1.8" />
+      <module name="springcloud-nacos-consumer" target="1.8" />
+      <module name="springcloud-nacos-producer" target="1.8" />
     </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">
@@ -55,9 +73,12 @@
       <module name="springboot-log4j" options="-parameters" />
       <module name="springboot-logback" options="-parameters" />
       <module name="springboot-mybatis" options="-parameters" />
+      <module name="springboot-mybatis-dynamic-table" options="-parameters" />
       <module name="springboot-mybatis-generator" options="-parameters" />
       <module name="springboot-mybatis-plus" options="-parameters" />
       <module name="springboot-mybatis-plus-generator" options="-parameters" />
+      <module name="springboot-nacos-config" options="-parameters" />
+      <module name="springboot-nacos-producer" options="-parameters" />
       <module name="springboot-security" options="-parameters" />
       <module name="springboot-security-jwt" options="-parameters" />
       <module name="springboot-shiro" options="-parameters" />

@@ -11,15 +11,25 @@
       <module fileurl="file://$PROJECT_DIR$/springboot-log4j/springboot-log4j.iml" filepath="$PROJECT_DIR$/springboot-log4j/springboot-log4j.iml" />
       <module fileurl="file://$PROJECT_DIR$/springboot-logback/springboot-logback.iml" filepath="$PROJECT_DIR$/springboot-logback/springboot-logback.iml" />
       <module fileurl="file://$PROJECT_DIR$/springboot-mybatis/springboot-mybatis.iml" filepath="$PROJECT_DIR$/springboot-mybatis/springboot-mybatis.iml" />
+      <module fileurl="file://$PROJECT_DIR$/springboot-mybatis-dynamic-datasource/springboot-mybatis-dynamic-datasource.iml" filepath="$PROJECT_DIR$/springboot-mybatis-dynamic-datasource/springboot-mybatis-dynamic-datasource.iml" />
+      <module fileurl="file://$PROJECT_DIR$/springboot-mybatis-dynamic-table/springboot-mybatis-dynamic-table.iml" filepath="$PROJECT_DIR$/springboot-mybatis-dynamic-table/springboot-mybatis-dynamic-table.iml" />
       <module fileurl="file://$PROJECT_DIR$/springboot-mybatis-generator/springboot-mybatis-generator.iml" filepath="$PROJECT_DIR$/springboot-mybatis-generator/springboot-mybatis-generator.iml" />
       <module fileurl="file://$PROJECT_DIR$/springboot-mybatis-plus/springboot-mybatis-plus.iml" filepath="$PROJECT_DIR$/springboot-mybatis-plus/springboot-mybatis-plus.iml" />
       <module fileurl="file://$PROJECT_DIR$/springboot-mybatis-plus-generator/springboot-mybatis-plus-generator.iml" filepath="$PROJECT_DIR$/springboot-mybatis-plus-generator/springboot-mybatis-plus-generator.iml" />
+      <module fileurl="file://$PROJECT_DIR$/springboot-nacos/springboot-nacos.iml" filepath="$PROJECT_DIR$/springboot-nacos/springboot-nacos.iml" />
+      <module fileurl="file://$PROJECT_DIR$/springboot-nacos/springboot-nacos-config/springboot-nacos-config.iml" filepath="$PROJECT_DIR$/springboot-nacos/springboot-nacos-config/springboot-nacos-config.iml" />
+      <module fileurl="file://$PROJECT_DIR$/springboot-nacos/springboot-nacos-consumer/springboot-nacos-consumer.iml" filepath="$PROJECT_DIR$/springboot-nacos/springboot-nacos-consumer/springboot-nacos-consumer.iml" />
+      <module fileurl="file://$PROJECT_DIR$/springboot-nacos/springboot-nacos-producer/springboot-nacos-producer.iml" filepath="$PROJECT_DIR$/springboot-nacos/springboot-nacos-producer/springboot-nacos-producer.iml" />
       <module fileurl="file://$PROJECT_DIR$/springboot-security/springboot-security.iml" filepath="$PROJECT_DIR$/springboot-security/springboot-security.iml" />
       <module fileurl="file://$PROJECT_DIR$/springboot-security-jwt/springboot-security-jwt.iml" filepath="$PROJECT_DIR$/springboot-security-jwt/springboot-security-jwt.iml" />
       <module fileurl="file://$PROJECT_DIR$/springboot-security-oauth2/springboot-security-oauth2.iml" filepath="$PROJECT_DIR$/springboot-security-oauth2/springboot-security-oauth2.iml" />
       <module fileurl="file://$PROJECT_DIR$/springboot-shiro/springboot-shiro.iml" filepath="$PROJECT_DIR$/springboot-shiro/springboot-shiro.iml" />
       <module fileurl="file://$PROJECT_DIR$/springboot-springdata-jpa/springboot-springdata-jpa.iml" filepath="$PROJECT_DIR$/springboot-springdata-jpa/springboot-springdata-jpa.iml" />
       <module fileurl="file://$PROJECT_DIR$/springboot-swagger2/springboot-swagger2.iml" filepath="$PROJECT_DIR$/springboot-swagger2/springboot-swagger2.iml" />
+      <module fileurl="file://$PROJECT_DIR$/springcloud-nacos/springcloud-nacos.iml" filepath="$PROJECT_DIR$/springcloud-nacos/springcloud-nacos.iml" />
+      <module fileurl="file://$PROJECT_DIR$/springcloud-nacos/springcloud-nacos-config/springcloud-nacos-config.iml" filepath="$PROJECT_DIR$/springcloud-nacos/springcloud-nacos-config/springcloud-nacos-config.iml" />
+      <module fileurl="file://$PROJECT_DIR$/springcloud-nacos/springcloud-nacos-consumer/springcloud-nacos-consumer.iml" filepath="$PROJECT_DIR$/springcloud-nacos/springcloud-nacos-consumer/springcloud-nacos-consumer.iml" />
+      <module fileurl="file://$PROJECT_DIR$/springcloud-nacos/springcloud-nacos-producer/springcloud-nacos-producer.iml" filepath="$PROJECT_DIR$/springcloud-nacos/springcloud-nacos-producer/springcloud-nacos-producer.iml" />
     </modules>
   </component>
 </project>

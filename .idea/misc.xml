@@ -10,6 +10,7 @@
     <file type="web" url="file://$PROJECT_DIR$/springboot-security-oauth2/spring-oauth-client" />
     <file type="web" url="file://$PROJECT_DIR$/springboot-security-oauth2/spring-oauth-client2" />
     <file type="web" url="file://$PROJECT_DIR$/springboot-security-oauth2/spring-oauth-server" />
+    <file type="web" url="file://$PROJECT_DIR$/springcloud-nacos/springcloud-nacos-producer" />
   </component>
   <component name="MavenProjectsManager">
     <option name="originalFiles">
@@ -28,6 +29,10 @@
         <option value="$PROJECT_DIR$/springboot-jdbc/pom.xml" />
         <option value="$PROJECT_DIR$/springboot-logback/pom.xml" />
         <option value="$PROJECT_DIR$/springboot-log4j/pom.xml" />
+        <option value="$PROJECT_DIR$/springboot-mybatis-dynamic-table/pom.xml" />
+        <option value="$PROJECT_DIR$/springboot-mybatis-dynamic-datasource/pom.xml" />
+        <option value="$PROJECT_DIR$/springboot-nacos/pom.xml" />
+        <option value="$PROJECT_DIR$/springcloud-nacos/pom.xml" />
       </list>
     </option>
   </component>

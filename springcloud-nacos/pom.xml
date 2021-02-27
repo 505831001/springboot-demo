@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.springcloud.nacos</groupId>
+    <artifactId>springcloud-nacos</artifactId>
+    <packaging>pom</packaging>
+    <version>0.0.1-SNAPSHOT</version>
+
+    <name>springcloud-nacos</name>
+    <description>Springcloud nacos project for Spring Boot</description>
+
+    <!--
+    Spring Cloud 整合 Nacos 环境介绍：
+    1. Windows 10 x64 系统。
+    2. JDK 1.8 工具包。
+    3. SpringCloud：Finchley.RELEASE 版本。
+    4. SpringBoot：2.0.4.RELEASE 版本。
+    5. spring-cloud-alibaba-dependencies：0.2.2.RELEASE 版本。
+    6. Nacos 1.1.4 版本。
+     -->
+
+    <!--
+    Spring Cloud 版本：
+    Hoxton.SR6
+    Hoxton.BUILD-SNAPSHOT
+    Greenwich.SR5
+    Greenwich.SR1
+    Greenwich.RELEASE
+    Finchley.SR1
+    Edgware.SR5
+    Dalston.SR1
+    Dalston.RELEASE
+    Spring Cloud 组件版本关系：
+    Spring Cloud Version	Spring Cloud Alibaba Version	Spring Boot Version
+    - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    Spring Cloud Greenwich  0.9.0.RELEASE                   2.1.X.RELEASE
+    Spring Cloud Finchley   0.2.X.RELEASE                   2.0.X.RELEASE
+    Spring Cloud Edgware    0.1.X.RELEASE                   1.5.X.RELEASE
+     -->
+
+    <!--
+    Spring Cloud 第一代和第二代部分常用组件对比：
+               Sring Cloud 第一代    Sring Cloud 第二代
+    - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    网关	       Zuul(Netflix)        Gateway(Spring Cloud)
+    注册中心	   Eureka(Netflix)      Consul, ZooKeeper, Nacos(阿里)
+    配置中心	   SprigCloudConfig     Nacos(阿里), Apollo(携程)
+    负载均衡	   Ribbon(Netflix)      Loadbalancer(Spring Cloud)
+    熔断器	   Hystrix(Netflix)     Resilience4J(Spring Cloud r4j), Sentinel(阿里)
+     -->
+
+    <properties>
+        <java.version>1.8</java.version>
+    </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.springframework.cloud</groupId>
+                <artifactId>spring-cloud-dependencies</artifactId>
+                <version>Finchley.SR1</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-dependencies</artifactId>
+                <version>2.2.4.RELEASE</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.cloud</groupId>
+                <artifactId>spring-cloud-alibaba-dependencies</artifactId>
+                <version>0.9.0.RELEASE</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <optional>true</optional>
+        </dependency>
+    </dependencies>
+
+    <modules>
+        <module>springcloud-nacos-config</module>
+        <module>springcloud-nacos-producer</module>
+        <module>springcloud-nacos-consumer</module>
+    </modules>
+
+</project>

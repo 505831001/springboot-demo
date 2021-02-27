@@ -1,0 +1,6 @@
+server:
+  port: 8781
+
+spring:
+  profiles:
+    active: dev
