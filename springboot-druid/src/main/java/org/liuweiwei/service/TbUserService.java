@@ -13,10 +13,10 @@ public interface TbUserService {
     /**
      * 根据用户ID查询用户信息
      *
-     * @param userId
+     * @param tbUser
      * @return
      */
-    TbUser findByUserId(Long userId);
+    TbUser queryOne(TbUser tbUser);
 
     /**
      * 查询用户列表

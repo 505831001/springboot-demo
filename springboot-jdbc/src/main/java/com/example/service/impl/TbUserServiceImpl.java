@@ -3,6 +3,7 @@ package com.example.service.impl;
 import com.example.model.TbUser;
 import com.example.service.TbUserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
@@ -18,6 +19,9 @@ public class TbUserServiceImpl implements TbUserService {
 
     @Autowired
     private JdbcTemplate jdbcTemplate;
+
+    @Autowired
+    private RedisTemplate<String, Object> redisTemplate;
 
     @Override
     public TbUser findByUserId(Long userId) {

@@ -16,7 +16,7 @@ import java.util.List;
  * @since 2021-01-06
  */
 @Controller
-@Api(value = "Value 用户控制器", tags = "Tags 用户控制器", description = "Description 用户控制器")
+@Api(tags = "用户控制器")
 public class TbItemController {
 
     @Autowired
@@ -24,7 +24,7 @@ public class TbItemController {
 
 
     @GetMapping(value="/findAll")
-    @ApiOperation(value = "Value 查询All用户", notes = "Notes 查询All用户", tags = "Tags 查询All用户")
+    @ApiOperation(value = "", notes = "查询All用户")
     @ResponseBody
     public String findAll() {
         List<TbItem> list = itemService.findAll();

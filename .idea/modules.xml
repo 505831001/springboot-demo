@@ -20,6 +20,7 @@
       <module fileurl="file://$PROJECT_DIR$/springboot-nacos/springboot-nacos-config/springboot-nacos-config.iml" filepath="$PROJECT_DIR$/springboot-nacos/springboot-nacos-config/springboot-nacos-config.iml" />
       <module fileurl="file://$PROJECT_DIR$/springboot-nacos/springboot-nacos-consumer/springboot-nacos-consumer.iml" filepath="$PROJECT_DIR$/springboot-nacos/springboot-nacos-consumer/springboot-nacos-consumer.iml" />
       <module fileurl="file://$PROJECT_DIR$/springboot-nacos/springboot-nacos-producer/springboot-nacos-producer.iml" filepath="$PROJECT_DIR$/springboot-nacos/springboot-nacos-producer/springboot-nacos-producer.iml" />
+      <module fileurl="file://$PROJECT_DIR$/springboot-nacos/springboot-nacos-provider/springboot-nacos-provider.iml" filepath="$PROJECT_DIR$/springboot-nacos/springboot-nacos-provider/springboot-nacos-provider.iml" />
       <module fileurl="file://$PROJECT_DIR$/springboot-security/springboot-security.iml" filepath="$PROJECT_DIR$/springboot-security/springboot-security.iml" />
       <module fileurl="file://$PROJECT_DIR$/springboot-security-jwt/springboot-security-jwt.iml" filepath="$PROJECT_DIR$/springboot-security-jwt/springboot-security-jwt.iml" />
       <module fileurl="file://$PROJECT_DIR$/springboot-security-oauth2/springboot-security-oauth2.iml" filepath="$PROJECT_DIR$/springboot-security-oauth2/springboot-security-oauth2.iml" />

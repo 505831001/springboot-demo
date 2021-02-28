@@ -19,4 +19,8 @@
         SELECT COUNT(1) FROM tb_user WHERE 1=1
     </select>
 
+    <select id="queryById" resultType="com.liuweiwei.model.TbUser">
+        SELECT * FROM tb_user WHERE id = #{userId}
+    </select>
+
 </mapper>

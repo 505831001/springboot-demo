@@ -8,6 +8,7 @@ import springfox.documentation.builders.PathSelectors;
 import springfox.documentation.builders.RequestHandlerSelectors;
 import springfox.documentation.schema.ModelRef;
 import springfox.documentation.service.ApiInfo;
+import springfox.documentation.service.Contact;
 import springfox.documentation.service.Parameter;
 import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spring.web.plugins.Docket;
@@ -21,9 +22,8 @@ import java.util.List;
  */
 @Configuration
 public class Swagger2Config {
-
     @Bean
-    public Docket createRestApi(){
+    public Docket createRestApi() {
         /**
          * 添加请求参数，我们这里把token作为请求头部参数传入后端。
          */
@@ -38,19 +38,23 @@ public class Swagger2Config {
         parameters.add(parameterBuilder.build());
 
         return new Docket(DocumentationType.SWAGGER_2)
-                .apiInfo(apiInfo())
+                .pathMapping("/")
                 .select()
-                .apis(RequestHandlerSelectors.any())
+                .apis(RequestHandlerSelectors.basePackage("org.liuweiwei.controller"))
                 .paths(PathSelectors.any())
                 .build()
+                .apiInfo(apiInfo())
                 .globalOperationParameters(parameters);
     }
 
-    private ApiInfo apiInfo(){
+    private ApiInfo apiInfo() {
         return new ApiInfoBuilder()
-                .title("Swagger API Doc")
+                .title("SpringBoot 整合 Swagger2 API Doc")
                 .description("This is a restful api document of Swagger.")
                 .version("1.0")
+                .contact(new Contact("abc", "xyz", "123"))
+                .license("license")
+                .licenseUrl("licenseURL")
                 .build();
     }
 }

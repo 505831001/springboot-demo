@@ -1,5 +1,6 @@
 package org.liuweiwei.dao;
 
+import com.baomidou.mybatisplus.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Param;
 import org.liuweiwei.model.TbUser;
 import org.springframework.stereotype.Repository;
@@ -16,7 +17,7 @@ import java.util.List;
  * @since 2021-01-06
  */
 @Repository
-public interface TbUserMapper {
+public interface TbUserMapper extends BaseMapper<TbUser> {
 
     /**
      * 根据用户ID查询用户信息

@@ -19,10 +19,13 @@
         SELECT COUNT(1) FROM tb_user WHERE 1=1
     </select>
 
+    <select id="selectByUserId" resultType="org.liuweiwei.model.TbUser">
+        SELECT * FROM tb_user WHERE id = #{userId}
+    </select>
+
     <select id="selectAll" resultType="org.liuweiwei.model.TbUser">
         SELECT *
         FROM tb_user
         WHERE 1=1
     </select>
-
 </mapper>

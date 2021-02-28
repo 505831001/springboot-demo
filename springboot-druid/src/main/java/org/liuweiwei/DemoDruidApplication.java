@@ -8,8 +8,13 @@ import org.springframework.boot.Banner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.context.annotation.Bean;
 import org.springframework.core.env.ConfigurableEnvironment;
-import org.springframework.core.env.Environment;
+import org.springframework.data.redis.connection.RedisConnectionFactory;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
+import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
+import org.springframework.data.redis.serializer.JdkSerializationRedisSerializer;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
@@ -38,6 +43,7 @@ import java.util.Map;
 @EnableWebMvc
 @MapperScan(basePackages = "org.liuweiwei.dao")
 public class DemoDruidApplication {
+
     /**
      * 日志-实现层：logback<org.slf4j>
      */
@@ -73,5 +79,20 @@ public class DemoDruidApplication {
         logger.info(applicationContextEnvironment.getProperty("java.vendor.url"));
         logger.info(applicationContextEnvironment.getProperty("java.vendor.url.bug"));
         logger.info(applicationContextEnvironment.getProperty("sun.java.command") + " started successfully.");
+    }
+
+    @Bean
+    public RedisTemplate<String, Object> redisTemplate(RedisConnectionFactory redisConnectionFactory) {
+        RedisTemplate<String, Object> template = new RedisTemplate<>();
+        template.setConnectionFactory(redisConnectionFactory);
+        /**
+         * Redis 默认序列化格式：JdkSerializationRedisSerializer();
+         * Redis 指定JSON序列化格式：new GenericJackson2JsonRedisSerializer();, new Jackson2JsonRedisSerializer<>(Object.class);
+         */
+        new JdkSerializationRedisSerializer();
+        new Jackson2JsonRedisSerializer<>(Object.class);
+        new GenericJackson2JsonRedisSerializer();
+        template.setDefaultSerializer(new GenericJackson2JsonRedisSerializer());
+        return template;
     }
 }

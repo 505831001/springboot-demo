@@ -4,60 +4,27 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <!--
     <parent>
-        <groupId>com.springboot.nacos</groupId>
         <artifactId>springboot-nacos</artifactId>
+        <groupId>com.springboot.nacos</groupId>
         <version>0.0.1-SNAPSHOT</version>
     </parent>
-    -->
-    <parent>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.0.4.RELEASE</version>
-        <relativePath/> <!-- lookup parent from repository -->
-    </parent>
 
-    <groupId>com.springboot.nacos.config</groupId>
     <artifactId>springboot-nacos-config</artifactId>
-    <packaging>jar</packaging>
-    <version>0.0.1-SNAPSHOT</version>
-
-    <name>springboot-nacos-config</name>
-    <description>Springboot nacos config project for Spring Boot</description>
-
-    <properties>
-        <nacos-config-spring-boot.version>0.2.1</nacos-config-spring-boot.version>
-    </properties>
 
     <dependencies>
+        <!-- spring cloud - nacos config -->
         <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-web</artifactId>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-alibaba-nacos-config</artifactId>
+            <version>0.9.0.RELEASE</version>
         </dependency>
+        <!-- alibaba - nacos config -->
         <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-actuator</artifactId>
+            <groupId>com.alibaba.cloud</groupId>
+            <artifactId>spring-cloud-starter-alibaba-nacos-config</artifactId>
+            <version>2.1.2.RELEASE</version>
         </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-test</artifactId>
-            <scope>test</scope>
-        </dependency>
-
-        <!-- nacos config -->
-        <dependency>
-            <groupId>com.alibaba.boot</groupId>
-            <artifactId>nacos-config-spring-boot-starter</artifactId>
-            <version>0.2.1</version>
-        </dependency>
-        <!-- nacos discovery -->
-        <dependency>
-            <groupId>com.alibaba.boot</groupId>
-            <artifactId>nacos-discovery-spring-boot-starter</artifactId>
-            <version>0.2.1</version>
-        </dependency>
-
         <!-- junit -->
         <dependency>
             <groupId>junit</groupId>

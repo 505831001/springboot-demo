@@ -6,10 +6,15 @@ import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.liuweiwei.dao.TbUserMapper;
 import com.liuweiwei.model.TbUser;
 import com.liuweiwei.service.TbUserService;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author Liuweiwei
@@ -18,37 +23,83 @@ import java.util.List;
 @Service
 public class TbUserServiceImpl implements TbUserService {
 
+    private final Logger logger = LogManager.getLogger(this.getClass());
+
     @Autowired
     private TbUserMapper userMapper;
 
+    @Autowired
+    private RedisTemplate<String, Object> redisTemplate;
+
     @Override
     public TbUser findByUserId(Long userId) {
-        TbUser user = userMapper.selectById(userId);
+        TbUser user = new TbUser();
+        user = (TbUser) redisTemplate.opsForValue().get("user");
+        if (Objects.isNull(user)) {
+            user = userMapper.selectById(userId);
+            logger.info("查询MySQL数据库");
+            redisTemplate.opsForValue().set("user", user);
+            redisTemplate.expire("user", 60L, TimeUnit.SECONDS);
+            logger.info("写入NoSQL数据库");
+        } else {
+            logger.info("查询NoSQL数据库");
+        }
         return user;
     }
 
+    /**
+     * Wrappers.query();
+     * Wrappers.query(T entity);
+     * Wrappers.lambdaQuery();
+     * Wrappers.lambdaQuery(T entity);
+     * Wrappers.lambdaQuery(Class<T> entityClass);
+     * Wrappers.update();
+     * Wrappers.update(T entity);
+     * Wrappers.lambdaUpdate();
+     * Wrappers.lambdaUpdate(T entity);
+     * Wrappers.lambdaUpdate(Class<T> entityClass);
+     *
+     * @return
+     */
     @Override
     public TbUser findOne() {
+        TbUser tbUser = new TbUser();
+        Long userId = tbUser.getId();
+
+        // XML 脚本格式
+        tbUser = userMapper.queryById(userId);
+
+        // MyBatis Plus 内嵌脚本方式
+        tbUser = userMapper.selectById(userId);
+
+        // MyBatis Plus 工具类<Wrappers>内嵌脚本方式
         QueryWrapper<TbUser> wrapper01 = new QueryWrapper<>();
         wrapper01.eq("name", "李湘").last("LIMIT 1");
-        userMapper.selectOne(wrapper01);
+        tbUser = userMapper.selectOne(wrapper01);
 
-        LambdaQueryWrapper<TbUser> wrapper02 = wrapper01.lambda();
-        wrapper02.eq(TbUser::getUsername, "李湘").last("LIMIT 1");
-        userMapper.selectOne(wrapper02);
+        QueryWrapper<TbUser> wrapper02 = Wrappers.query();
+        wrapper02.eq("name", "李湘").last("LIMIT 1");
+        tbUser = userMapper.selectOne(wrapper02);
 
-        LambdaQueryWrapper<TbUser> wrapper03 = Wrappers.lambdaQuery(TbUser.class);
+        LambdaQueryWrapper<TbUser> wrapper03 = wrapper01.lambda();
         wrapper03.eq(TbUser::getUsername, "李湘").last("LIMIT 1");
-        userMapper.selectOne(wrapper03);
+        tbUser = userMapper.selectOne(wrapper03);
 
-        LambdaQueryWrapper<TbUser> wrapper04 = Wrappers.lambdaQuery(TbUser.class).eq(TbUser::getUsername, "李湘").last("LIMIT 1");
-        userMapper.selectOne(wrapper04);
+        LambdaQueryWrapper<TbUser> wrapper04 = Wrappers.lambdaQuery(TbUser.class);
+        wrapper04.eq(TbUser::getUsername, "李湘").last("LIMIT 1");
+        tbUser = userMapper.selectOne(wrapper04);
 
         LambdaQueryWrapper<TbUser> wrapper05 = Wrappers.<TbUser>lambdaQuery().eq(TbUser::getUsername, "李湘").last("LIMIT 1");
-        userMapper.selectOne(wrapper05);
+        tbUser = userMapper.selectOne(wrapper05);
 
-        TbUser user = userMapper.selectOne(wrapper05);
-        return user;
+        LambdaQueryWrapper<TbUser> wrapper06 = Wrappers.lambdaQuery(TbUser.class).eq(TbUser::getUsername, "李湘").last("LIMIT 1");
+        tbUser = userMapper.selectOne(wrapper06);
+
+        tbUser = userMapper.selectOne(Wrappers.<TbUser>query().eq("name", "李湘").last("LIMIT 1"));
+        tbUser = userMapper.selectOne(Wrappers.<TbUser>lambdaQuery().eq(TbUser::getUsername, "李湘").last("LIMIT 1"));
+        tbUser = userMapper.selectOne(Wrappers.lambdaQuery(TbUser.class).eq(TbUser::getUsername, "李湘").last("LIMIT 1"));
+
+        return tbUser;
     }
 
     @Override
