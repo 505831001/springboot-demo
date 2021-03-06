@@ -97,7 +97,6 @@
 
     <groupId>com.springboot.nacos</groupId>
     <artifactId>springboot-nacos</artifactId>
-    <packaging>pom</packaging>
     <version>0.0.1-SNAPSHOT</version>
 
     <properties>

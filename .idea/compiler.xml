@@ -7,6 +7,7 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
+        <module name="springboot-nacos" />
         <module name="springcloud-nacos-producer" />
         <module name="springboot-mybatis-plus-generator" />
         <module name="springboot-nacos-config" />
@@ -79,6 +80,7 @@
       <module name="springboot-mybatis-generator" options="-parameters" />
       <module name="springboot-mybatis-plus" options="-parameters" />
       <module name="springboot-mybatis-plus-generator" options="-parameters" />
+      <module name="springboot-nacos" options="-parameters" />
       <module name="springboot-nacos-config" options="-parameters" />
       <module name="springboot-nacos-consumer" options="-parameters" />
       <module name="springboot-nacos-producer" options="-parameters" />

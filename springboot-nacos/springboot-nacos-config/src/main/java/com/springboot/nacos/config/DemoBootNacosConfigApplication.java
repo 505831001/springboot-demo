@@ -1,7 +1,5 @@
 package com.springboot.nacos.config;
 
-import com.alibaba.nacos.spring.context.annotation.config.EnableNacosConfig;
-import com.alibaba.nacos.spring.context.annotation.config.NacosPropertySource;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
@@ -16,8 +14,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  * @since 2021-01-30
  */
 @SpringBootApplication
-@EnableNacosConfig
-@NacosPropertySource(dataId = "itsc-nacos-config-dev.properties", groupId = "dev", autoRefreshed = true)
 public class DemoBootNacosConfigApplication {
     public static void main(String[] args) {
         SpringApplication.run(DemoBootNacosConfigApplication.class, args);
