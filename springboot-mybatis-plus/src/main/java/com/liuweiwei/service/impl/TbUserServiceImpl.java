@@ -33,10 +33,14 @@ public class TbUserServiceImpl implements TbUserService {
 
     @Override
     public TbUser findByUserId(Long userId) {
-        TbUser user = new TbUser();
-        user = (TbUser) redisTemplate.opsForValue().get("user");
+        TbUser user = (TbUser) redisTemplate.opsForValue().get("user");
         if (Objects.isNull(user)) {
+            // 1. XML 脚本文档方式
+            user = userMapper.queryById(userId);
+            // 2. MyBatis Plus 内嵌脚本方式
             user = userMapper.selectById(userId);
+            // 3. MyBatis Plus 工具类<Wrappers>内嵌脚本方式
+            user = userMapper.selectOne(Wrappers.lambdaQuery(TbUser.class).eq(TbUser::getId, userId).last("limit 1"));
             logger.info("查询MySQL数据库");
             redisTemplate.opsForValue().set("user", user);
             redisTemplate.expire("user", 60L, TimeUnit.SECONDS);
