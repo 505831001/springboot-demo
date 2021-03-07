@@ -18,14 +18,14 @@ public class GlobalScopeController {
     private String no;
     @Value("${example.name}")
     private String name;
-    @Value("${example.age}")
-    private String age;
+    @Value("${example.support}")
+    private String support;
 
     @NacosValue(value = "${server.port}", autoRefreshed = true)
     protected String serverPort;
 
     @GetMapping(value = "/user")
     public String user() {
-        return "【端口】:" + serverPort + " - 编号：" + no + "，姓名：" + name + "，年龄：" + age;
+        return "端口:" + serverPort + ", 编码:" + no + ", 姓名:" + name + ", 支持:" + support;
     }
 }
