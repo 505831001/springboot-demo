@@ -26,4 +26,12 @@ public interface TbUserService {
      * @return
      */
     Set<String> getPermissions(String userName);
+
+    /**
+     * 根据用户名称查询数据库用户密码
+     *
+     * @param username
+     * @return
+     */
+    String findPasswordByName(String username);
 }

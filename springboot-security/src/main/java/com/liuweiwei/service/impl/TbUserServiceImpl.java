@@ -1,7 +1,10 @@
 package com.liuweiwei.service.impl;
 
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.liuweiwei.mapper.TbUserMapper;
 import com.liuweiwei.model.TbUser;
 import com.liuweiwei.service.TbUserService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -14,6 +17,9 @@ import java.util.Set;
  */
 @Service
 public class TbUserServiceImpl implements TbUserService {
+
+	@Autowired
+	private TbUserMapper tbUserMapper;
 
 	@Override
 	public TbUser findUserByName(String username) {
@@ -33,5 +39,15 @@ public class TbUserServiceImpl implements TbUserService {
 		permissions.add("sys:user:update");
 		permissions.add("sys:user:select");
 		return permissions;
+	}
+
+	@Override
+	public String findPasswordByName(String username) {
+		return tbUserMapper.selectOne(
+				Wrappers.<TbUser>lambdaQuery()
+						.select(TbUser::getPassword)
+						.eq(TbUser::getUsername, username)
+						.last("limit 1")
+		).getPassword();
 	}
 }

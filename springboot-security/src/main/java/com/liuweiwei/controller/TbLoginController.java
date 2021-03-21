@@ -14,17 +14,20 @@ public class TbLoginController {
 
     @GetMapping("/loginPage")
     public String login() {
-        return "login";
+        System.out.println("请求Url.loginPage(String loginPage)");
+        return "login_page";
     }
 
     @GetMapping("/indexPage")
     public String index() {
+        System.out.println("请求Url.defaultSuccessUrl(String indexPage)");
         return "index_page";
     }
 
-    @GetMapping("/loginError")
-    public String error() {
-        return "error_page";
+    @GetMapping("/failurePage")
+    public String failure() {
+        System.out.println("请求Url.failureUrl(String failurePage)");
+        return "failure_page";
     }
 
     @GetMapping("/what")
