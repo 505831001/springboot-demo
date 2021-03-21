@@ -1,10 +1,7 @@
 package com.liuweiwei.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.liuweiwei.component.My01UserDetailsServiceImpl;
-import com.liuweiwei.component.My02AuthenticationProviderImpl;
-import com.liuweiwei.component.My03AuthenticationSuccessHandler;
-import com.liuweiwei.component.My04AuthenticationFailureHandler;
+import com.liuweiwei.component.*;
 import com.liuweiwei.service.TbUserService;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -72,6 +69,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
     private My04AuthenticationFailureHandler my04AuthenticationFailureHandler;
+
+    @Autowired
+    private My05LogoutSuccessHandler my05LogoutSuccessHandler;
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -268,17 +268,16 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                     @Override
                     public void logout(HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
                         response.setContentType("application/json;charset=UTF-8");
-                        log.info("登录退出...");
+                        log.info("登录退出a...");
                     }
                 })
                 .logoutSuccessHandler(new LogoutSuccessHandler() {
                     @Override
                     public void onLogoutSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
                         response.setContentType("application/json;charset=UTF-8");
-                        log.info("登录退出...");
+                        log.info("登录退出b...");
                     }
                 })
-
                 .and()
                 .authorizeRequests()
                 .anyRequest()

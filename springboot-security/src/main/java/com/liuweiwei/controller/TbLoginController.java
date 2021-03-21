@@ -18,7 +18,7 @@ public class TbLoginController {
         return "login_page";
     }
 
-    @GetMapping("/indexPage")
+    @GetMapping("/authentication/indexPage")
     public String index() {
         System.out.println("请求Url.defaultSuccessUrl(String indexPage)");
         return "index_page";
