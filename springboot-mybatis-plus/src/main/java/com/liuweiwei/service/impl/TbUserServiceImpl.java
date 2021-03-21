@@ -3,13 +3,20 @@ package com.liuweiwei.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import com.liuweiwei.dao.TbUserMapper;
 import com.liuweiwei.model.TbUser;
 import com.liuweiwei.service.TbUserService;
+import com.liuweiwei.utils.PageRequest;
+import com.liuweiwei.utils.PageResult;
+import com.liuweiwei.utils.PageUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -133,5 +140,37 @@ public class TbUserServiceImpl implements TbUserService {
 
         List<TbUser> list = userMapper.selectList(null);
         return list;
+    }
+
+    @Override
+    public PageResult findPage(PageRequest pageRequest) {
+        PageResult pageResult = PageUtils.getPageResult(pageRequest, getPageInfo(pageRequest));
+        return pageResult;
+    }
+
+    /**
+     * 调用分页插件完成分页
+     *
+     * @param pageRequest
+     * @return
+     */
+    private PageInfo<TbUser> getPageInfo(PageRequest pageRequest) {
+        PageHelper.startPage(pageRequest.getPageNum(), pageRequest.getPageSize());
+        List<TbUser> list = userMapper.queryPage();
+        PageInfo<TbUser> pageInfo = new PageInfo<>(list);
+        return pageInfo;
+    }
+
+    @Autowired
+    private JdbcTemplate primaryJdbcTemplate;
+    @Autowired
+    private JdbcTemplate secondaryJdbcTemplate;
+
+    @Override
+    public Integer update(TbUser tbUser) {
+        int index = 0;
+        index += primaryJdbcTemplate.update("update tb_user set username = ? where id = ?", "李四A", 14);
+        index += secondaryJdbcTemplate.update("update tb_user set username = ? where id = ?", "李四B", 14);
+        return index;
     }
 }

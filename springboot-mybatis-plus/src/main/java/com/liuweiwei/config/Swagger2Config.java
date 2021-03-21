@@ -18,7 +18,7 @@ import springfox.documentation.spring.web.plugins.Docket;
 public class Swagger2Config {
 
     @Bean
-    public Docket createRestApi(){
+    public Docket createRestApi() {
         return new Docket(DocumentationType.SWAGGER_2)
                 .pathMapping("/")
                 .select()
@@ -28,7 +28,7 @@ public class Swagger2Config {
                 .apiInfo(apiInfo());
     }
 
-    private ApiInfo apiInfo(){
+    private ApiInfo apiInfo() {
         return new ApiInfoBuilder()
                 .title("SpringBoot 整合 Swagger2 API Doc")
                 .description("This is a restful api document of Swagger.")

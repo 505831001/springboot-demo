@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.boot.Banner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cloud.client.loadbalancer.LoadBalanced;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.env.ConfigurableEnvironment;
@@ -15,6 +16,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.JdkSerializationRedisSerializer;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
@@ -23,8 +25,8 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
  * @since 2021-01-08
  */
 @SpringBootApplication
-@EnableWebMvc
 @EnableSwagger2
+@EnableWebMvc
 @MapperScan(basePackages = "com.liuweiwei.dao")
 public class DemoMyBatisPlusApplication {
 
@@ -32,6 +34,7 @@ public class DemoMyBatisPlusApplication {
      * 日志-实现层：logback<org.slf4j>
      */
     private static final org.slf4j.Logger log = LoggerFactory.getLogger(DemoMyBatisPlusApplication.class);
+
     /**
      * 日志-实现层：log4j<org.apache.log4j>
      */
@@ -63,6 +66,12 @@ public class DemoMyBatisPlusApplication {
         logger.info(applicationContextEnvironment.getProperty("java.vendor.url"));
         logger.info(applicationContextEnvironment.getProperty("java.vendor.url.bug"));
         logger.info(applicationContextEnvironment.getProperty("sun.java.command") + " started successfully.");
+    }
+
+    @LoadBalanced
+    @Bean
+    public RestTemplate restTemplate() {
+        return new RestTemplate();
     }
 
     @Bean

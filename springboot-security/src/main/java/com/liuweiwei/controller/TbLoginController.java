@@ -14,7 +14,7 @@ public class TbLoginController {
 
     @GetMapping("/loginPage")
     public String login() {
-        return "login_page";
+        return "login";
     }
 
     @GetMapping("/indexPage")

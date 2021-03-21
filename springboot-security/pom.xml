@@ -108,13 +108,16 @@
     </dependencies>
 
     <build>
+        <!-- maven打包&构建名称 -->
+        <!-- <finalName>liuweiwei</finalName> -->
+        <!-- maven打包&构建插件 -->
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
             </plugin>
         </plugins>
-        <!-- 打包时拷贝mybatis映射文件 -->
+        <!-- maven打包时拷贝mybatis映射文件 -->
         <resources>
             <resource>
                 <directory>src/main/java</directory>

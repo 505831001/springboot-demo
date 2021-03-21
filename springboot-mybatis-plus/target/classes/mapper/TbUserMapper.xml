@@ -23,4 +23,11 @@
         SELECT * FROM tb_user WHERE id = #{userId}
     </select>
 
+    <select id="queryAll" resultType="com.liuweiwei.model.TbUser">
+        SELECT <include refid="Base_Column_List"/> FROM tb_user
+    </select>
+
+    <select id="queryPage" resultType="com.liuweiwei.model.TbUser">
+        SELECT <include refid="Base_Column_List"/> FROM tb_user
+    </select>
 </mapper>

@@ -12,6 +12,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -35,45 +36,62 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Bean
     public PasswordEncoder passwordEncoder() {
-        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
-        return encoder;
+        return new BCryptPasswordEncoder();
     }
 
-    @Override
-    protected void configure(HttpSecurity http) throws Exception {
-        http
-                .csrf().disable()
-                .headers().frameOptions().disable()
-                .and();
-        http
-                .formLogin()
-                .loginPage("/loginPage")
-                .loginProcessingUrl("/form")
-                .defaultSuccessUrl("/indexPage")
-                .failureUrl("/loginError")
-                .permitAll()
-                .and();
-        http
-                .authorizeRequests()
-                .antMatchers( "/css/**", "/error404").permitAll()
-                .antMatchers("/user/**").hasRole("guest")
-                .anyRequest().authenticated()
-                .and();
-    }
-
-    protected void configure01(AuthenticationManagerBuilder auth) throws Exception {
-        auth.inMemoryAuthentication().passwordEncoder(passwordEncoder())
-                .withUser("liuweiwei").password(passwordEncoder().encode("123456")).roles("admin");
-        auth.inMemoryAuthentication().passwordEncoder(passwordEncoder())
-                .withUser("linyiming").password(passwordEncoder().encode("123456")).roles("guest");
-    }
-
-    public void configure02(AuthenticationManagerBuilder auth) throws Exception {
-        auth.userDetailsService(userDetailsServiceImpl).passwordEncoder(passwordEncoder());
-    }
-
+    /**
+     * Used by the default implementation of {@link #authenticationManager()} to attempt to obtain an {AuthenticationManager}.
+     * If overridden, the {AuthenticationManagerBuilder} should be used to specify the {AuthenticationManager}.
+     *
+     * @param auth
+     * @throws Exception
+     */
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.authenticationProvider(authenticationProviderImpl);
+        auth.inMemoryAuthentication().passwordEncoder(passwordEncoder()).withUser("admin").password("123456").roles("ADMIN");
+        auth.inMemoryAuthentication().passwordEncoder(passwordEncoder()).withUser("guest").password("123456").roles("GUEST");
+
+        // auth.userDetailsService(userDetailsServiceImpl).passwordEncoder(passwordEncoder());
+
+        // auth.authenticationProvider(authenticationProviderImpl);
+    }
+
+    /**
+     * Override this method to configure {@link WebSecurity}. For example, if you wish to ignore certain requests.
+     *
+     * @param web
+     * @throws Exception
+     */
+    @Override
+    public void configure(WebSecurity web) throws Exception {
+        super.configure(web);
+    }
+
+    /**
+     * Override this method to configure the {@link HttpSecurity}.
+     * Typically subclasses should not invoke this method by calling super as it may override their configuration.
+     * The default configuration is:
+     *
+     * @param http
+     * @throws Exception
+     */
+    @Override
+    protected void configure(HttpSecurity http) throws Exception {
+        http.authorizeRequests()
+            .antMatchers( "/css/**", "/error404").permitAll()
+            .antMatchers("/user/**").hasRole("guest")
+            .anyRequest()
+            .authenticated()
+
+            .and()
+            .formLogin()
+            .loginPage("/loginPage")
+            .loginProcessingUrl("/form")
+            .defaultSuccessUrl("/indexPage")
+            .failureUrl("/loginError").permitAll();
+
+        http.cors().disable()
+            .csrf().disable()
+            .headers().frameOptions().disable();
     }
 }
