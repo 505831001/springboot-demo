@@ -1,13 +1,16 @@
 package com.liuweiwei.config;
 
-import com.liuweiwei.interceptor.Web01MvcInterceptor;
+import com.liuweiwei.api.Web01MvcInterceptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.web.servlet.config.annotation.CorsRegistry;
-import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
-import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import org.springframework.web.context.request.NativeWebRequest;
+import org.springframework.web.context.request.async.CallableProcessingInterceptor;
+import org.springframework.web.context.request.async.DeferredResult;
+import org.springframework.web.context.request.async.DeferredResultProcessingInterceptor;
+import org.springframework.web.servlet.config.annotation.*;
+
+import java.util.concurrent.Callable;
 
 /**
  * @author liuweiwei
@@ -38,6 +41,11 @@ public class WebMvcAutoConfig extends WebMvcAutoConfiguration implements WebMvcC
                 .allowCredentials(true);
     }
 
+    /**
+     * 同步请求拦截器：InterceptorRegistry
+     *
+     * @param registry
+     */
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(mvcInterceptor);
@@ -46,5 +54,26 @@ public class WebMvcAutoConfig extends WebMvcAutoConfiguration implements WebMvcC
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
 
+    }
+
+    /**
+     * 异步请求拦截器：CallableProcessingInterceptor
+     *
+     * @param configurer
+     */
+    @Override
+    public void configureAsyncSupport(AsyncSupportConfigurer configurer) {
+        configurer.registerCallableInterceptors(new CallableProcessingInterceptor() {
+            @Override
+            public <T> void beforeConcurrentHandling(NativeWebRequest request, Callable<T> task) throws Exception {
+
+            }
+        });
+        configurer.registerDeferredResultInterceptors(new DeferredResultProcessingInterceptor() {
+            @Override
+            public <T> void beforeConcurrentHandling(NativeWebRequest request, DeferredResult<T> deferredResult) throws Exception {
+
+            }
+        });
     }
 }

@@ -1,6 +1,6 @@
 package com.liuweiwei.config;
 
-import com.liuweiwei.interceptor.Web02MvcInterceptor;
+import com.liuweiwei.api.Web02MvcInterceptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;

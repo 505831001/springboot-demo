@@ -2,6 +2,7 @@ package com.liuweiwei.component;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.liuweiwei.config.WebMvcAutoConfig;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.DefaultRedirectStrategy;
@@ -18,12 +19,8 @@ import java.io.IOException;
  * @since 2020-05-20
  */
 @Component
+@Slf4j
 public class My03AuthenticationSuccessHandler implements AuthenticationSuccessHandler {
-
-    /**
-     * 日志-实现层：logback
-     */
-    private final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(this.getClass());
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {

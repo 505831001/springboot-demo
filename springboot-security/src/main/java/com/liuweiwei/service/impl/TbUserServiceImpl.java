@@ -43,11 +43,12 @@ public class TbUserServiceImpl implements TbUserService {
 
 	@Override
 	public String findPasswordByName(String username) {
-		return tbUserMapper.selectOne(
+		String md5Password = tbUserMapper.selectOne(
 				Wrappers.<TbUser>lambdaQuery()
 						.select(TbUser::getPassword)
 						.eq(TbUser::getUsername, username)
 						.last("limit 1")
 		).getPassword();
+		return md5Password;
 	}
 }

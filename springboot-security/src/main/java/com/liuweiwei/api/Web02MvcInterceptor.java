@@ -1,4 +1,4 @@
-package com.liuweiwei.interceptor;
+package com.liuweiwei.api;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -18,7 +18,7 @@ public class Web02MvcInterceptor implements HandlerInterceptor {
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-        System.out.println("02 - Web Mvc 拦截器：preHandle(request, response, handler) 方法。");
+        log.info("02 - Web Mvc 拦截器：preHandle(request, response, handler) 方法。");
         return true;
     }
 
