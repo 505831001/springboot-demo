@@ -34,7 +34,6 @@ import org.springframework.security.web.authentication.AuthenticationFailureHand
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.logout.LogoutHandler;
 import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
-import org.springframework.security.web.authentication.logout.SimpleUrlLogoutSuccessHandler;
 import org.springframework.security.web.authentication.rememberme.JdbcTokenRepositoryImpl;
 import org.springframework.security.web.authentication.rememberme.PersistentTokenRepository;
 import org.springframework.security.web.session.InvalidSessionStrategy;
@@ -108,10 +107,16 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     private My04AuthenticationFailureHandler my04AuthenticationFailureHandler;
 
     @Autowired
-    private My05LogoutSuccessHandler my05LogoutSuccessHandler;
+    private My05InvalidSessionStrategy my05InvalidSessionStrategy;
 
     @Autowired
-    private My06AccessDeniedHandler my06AccessDeniedHandler;
+    private My06SessionInformationExpiredStrategy my06SessionInformationExpiredStrategy;
+
+    @Autowired
+    private My07LogoutSuccessHandler my07LogoutSuccessHandler;
+
+    @Autowired
+    private My08AccessDeniedHandler my08AccessDeniedHandler;
 
     /**
      * NoOpPasswordEncoder.getInstance();

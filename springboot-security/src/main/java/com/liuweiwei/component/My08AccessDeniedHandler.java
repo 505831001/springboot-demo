@@ -16,9 +16,9 @@ import java.io.PrintWriter;
  * @author Liuweiwei
  * @since 2021-04-06
  */
-@Component(value = "my06AccessDeniedHandler")
+@Component(value = "my08AccessDeniedHandler")
 @Slf4j
-public class My06AccessDeniedHandler implements AccessDeniedHandler {
+public class My08AccessDeniedHandler implements AccessDeniedHandler {
 
     @Override
     public void handle(HttpServletRequest request, HttpServletResponse response, AccessDeniedException accessDeniedException) throws IOException, ServletException {
