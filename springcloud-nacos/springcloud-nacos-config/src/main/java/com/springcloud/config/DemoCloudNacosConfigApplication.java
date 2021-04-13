@@ -21,6 +21,7 @@ import java.util.Map;
  */
 @SpringBootApplication
 public class DemoCloudNacosConfigApplication {
+
     private static final Logger logger = LogManager.getLogger(DemoCloudNacosConfigApplication.class);
 
     public static void main(String[] args) {
@@ -40,12 +41,12 @@ public class DemoCloudNacosConfigApplication {
 
     @Bean
     public RedisTemplate<String, Object> redisTemplate(RedisConnectionFactory redisConnectionFactory) {
-        RedisTemplate<String, Object> template = new RedisTemplate<>();
-        template.setConnectionFactory(redisConnectionFactory);
         /**
          * Redis 默认序列化格式：JdkSerializationRedisSerializer();
          * Redis 指定JSON序列化格式：new GenericJackson2JsonRedisSerializer();, 或者：new Jackson2JsonRedisSerializer<>(Object.class);
          */
+        RedisTemplate<String, Object> template = new RedisTemplate<>();
+        template.setConnectionFactory(redisConnectionFactory);
         template.setDefaultSerializer(new GenericJackson2JsonRedisSerializer());
         return template;
     }

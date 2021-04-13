@@ -13,8 +13,7 @@ import org.springframework.security.oauth2.config.annotation.web.configurers.Aut
  * @since 2020-12-30
  */
 @Configuration
-@EnableAuthorizationServer
-public class WebSecurityOauth2Config extends AuthorizationServerConfigurerAdapter {
+public class WebAuthorizationServerConfig extends AuthorizationServerConfigurerAdapter {
     
     @Autowired    
     private BCryptPasswordEncoder passwordEncoder;

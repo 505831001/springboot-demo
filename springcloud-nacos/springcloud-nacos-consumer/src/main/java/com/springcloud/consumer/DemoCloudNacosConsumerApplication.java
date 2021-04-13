@@ -14,6 +14,7 @@ import org.springframework.web.client.RestTemplate;
 @SpringBootApplication
 @EnableDiscoveryClient
 public class DemoCloudNacosConsumerApplication {
+
     public static void main(String[] args) {
         SpringApplication.run(DemoCloudNacosConsumerApplication.class, args);
     }

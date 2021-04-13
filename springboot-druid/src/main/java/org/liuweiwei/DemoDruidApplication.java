@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.boot.Banner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cloud.client.loadbalancer.LoadBalanced;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.env.ConfigurableEnvironment;
@@ -15,6 +16,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.JdkSerializationRedisSerializer;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
@@ -48,6 +50,7 @@ public class DemoDruidApplication {
      * 日志-实现层：logback<org.slf4j>
      */
     private static final org.slf4j.Logger log = LoggerFactory.getLogger(DemoDruidApplication.class);
+
     /**
      * 日志-实现层：log4j<org.apache.log4j>
      */
@@ -58,11 +61,13 @@ public class DemoDruidApplication {
      * 默认情况下，class将执行以下步骤来引导应用程序：
      */
     private static SpringApplication application;
+
     /**
      * 大部分(如果不是全部)应用程序上下文都要实现的SPI接口。
      * 除了{ApplicationContext}接口中的应用程序上下文客户端方法之外，还提供了配置应用程序上下文的工具。
      */
     private static ConfigurableApplicationContext applicationContext;
+
     /**
      * 大多数(如果不是全部){Environment}类型都要实现的配置接口。
      * 提供用于设置活动和默认概要文件以及操作底层属性源的工具。
@@ -81,17 +86,20 @@ public class DemoDruidApplication {
         logger.info(applicationContextEnvironment.getProperty("sun.java.command") + " started successfully.");
     }
 
+    @LoadBalanced
+    @Bean
+    public RestTemplate restTemplate() {
+        return new RestTemplate();
+    }
+
     @Bean
     public RedisTemplate<String, Object> redisTemplate(RedisConnectionFactory redisConnectionFactory) {
-        RedisTemplate<String, Object> template = new RedisTemplate<>();
-        template.setConnectionFactory(redisConnectionFactory);
         /**
-         * Redis 默认序列化格式：JdkSerializationRedisSerializer();
+         * Redis 默认JDK序列化格式：new JdkSerializationRedisSerializer();
          * Redis 指定JSON序列化格式：new GenericJackson2JsonRedisSerializer();, new Jackson2JsonRedisSerializer<>(Object.class);
          */
-        new JdkSerializationRedisSerializer();
-        new Jackson2JsonRedisSerializer<>(Object.class);
-        new GenericJackson2JsonRedisSerializer();
+        RedisTemplate<String, Object> template = new RedisTemplate<>();
+        template.setConnectionFactory(redisConnectionFactory);
         template.setDefaultSerializer(new GenericJackson2JsonRedisSerializer());
         return template;
     }

@@ -79,6 +79,12 @@
             <scope>test</scope>
         </dependency>
 
+        <!-- spring cloud -->
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-commons</artifactId>
+        </dependency>
+
         <!-- nacos config
         <dependency>
             <groupId>com.alibaba.cloud</groupId>
