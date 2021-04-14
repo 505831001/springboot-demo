@@ -78,6 +78,18 @@
             <scope>test</scope>
         </dependency>
 
+        <!-- spring cloud - @LoadBalanced -->
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-commons</artifactId>
+        </dependency>
+
+        <!-- alibaba cloud - rocketmq -->
+        <dependency>
+            <groupId>com.alibaba.cloud</groupId>
+            <artifactId>spring-cloud-starter-stream-rocketmq</artifactId>
+        </dependency>
+
         <!-- mybatis plus -->
         <dependency>
             <groupId>com.baomidou</groupId>
@@ -128,12 +140,6 @@
             <groupId>com.alibaba</groupId>
             <artifactId>fastjson</artifactId>
             <version>1.2.47</version>
-        </dependency>
-
-        <!-- @LoadBalanced -->
-        <dependency>
-            <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-commons</artifactId>
         </dependency>
     </dependencies>
 

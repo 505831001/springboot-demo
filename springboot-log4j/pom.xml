@@ -89,10 +89,16 @@
             <scope>test</scope>
         </dependency>
 
-        <!-- spring cloud -->
+        <!-- spring cloud - @LoadBalanced -->
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-commons</artifactId>
+        </dependency>
+
+        <!-- alibaba cloud - rocketmq -->
+        <dependency>
+            <groupId>com.alibaba.cloud</groupId>
+            <artifactId>spring-cloud-starter-stream-rocketmq</artifactId>
         </dependency>
 
         <!-- mysql -->
