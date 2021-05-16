@@ -11,6 +11,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
 import org.springframework.cloud.client.loadbalancer.LoadBalanced;
+import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.env.ConfigurableEnvironment;
@@ -40,6 +41,7 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
  * @since 2021-01-07
  */
 @SpringBootApplication
+@EnableEurekaClient
 @EnableWebMvc
 @EnableSwagger2
 @MapperScan(basePackages = "org.liuweiwei.dao")

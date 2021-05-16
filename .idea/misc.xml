@@ -33,6 +33,8 @@
         <option value="$PROJECT_DIR$/springboot-mybatis-dynamic-datasource/pom.xml" />
         <option value="$PROJECT_DIR$/springboot-nacos/pom.xml" />
         <option value="$PROJECT_DIR$/springcloud-nacos/pom.xml" />
+        <option value="$PROJECT_DIR$/springboot-gateway/pom.xml" />
+        <option value="$PROJECT_DIR$/springboot-eureka/pom.xml" />
       </list>
     </option>
     <option name="ignoredFiles">

@@ -19,9 +19,14 @@ import java.util.List;
 @Api(tags = "用户控制器")
 public class TbItemController {
 
+    @GetMapping(value = "/echo")
+    @ResponseBody
+    public String echo(String message) {
+        return "MyBatis 应用程序输出：" + message;
+    }
+
     @Autowired
     private TbItemService itemService;
-
 
     @GetMapping(value="/findAll")
     @ApiOperation(value = "", notes = "查询所有用户信息")

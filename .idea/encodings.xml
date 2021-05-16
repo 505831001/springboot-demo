@@ -2,6 +2,8 @@
 <project version="4">
   <component name="Encoding" native2AsciiForPropertiesFiles="true" defaultCharsetForPropertiesFiles="UTF-8">
     <file url="file://$PROJECT_DIR$/springboot-druid/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/springboot-eureka/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/springboot-gateway/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/springboot-jdbc/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/springboot-log4j/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/springboot-logback/src/main/java" charset="UTF-8" />

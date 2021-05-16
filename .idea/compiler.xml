@@ -13,9 +13,11 @@
         <module name="springboot-logback" />
         <module name="springboot-nacos-consumer" />
         <module name="springboot-nacos-provider" />
+        <module name="springboot-gateway" />
         <module name="springcloud-nacos-config" />
         <module name="springboot-security" />
         <module name="springboot-log4j" />
+        <module name="springboot-eureka" />
         <module name="springboot-mybatis-plus" />
         <module name="spring-oauth-client" />
         <module name="springboot-springdata-jpa" />
@@ -38,6 +40,8 @@
       <module name="spring-oauth-client2" target="1.8" />
       <module name="spring-oauth-server" target="1.8" />
       <module name="springboot-druid" target="1.8" />
+      <module name="springboot-eureka" target="1.8" />
+      <module name="springboot-gateway" target="1.8" />
       <module name="springboot-jdbc" target="1.8" />
       <module name="springboot-log4j" target="1.8" />
       <module name="springboot-logback" target="1.8" />
@@ -70,6 +74,8 @@
       <module name="spring-oauth-client2" options="-parameters" />
       <module name="spring-oauth-server" options="-parameters" />
       <module name="springboot-druid" options="-parameters" />
+      <module name="springboot-eureka" options="-parameters" />
+      <module name="springboot-gateway" options="-parameters" />
       <module name="springboot-jdbc" options="-parameters" />
       <module name="springboot-log4j" options="-parameters" />
       <module name="springboot-logback" options="-parameters" />

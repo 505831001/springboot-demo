@@ -7,6 +7,8 @@
       <module fileurl="file://$PROJECT_DIR$/springboot-security-oauth2/spring-oauth-server/spring-oauth-server.iml" filepath="$PROJECT_DIR$/springboot-security-oauth2/spring-oauth-server/spring-oauth-server.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/springboot-demo.iml" filepath="$PROJECT_DIR$/.idea/springboot-demo.iml" />
       <module fileurl="file://$PROJECT_DIR$/springboot-druid/springboot-druid.iml" filepath="$PROJECT_DIR$/springboot-druid/springboot-druid.iml" />
+      <module fileurl="file://$PROJECT_DIR$/springboot-eureka/springboot-eureka.iml" filepath="$PROJECT_DIR$/springboot-eureka/springboot-eureka.iml" />
+      <module fileurl="file://$PROJECT_DIR$/springboot-gateway/springboot-gateway.iml" filepath="$PROJECT_DIR$/springboot-gateway/springboot-gateway.iml" />
       <module fileurl="file://$PROJECT_DIR$/springboot-jdbc/springboot-jdbc.iml" filepath="$PROJECT_DIR$/springboot-jdbc/springboot-jdbc.iml" />
       <module fileurl="file://$PROJECT_DIR$/springboot-log4j/springboot-log4j.iml" filepath="$PROJECT_DIR$/springboot-log4j/springboot-log4j.iml" />
       <module fileurl="file://$PROJECT_DIR$/springboot-logback/springboot-logback.iml" filepath="$PROJECT_DIR$/springboot-logback/springboot-logback.iml" />

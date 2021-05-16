@@ -1,0 +1,39 @@
+server:
+  port: 8888
+
+spring:
+  application:
+    name: client-gateway-service
+  cloud:
+    gateway:
+      discovery:
+        locator:
+          enabled: false
+          lowerCaseServiceId: true
+      routes:
+        - id: mybatis
+          uri: lb://CLIENT-MYBATIS
+          predicates:
+            - Path=/mybatis/**
+          filters:
+            - StripPrefix=1
+        - id: mybatis-plus
+          uri: lb://CLIENT-MYBATIS-PLUS
+          predicates:
+            - Path=/mybatis-plus/**
+          filters:
+            - StripPrefix=1
+        - id: log4j-service
+          uri: lb://CLIENT-LOG4J-SERVICE
+          predicates:
+            - Path=/log4j/**
+          filters:
+            - StripPrefix=1
+
+eureka:
+  instance:
+    preferIpAddress: true
+    instance-id: ${spring.cloud.client.ip-address}:${server.port}
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/

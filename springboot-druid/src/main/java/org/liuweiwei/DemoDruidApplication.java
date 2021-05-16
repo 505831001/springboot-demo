@@ -22,7 +22,11 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
+import java.net.URL;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.locks.Lock;
 
 /**
  * Druid Monitor 德鲁伊监控器地址：http://localhost:8080/druid/login.html
