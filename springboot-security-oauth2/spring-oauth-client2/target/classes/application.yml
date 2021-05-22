@@ -1,6 +1,0 @@
-server:
-  port: 8883
-
-spring:
-  profiles:
-    active: dev

@@ -9,6 +9,7 @@
         <outputRelativeToContentRoot value="true" />
         <module name="springcloud-nacos-producer" />
         <module name="springboot-mybatis-plus-generator" />
+        <module name="springboot-ribbon" />
         <module name="springboot-shiro" />
         <module name="springboot-logback" />
         <module name="springboot-nacos-consumer" />
@@ -41,6 +42,7 @@
       <module name="spring-oauth-server" target="1.8" />
       <module name="springboot-druid" target="1.8" />
       <module name="springboot-eureka" target="1.8" />
+      <module name="springboot-feign" target="1.8" />
       <module name="springboot-gateway" target="1.8" />
       <module name="springboot-jdbc" target="1.8" />
       <module name="springboot-log4j" target="1.8" />
@@ -56,6 +58,7 @@
       <module name="springboot-nacos-consumer" target="1.8" />
       <module name="springboot-nacos-producer" target="1.8" />
       <module name="springboot-nacos-provider" target="1.8" />
+      <module name="springboot-ribbon" target="1.8" />
       <module name="springboot-security" target="1.8" />
       <module name="springboot-security-jwt" target="1.8" />
       <module name="springboot-security-oauth2" target="1.8" />
@@ -75,6 +78,7 @@
       <module name="spring-oauth-server" options="-parameters" />
       <module name="springboot-druid" options="-parameters" />
       <module name="springboot-eureka" options="-parameters" />
+      <module name="springboot-feign" options="-parameters" />
       <module name="springboot-gateway" options="-parameters" />
       <module name="springboot-jdbc" options="-parameters" />
       <module name="springboot-log4j" options="-parameters" />
@@ -89,6 +93,7 @@
       <module name="springboot-nacos-consumer" options="-parameters" />
       <module name="springboot-nacos-producer" options="-parameters" />
       <module name="springboot-nacos-provider" options="-parameters" />
+      <module name="springboot-ribbon" options="-parameters" />
       <module name="springboot-security" options="-parameters" />
       <module name="springboot-security-jwt" options="-parameters" />
       <module name="springboot-shiro" options="-parameters" />

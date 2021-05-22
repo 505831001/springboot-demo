@@ -11,12 +11,12 @@ spring:
     username: root
     password: 123456
   application:
-    name: app-logback-service
+    name: client-logback-service
 
 eureka:
   client:
     serviceUrl:
-      defaultZone: http://localhost:9000/eureka/
+      defaultZone: http://localhost:8761/eureka/
   instance:
     instance-id: app-logback-service
     prefer-ip-address: true

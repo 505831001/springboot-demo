@@ -14,6 +14,7 @@
     <file url="file://$PROJECT_DIR$/springboot-mybatis/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/springboot-mybatis/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/springboot-nacos/springboot-nacos-producer/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/springboot-ribbon/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/springboot-security-jwt/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/springboot-security-oauth2/spring-oauth-client/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/springboot-security-oauth2/spring-oauth-client2/src/main/java" charset="UTF-8" />

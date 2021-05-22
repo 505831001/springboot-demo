@@ -1,7 +1,13 @@
 server:
-  port: 8888
+  port: 8888 #服务注册中心端口号
+
+logging:
+  level:
+    com.cloud.x20.gateway: debug
 
 spring:
+  jmx:
+    enabled: false
   application:
     name: client-gateway-service
   cloud:
@@ -11,24 +17,49 @@ spring:
           enabled: false
           lowerCaseServiceId: true
       routes:
+        # uri: http://开头 - http代表从hosts域名获取
+        # uri: http://localhost:8282
+        # uri: lb://开头 - lb代表从注册中心获取服务名称
+        # uri: lb://CLIENT-MYBATIS-PLUS
+        # uri: 动态变量
+        # uri: ${mybatis-plus.uri}
+        # ========================================
         - id: mybatis
-          uri: lb://CLIENT-MYBATIS
+          uri: ${mybatis.uri}
           predicates:
             - Path=/mybatis/**
           filters:
             - StripPrefix=1
+        # ========================================
         - id: mybatis-plus
-          uri: lb://CLIENT-MYBATIS-PLUS
+          uri: ${mybatis-plus.uri}
           predicates:
             - Path=/mybatis-plus/**
           filters:
             - StripPrefix=1
+        # ========================================
         - id: log4j-service
-          uri: lb://CLIENT-LOG4J-SERVICE
+          uri: ${log4j-service.uri}
           predicates:
             - Path=/log4j/**
           filters:
             - StripPrefix=1
+        # ========================================
+        - id: logback-service
+          uri: ${logback-service.uri}
+          predicates:
+            - Path=/logback/**
+          filters:
+            - StripPrefix=1
+
+mybatis:
+  uri: lb://CLIENT-MYBATIS
+mybatis-plus:
+  uri: lb://CLIENT-MYBATIS-PLUS
+log4j-service:
+  uri: lb://CLIENT-LOG4J-SERVICE
+logback-service:
+  uri: lb://CLIENT-LOGBACK-SERVICE
 
 eureka:
   instance:
@@ -37,3 +68,4 @@ eureka:
   client:
     service-url:
       defaultZone: http://localhost:8761/eureka/
+
