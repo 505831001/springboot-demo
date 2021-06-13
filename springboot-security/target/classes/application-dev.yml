@@ -1,0 +1,43 @@
+spring:
+  thymeleaf:
+    prefix: classpath:/templates/
+    suffix: .html
+    servlet:
+      content-type: text/html
+    mode: HTML5
+  datasource:
+    driver-class-name: com.mysql.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/mysql?useUnicode=true&zeroDateTimeBehavior=convertToNull&autoReconnect=true&characterEncoding=utf-8&useSSL=false
+    username: root
+    password: 123456
+  session:
+    store-type: none
+
+## 打印映射接口sql
+logging:
+  level:
+    com:
+      liuweiwei:
+        mapper: debug
+
+#logging:
+#  pattern:
+#    console: "%d{yyyy-MM-dd} [%thread] %-5level %logger{50} -%msg%n"
+#    file: "%d{yyyy/MM/dd HH:mm:ss.SSS} [%thread] %-5level %logger{50} %msg%n"
+
+#logging:
+#  # level: trace
+#  # path: D:/logs/log4j
+#  # file: D:/logs/log4j.log
+#  file:
+#    path: D:/logs/log4j
+#    name: D:/logs/log4j/log4j.log
+#  pattern:
+#    console: "%d{yyyy-MM-dd} [%thread] %-5level %logger{50} -%msg%n"
+#    file: "%d{yyyy/MM/dd HH:mm:ss.SSS} [%thread] %-5level %logger{50} %msg%n"
+
+#logging:
+#  config: classpath:log4j2-spring.xml
+#  level:
+#    cn.jay.repository: trace
+

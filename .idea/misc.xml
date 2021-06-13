@@ -36,6 +36,12 @@
         <option value="$PROJECT_DIR$/springboot-gateway/pom.xml" />
         <option value="$PROJECT_DIR$/springboot-eureka/pom.xml" />
         <option value="$PROJECT_DIR$/springboot-ribbon/pom.xml" />
+        <option value="$PROJECT_DIR$/springboot-openfeign/pom.xml" />
+        <option value="$PROJECT_DIR$/springboot-hystrix/pom.xml" />
+        <option value="$PROJECT_DIR$/springboot-hystrix-dashboard/pom.xml" />
+        <option value="$PROJECT_DIR$/springboot-zuul/pom.xml" />
+        <option value="$PROJECT_DIR$/springboot-config-server/pom.xml" />
+        <option value="$PROJECT_DIR$/springboot-config-client/pom.xml" />
       </list>
     </option>
     <option name="ignoredFiles">

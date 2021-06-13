@@ -1,9 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="Encoding" native2AsciiForPropertiesFiles="true" defaultCharsetForPropertiesFiles="UTF-8">
+    <file url="file://$PROJECT_DIR$/springboot-config-client/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/springboot-config-server/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/springboot-druid/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/springboot-eureka/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/springboot-gateway/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/springboot-hystrix-dashboard/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/springboot-hystrix/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/springboot-jdbc/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/springboot-log4j/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/springboot-logback/src/main/java" charset="UTF-8" />
@@ -14,6 +18,7 @@
     <file url="file://$PROJECT_DIR$/springboot-mybatis/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/springboot-mybatis/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/springboot-nacos/springboot-nacos-producer/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/springboot-openfeign/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/springboot-ribbon/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/springboot-security-jwt/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/springboot-security-oauth2/spring-oauth-client/src/main/java" charset="UTF-8" />
@@ -23,6 +28,7 @@
     <file url="file://$PROJECT_DIR$/springboot-shiro/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/springboot-springdata-jpa/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/springboot-swagger2/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/springboot-zuul/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/springcloud-nacos/springcloud-nacos-config/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/springcloud-nacos/springcloud-nacos-consumer/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/springcloud-nacos/springcloud-nacos-producer/src/main/java" charset="UTF-8" />

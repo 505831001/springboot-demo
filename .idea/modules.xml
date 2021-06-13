@@ -5,10 +5,14 @@
       <module fileurl="file://$PROJECT_DIR$/springboot-security-oauth2/spring-oauth-client/spring-oauth-client.iml" filepath="$PROJECT_DIR$/springboot-security-oauth2/spring-oauth-client/spring-oauth-client.iml" />
       <module fileurl="file://$PROJECT_DIR$/springboot-security-oauth2/spring-oauth-client2/spring-oauth-client2.iml" filepath="$PROJECT_DIR$/springboot-security-oauth2/spring-oauth-client2/spring-oauth-client2.iml" />
       <module fileurl="file://$PROJECT_DIR$/springboot-security-oauth2/spring-oauth-server/spring-oauth-server.iml" filepath="$PROJECT_DIR$/springboot-security-oauth2/spring-oauth-server/spring-oauth-server.iml" />
+      <module fileurl="file://$PROJECT_DIR$/springboot-config-client/springboot-config-client.iml" filepath="$PROJECT_DIR$/springboot-config-client/springboot-config-client.iml" />
+      <module fileurl="file://$PROJECT_DIR$/springboot-config-server/springboot-config-server.iml" filepath="$PROJECT_DIR$/springboot-config-server/springboot-config-server.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/springboot-demo.iml" filepath="$PROJECT_DIR$/.idea/springboot-demo.iml" />
       <module fileurl="file://$PROJECT_DIR$/springboot-druid/springboot-druid.iml" filepath="$PROJECT_DIR$/springboot-druid/springboot-druid.iml" />
       <module fileurl="file://$PROJECT_DIR$/springboot-eureka/springboot-eureka.iml" filepath="$PROJECT_DIR$/springboot-eureka/springboot-eureka.iml" />
       <module fileurl="file://$PROJECT_DIR$/springboot-gateway/springboot-gateway.iml" filepath="$PROJECT_DIR$/springboot-gateway/springboot-gateway.iml" />
+      <module fileurl="file://$PROJECT_DIR$/springboot-hystrix/springboot-hystrix.iml" filepath="$PROJECT_DIR$/springboot-hystrix/springboot-hystrix.iml" />
+      <module fileurl="file://$PROJECT_DIR$/springboot-hystrix-dashboard/springboot-hystrix-dashboard.iml" filepath="$PROJECT_DIR$/springboot-hystrix-dashboard/springboot-hystrix-dashboard.iml" />
       <module fileurl="file://$PROJECT_DIR$/springboot-jdbc/springboot-jdbc.iml" filepath="$PROJECT_DIR$/springboot-jdbc/springboot-jdbc.iml" />
       <module fileurl="file://$PROJECT_DIR$/springboot-log4j/springboot-log4j.iml" filepath="$PROJECT_DIR$/springboot-log4j/springboot-log4j.iml" />
       <module fileurl="file://$PROJECT_DIR$/springboot-logback/springboot-logback.iml" filepath="$PROJECT_DIR$/springboot-logback/springboot-logback.iml" />
@@ -22,6 +26,7 @@
       <module fileurl="file://$PROJECT_DIR$/springboot-nacos/springboot-nacos-consumer/springboot-nacos-consumer.iml" filepath="$PROJECT_DIR$/springboot-nacos/springboot-nacos-consumer/springboot-nacos-consumer.iml" />
       <module fileurl="file://$PROJECT_DIR$/springboot-nacos/springboot-nacos-producer/springboot-nacos-producer.iml" filepath="$PROJECT_DIR$/springboot-nacos/springboot-nacos-producer/springboot-nacos-producer.iml" />
       <module fileurl="file://$PROJECT_DIR$/springboot-nacos/springboot-nacos-provider/springboot-nacos-provider.iml" filepath="$PROJECT_DIR$/springboot-nacos/springboot-nacos-provider/springboot-nacos-provider.iml" />
+      <module fileurl="file://$PROJECT_DIR$/springboot-openfeign/springboot-openfeign.iml" filepath="$PROJECT_DIR$/springboot-openfeign/springboot-openfeign.iml" />
       <module fileurl="file://$PROJECT_DIR$/springboot-ribbon/springboot-ribbon.iml" filepath="$PROJECT_DIR$/springboot-ribbon/springboot-ribbon.iml" />
       <module fileurl="file://$PROJECT_DIR$/springboot-security/springboot-security.iml" filepath="$PROJECT_DIR$/springboot-security/springboot-security.iml" />
       <module fileurl="file://$PROJECT_DIR$/springboot-security-jwt/springboot-security-jwt.iml" filepath="$PROJECT_DIR$/springboot-security-jwt/springboot-security-jwt.iml" />
@@ -29,6 +34,7 @@
       <module fileurl="file://$PROJECT_DIR$/springboot-shiro/springboot-shiro.iml" filepath="$PROJECT_DIR$/springboot-shiro/springboot-shiro.iml" />
       <module fileurl="file://$PROJECT_DIR$/springboot-springdata-jpa/springboot-springdata-jpa.iml" filepath="$PROJECT_DIR$/springboot-springdata-jpa/springboot-springdata-jpa.iml" />
       <module fileurl="file://$PROJECT_DIR$/springboot-swagger2/springboot-swagger2.iml" filepath="$PROJECT_DIR$/springboot-swagger2/springboot-swagger2.iml" />
+      <module fileurl="file://$PROJECT_DIR$/springboot-zuul/springboot-zuul.iml" filepath="$PROJECT_DIR$/springboot-zuul/springboot-zuul.iml" />
       <module fileurl="file://$PROJECT_DIR$/springcloud-nacos/springcloud-nacos.iml" filepath="$PROJECT_DIR$/springcloud-nacos/springcloud-nacos.iml" />
       <module fileurl="file://$PROJECT_DIR$/springcloud-nacos/springcloud-nacos-config/springcloud-nacos-config.iml" filepath="$PROJECT_DIR$/springcloud-nacos/springcloud-nacos-config/springcloud-nacos-config.iml" />
       <module fileurl="file://$PROJECT_DIR$/springcloud-nacos/springcloud-nacos-consumer/springcloud-nacos-consumer.iml" filepath="$PROJECT_DIR$/springcloud-nacos/springcloud-nacos-consumer/springcloud-nacos-consumer.iml" />

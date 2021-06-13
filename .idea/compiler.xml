@@ -11,10 +11,13 @@
         <module name="springboot-mybatis-plus-generator" />
         <module name="springboot-ribbon" />
         <module name="springboot-shiro" />
+        <module name="springboot-zuul" />
         <module name="springboot-logback" />
         <module name="springboot-nacos-consumer" />
         <module name="springboot-nacos-provider" />
         <module name="springboot-gateway" />
+        <module name="springboot-hystrix-dashboard" />
+        <module name="springboot-hystrix" />
         <module name="springcloud-nacos-config" />
         <module name="springboot-security" />
         <module name="springboot-log4j" />
@@ -26,13 +29,16 @@
         <module name="springboot-druid" />
         <module name="springboot-mybatis-generator" />
         <module name="spring-oauth-server" />
+        <module name="springboot-config-server" />
         <module name="springboot-jdbc" />
         <module name="springboot-security-jwt" />
+        <module name="springboot-config-client" />
         <module name="springboot-mybatis-dynamic-table" />
         <module name="springboot-swagger2" />
         <module name="springboot-mybatis" />
         <module name="springcloud-nacos-consumer" />
         <module name="spring-oauth-client2" />
+        <module name="springboot-openfeign" />
         <module name="springboot-mybatis-dynamic-datasource" />
       </profile>
     </annotationProcessing>
@@ -40,10 +46,14 @@
       <module name="spring-oauth-client" target="1.8" />
       <module name="spring-oauth-client2" target="1.8" />
       <module name="spring-oauth-server" target="1.8" />
+      <module name="springboot-config-client" target="1.8" />
+      <module name="springboot-config-server" target="1.8" />
       <module name="springboot-druid" target="1.8" />
       <module name="springboot-eureka" target="1.8" />
       <module name="springboot-feign" target="1.8" />
       <module name="springboot-gateway" target="1.8" />
+      <module name="springboot-hystrix" target="1.8" />
+      <module name="springboot-hystrix-dashboard" target="1.8" />
       <module name="springboot-jdbc" target="1.8" />
       <module name="springboot-log4j" target="1.8" />
       <module name="springboot-logback" target="1.8" />
@@ -58,6 +68,7 @@
       <module name="springboot-nacos-consumer" target="1.8" />
       <module name="springboot-nacos-producer" target="1.8" />
       <module name="springboot-nacos-provider" target="1.8" />
+      <module name="springboot-openfeign" target="1.8" />
       <module name="springboot-ribbon" target="1.8" />
       <module name="springboot-security" target="1.8" />
       <module name="springboot-security-jwt" target="1.8" />
@@ -65,6 +76,7 @@
       <module name="springboot-shiro" target="1.8" />
       <module name="springboot-springdata-jpa" target="1.8" />
       <module name="springboot-swagger2" target="1.8" />
+      <module name="springboot-zuul" target="1.8" />
       <module name="springcloud-nacos" target="1.8" />
       <module name="springcloud-nacos-config" target="1.8" />
       <module name="springcloud-nacos-consumer" target="1.8" />
@@ -76,10 +88,14 @@
       <module name="spring-oauth-client" options="-parameters" />
       <module name="spring-oauth-client2" options="-parameters" />
       <module name="spring-oauth-server" options="-parameters" />
+      <module name="springboot-config-client" options="-parameters" />
+      <module name="springboot-config-server" options="-parameters" />
       <module name="springboot-druid" options="-parameters" />
       <module name="springboot-eureka" options="-parameters" />
       <module name="springboot-feign" options="-parameters" />
       <module name="springboot-gateway" options="-parameters" />
+      <module name="springboot-hystrix" options="-parameters" />
+      <module name="springboot-hystrix-dashboard" options="-parameters" />
       <module name="springboot-jdbc" options="-parameters" />
       <module name="springboot-log4j" options="-parameters" />
       <module name="springboot-logback" options="-parameters" />
@@ -93,12 +109,14 @@
       <module name="springboot-nacos-consumer" options="-parameters" />
       <module name="springboot-nacos-producer" options="-parameters" />
       <module name="springboot-nacos-provider" options="-parameters" />
+      <module name="springboot-openfeign" options="-parameters" />
       <module name="springboot-ribbon" options="-parameters" />
       <module name="springboot-security" options="-parameters" />
       <module name="springboot-security-jwt" options="-parameters" />
       <module name="springboot-shiro" options="-parameters" />
       <module name="springboot-springdata-jpa" options="-parameters" />
       <module name="springboot-swagger2" options="-parameters" />
+      <module name="springboot-zuul" options="-parameters" />
       <module name="springcloud-nacos-config" options="-parameters" />
       <module name="springcloud-nacos-consumer" options="-parameters" />
       <module name="springcloud-nacos-producer" options="-parameters" />

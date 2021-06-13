@@ -7,7 +7,6 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.loadbalancer.LoadBalanced;
 import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
-import org.springframework.cloud.netflix.ribbon.RibbonClient;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.env.ConfigurableEnvironment;
@@ -19,7 +18,6 @@ import org.springframework.web.client.RestTemplate;
  */
 @SpringBootApplication
 @EnableEurekaClient
-@RibbonClient(name = "CLIENT-RIBBON-SERVICE", configuration = IRule.class)
 public class CloudX20RibbonApplication {
 
     /**
@@ -35,13 +33,25 @@ public class CloudX20RibbonApplication {
         LOGGER.info(environment.getProperty("sun.java.command") + " started successfully.");
     }
 
+    /**
+     * Ribbon
+     *     01. 实现方式: @RibbonClient + RestTemplate(@LoadBalanced)
+     *     02. 通过微服务名称来获得调用地址
+     *     03. 客户端
+     * Feign
+     *     01. 实现方式: @EnableFeignClients + @FeignClient
+     *     02. 通过接口＋注解来获得调用服务
+     *     03. 客户端
+     *
+     * @return
+     */
     @LoadBalanced
     @Bean
     public RestTemplate restTemplate() {
         return new RestTemplate();
     }
 
-    @Bean(name = "LiuIRule")
+    @Bean
     public IRule iRule() {
         IRule rule = new AvailabilityFilteringRule();
         rule = new WeightedResponseTimeRule();

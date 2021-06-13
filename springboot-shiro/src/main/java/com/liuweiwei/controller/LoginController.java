@@ -24,25 +24,25 @@ import javax.validation.Valid;
  */
 @RestController
 @Slf4j
-public class TbLoginController {
+public class LoginController {
 
     @Autowired
     private TbLoginService loginService;
 
     /**
-     * GET - http://localhost:8080/login?userName=liuweiwei&password=123456
+     * http://localhost:8088/login?username=liuweiwei&password=123456
      *
-     * @param userName
+     * @param username
      * @param password
      * @return
      */
     @GetMapping("/login")
-    public String login(@RequestParam(name = "userName") @Valid String userName,
+    public String login(@RequestParam(name = "username") @Valid String username,
                         @RequestParam(name = "password") @Valid String password) {
-        if (StringUtils.isEmpty(userName) || StringUtils.isEmpty(password)) {
+        if (StringUtils.isEmpty(username) || StringUtils.isEmpty(password)) {
             return null;
         }
-        UsernamePasswordToken token = new UsernamePasswordToken(userName, password);
+        UsernamePasswordToken token = new UsernamePasswordToken(username, password);
         //用户认证信息
         Subject subject = SecurityUtils.getSubject();
         try {

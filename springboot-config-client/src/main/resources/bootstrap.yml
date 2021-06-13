@@ -1,0 +1,39 @@
+server:
+  port: 8706 #服务注册中心端口号
+  servlet:
+    context-path: /
+
+logging:
+  level:
+    com.cloud.x20.config.client: debug
+
+##读取本地配置文件
+spring:
+  application:
+    name: config-client
+  cloud:
+    config:
+      enabled: true
+      profile: dev
+      uri: http://localhost:8705/
+
+eureka:
+  instance:
+    prefer-ip-address: true
+    instance-id: ${spring.cloud.client.ip-address}:${server.port}
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+
+#management:
+#  endpoints:
+#    web:
+#      exposure:
+#        include: '*'
+#  endpoint:
+#    refresh:
+#      enabled: true
+#  health:
+#    refresh:
+#      enabled: true
+

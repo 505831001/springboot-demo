@@ -1,0 +1,51 @@
+server:
+  port: 8705 #服务注册中心端口号
+  servlet:
+    context-path: /
+
+logging:
+  level:
+    com.cloud.x20.config.server: debug
+
+##读取本地配置文件
+spring:
+  application:
+    name: config-server
+  profiles:
+    active: native #设置读取本地配置文件
+  cloud:
+    config:
+      server:
+        native:
+          search-locations: classpath:/config/ #读取本地配置文件的路径
+          add-label-locations: false #这个是在git的时候才用到，这个设置成false就可以了，因为默认是true
+#        ##读取远程git配置文件
+#        ##org.eclipse.jgit.errors.TransportException:https://github.com/505831001/config.git: cannot open git-upload-pack
+#        ##If you are using the git profile, you need to set a Git URI in your configuration.
+#        ##If you are using a native profile and have spring.cloud.config.server.bootstrap=true, you need to use a composite configuration.
+#        git:
+#          uri: https://github.com/505831001/config.git #配置文件git地址
+#          timeout: 5 #超时时间，默认是5秒，这里随便设置
+#          search-paths: info #寻找路径
+#      label: main #默认git要拉取的分支
+
+eureka:
+  instance:
+    prefer-ip-address: true
+    instance-id: ${spring.cloud.client.ip-address}:${server.port}
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+
+#management:
+#  endpoints:
+#    web:
+#      exposure:
+#        include: '*'
+#  endpoint:
+#    refresh:
+#      enabled: true
+#  health:
+#    refresh:
+#      enabled: true
+

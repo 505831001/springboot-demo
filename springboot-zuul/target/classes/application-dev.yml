@@ -1,0 +1,53 @@
+server:
+  port: 8707 #服务注册中心端口号
+
+logging:
+  level:
+    com.cloud.x20.zuul: debug
+
+spring:
+  application:
+    name: client-zuul-service #网关服务名称
+  main:
+    allow-bean-definition-overriding: true
+
+zuul:
+  prefix: /api
+  routes:
+    zuul-one01:                    #访问网关路径的前缀（在映射路径的前面，一般用于区别开发的版本）
+      path: /client/**             #自定义映射服务器路径的名称（相当于key，外部访问这个地址会映射到下面的service-id这个value值。然后从eureka服务列表找到对应服务名称，进而负载均衡的请求一个服务器）
+      # uri: http://开头 - http代表从hosts域名获取
+      # uri: http://localhost:8282/
+      # uri: lb://开头 - lb代表从注册中心获取服务名称
+      # uri: lb://CLIENT-MYBATIS-PLUS
+      # uri: 动态变量
+      # uri: ${mybatis-plus.uri}
+      # ========================================
+      #url: http://localhost:8706/ #这是写的固定映射url，可代替service-id。但是不能实现服务器的负载均衡和高可用，因为总是访问同一服务器
+      service-id: CONFIG-CLIENT    #eureka注册中心中要映射的服务名称，因为是双层map结构，所以可以实现负载均衡和高可用
+    zuul-two02:                    #搭建另一个映射服务器，这里就简单的映射同一服务了。简单测试下而已
+      path: /first/**
+      #url: http://localhost:8705/
+      service-id: CONFIG-SERVER    #映射服务器名称简单的使用上面的，仅供测试
+
+mybatis:
+  uri: http://localhost:8008/
+mybatis-plus:
+  uri: http://localhost:8009/
+log4j-service:
+  uri: lb://CLIENT-LOG4J-SERVICE
+logback-service:
+  uri: lb://CLIENT-LOGBACK-SERVICE
+config-client:
+  uri: CONFIG-CLIENT
+config-server:
+  uri: CONFIG-SERVER
+
+eureka:
+  instance:
+    prefer-ip-address: true
+    instance-id: ${spring.cloud.client.ip-address}:${server.port}
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+

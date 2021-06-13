@@ -1,0 +1,56 @@
+server:
+  port: 8703 #服务注册中心端口号
+
+logging:
+  level:
+    com.cloud.x20.hystrix: debug
+
+spring:
+  application:
+    name: client-hystrix-service
+  cloud:
+    circuitbreaker:
+      hystrix:
+        enabled: true
+
+feign:
+  hystrix:
+    enabled: true
+
+## 断路器(Hystrix)配置隔离策略
+hystrix:
+  command:
+    default:
+      execution:
+        isolation:
+          strategy: ExecutionIsolationStrategy.SEMAPHORE #信号量隔离
+          #strategy: ExecutionIsolationStrategy.THREAD  #线程池隔离
+          thread:
+            timeoutInMilliseconds: 3000  #默认的连接超时时间1秒,若1秒没有返回数据,自动的触发降级逻辑
+      circuitBreaker:
+        requestVolumeThreshold: 5        #触发熔断的最小请求次数，默认20 /10秒
+        sleepWindowInMilliseconds: 10000 #熔断多少秒后去尝试请求 默认 5 打开状态的时间
+        errorThresholdPercentage: 50     #触发熔断的失败请求最小占比，默认50%
+  metrics:
+    enabled: true
+    polling-interval-ms: 3000
+  shareSecurityContext: false
+
+eureka:
+  instance:
+    prefer-ip-address: true
+    instance-id: ${spring.cloud.client.ip-address}:${server.port}
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+
+management:
+  endpoint:
+    hystrix:
+      stream:
+        enabled: true
+  metrics:
+    binders:
+      hystrix:
+        enabled: true
+
