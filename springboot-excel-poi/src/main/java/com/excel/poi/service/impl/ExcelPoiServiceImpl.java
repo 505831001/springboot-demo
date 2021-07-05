@@ -1,10 +1,15 @@
 package com.excel.poi.service.impl;
 
+import com.alibaba.fastjson.JSONObject;
+import com.baomidou.mybatisplus.core.toolkit.BeanUtils;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.excel.poi.dao.TbUserMapper;
 import com.excel.poi.entity.TbUser;
 import com.excel.poi.service.ExcelPoiService;
 import com.excel.poi.utils.Utils;
+import com.google.common.collect.Lists;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.ListUtils;
 import org.apache.poi.hssf.usermodel.*;
 import org.apache.poi.ss.usermodel.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,9 +24,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * @author Liuweiwei
@@ -163,7 +166,31 @@ public class ExcelPoiServiceImpl implements ExcelPoiService {
     public void downloadExcel(HttpServletResponse response) {
         HSSFWorkbook workbook = new HSSFWorkbook();
         HSSFSheet sheet = workbook.createSheet("用户信息表");
-        List<TbUser> tbUserList = tbUserMapper.selectList(null);
+        List<TbUser> list = tbUserMapper.selectList(null);
+        System.out.println("org.apache.commons.collections4.CollectionUtils - 如果指定的集合不为空，则执行空安全检查。");
+        if (CollectionUtils.isNotEmpty(list)) {
+            List<List<TbUser>> partition = Lists.partition(list, HttpStatus.OK.value());
+            for (List<TbUser> users : partition) {
+                for (TbUser tbUser : users) {
+                    System.out.println("com.google.common.collect.Lists - 返回一个列表的连续{List.subList(int,int) subList}，每个列表的大小相同(最后的列表可能更小)。");
+                    String json = JSONObject.toJSONString(tbUser);
+                    System.out.println("com.alibaba.fastjson.JSONObject - 此方法将指定的对象序列化为其等效的json表示形式。");
+                    TbUser object = JSONObject.parseObject(json, TbUser.class);
+                    System.out.println("com.alibaba.fastjson.JSONObject - 此方法将指定的json反序列化为指定类的对象。");
+                    List<Map<String, Object>> maps = BeanUtils.beansToMaps(list);
+                    System.out.println("");
+                }
+            }
+        }
+        System.out.println("org.springframework.util.CollectionUtils - 如果提供的集合为{null}或空，则返回{true}。");
+        if (org.springframework.util.CollectionUtils.isEmpty(list)) {
+            List<List<TbUser>> partition = ListUtils.partition(list, HttpServletResponse.SC_OK);
+            for (List<TbUser> users : partition) {
+                for (TbUser tbUser : users) {
+                    System.out.println("org.apache.commons.collections4.ListUtils - 返回一个列表的连续{List.subList(int,int) subList}，每个列表的大小相同(最后的列表可能更小)。");
+                }
+            }
+        }
         //设置要导出的文件的名字
         String fileName = "userinfo" + ".xls";
         //新增数据行，并且设置单元格数据
@@ -178,7 +205,7 @@ public class ExcelPoiServiceImpl implements ExcelPoiService {
             cell.setCellValue(text);
         }
         //在表中存放查询到的数据放入对应的列
-        for (TbUser tbUser : tbUserList) {
+        for (TbUser tbUser : list) {
             HSSFRow row1 = sheet.createRow(rowNum);
             row1.createCell(0).setCellValue(tbUser.getId() == null ? null : tbUser.getId());
             row1.createCell(1).setCellValue(tbUser.getUsername() == null ? null : tbUser.getUsername());
