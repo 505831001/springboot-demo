@@ -42,6 +42,7 @@
         <option value="$PROJECT_DIR$/springboot-zuul/pom.xml" />
         <option value="$PROJECT_DIR$/springboot-config-server/pom.xml" />
         <option value="$PROJECT_DIR$/springboot-config-client/pom.xml" />
+        <option value="$PROJECT_DIR$/springboot-excel-poi/pom.xml" />
       </list>
     </option>
     <option name="ignoredFiles">

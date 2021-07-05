@@ -17,12 +17,12 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
 
-    <groupId>org.liuweiwei</groupId>
-    <artifactId>springboot-mybatis</artifactId>
+    <groupId>com.excel.poi</groupId>
+    <artifactId>springboot-excel-poi</artifactId>
     <version>0.0.1-SNAPSHOT</version>
 
-    <name>springboot-mybatis</name>
-    <description>Mybatis project for Spring Boot</description>
+    <name>springboot-excel-poi</name>
+    <description>Excel poi project for Spring Boot</description>
 
     <properties>
         <java.version>1.8</java.version>
@@ -87,30 +87,6 @@
             </exclusions>
         </dependency>
 
-        <!-- spring cloud - @LoadBalanced -->
-        <dependency>
-            <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-commons</artifactId>
-        </dependency>
-        <!-- spring cloud - client -->
-        <dependency>
-            <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
-        </dependency>
-
-        <!-- alibaba cloud - rocketmq -->
-        <dependency>
-            <groupId>com.alibaba.cloud</groupId>
-            <artifactId>spring-cloud-starter-stream-rocketmq</artifactId>
-        </dependency>
-
-        <!-- mybatis -->
-        <dependency>
-            <groupId>org.mybatis.spring.boot</groupId>
-            <artifactId>mybatis-spring-boot-starter</artifactId>
-            <version>2.1.1</version>
-        </dependency>
-
         <!-- swagger -->
         <dependency>
             <groupId>io.springfox</groupId>
@@ -121,6 +97,25 @@
             <groupId>io.springfox</groupId>
             <artifactId>springfox-swagger-ui</artifactId>
             <version>2.9.2</version>
+        </dependency>
+
+        <!-- mybatis plus -->
+        <dependency>
+            <groupId>com.baomidou</groupId>
+            <artifactId>mybatis-plus-boot-starter</artifactId>
+            <version>3.4.0</version>
+        </dependency>
+        <!-- mybatis plus 代码生成器 -->
+        <dependency>
+            <groupId>com.baomidou</groupId>
+            <artifactId>mybatis-plus-generator</artifactId>
+            <version>3.4.0</version>
+        </dependency>
+        <!-- github pageHelper -->
+        <dependency>
+            <groupId>com.github.pagehelper</groupId>
+            <artifactId>pagehelper-spring-boot-starter</artifactId>
+            <version>1.2.12</version>
         </dependency>
 
         <!-- mysql -->
@@ -136,6 +131,19 @@
             <optional>true</optional>
         </dependency>
 
+        <!-- https://mvnrepository.com/artifact/org.apache.poi/poi -->
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi</artifactId>
+            <version>3.17</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/org.apache.poi/poi-ooxml -->
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi-ooxml</artifactId>
+            <version>3.17</version>
+        </dependency>
+
         <!-- google guava -->
         <dependency>
             <groupId>com.google.guava</groupId>
@@ -147,6 +155,12 @@
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-collections4</artifactId>
             <version>4.1</version>
+        </dependency>
+        <!-- fastjson -->
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>fastjson</artifactId>
+            <version>1.2.47</version>
         </dependency>
     </dependencies>
 

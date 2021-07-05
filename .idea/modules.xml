@@ -10,6 +10,7 @@
       <module fileurl="file://$PROJECT_DIR$/.idea/springboot-demo.iml" filepath="$PROJECT_DIR$/.idea/springboot-demo.iml" />
       <module fileurl="file://$PROJECT_DIR$/springboot-druid/springboot-druid.iml" filepath="$PROJECT_DIR$/springboot-druid/springboot-druid.iml" />
       <module fileurl="file://$PROJECT_DIR$/springboot-eureka/springboot-eureka.iml" filepath="$PROJECT_DIR$/springboot-eureka/springboot-eureka.iml" />
+      <module fileurl="file://$PROJECT_DIR$/springboot-excel-poi/springboot-excel-poi.iml" filepath="$PROJECT_DIR$/springboot-excel-poi/springboot-excel-poi.iml" />
       <module fileurl="file://$PROJECT_DIR$/springboot-gateway/springboot-gateway.iml" filepath="$PROJECT_DIR$/springboot-gateway/springboot-gateway.iml" />
       <module fileurl="file://$PROJECT_DIR$/springboot-hystrix/springboot-hystrix.iml" filepath="$PROJECT_DIR$/springboot-hystrix/springboot-hystrix.iml" />
       <module fileurl="file://$PROJECT_DIR$/springboot-hystrix-dashboard/springboot-hystrix-dashboard.iml" filepath="$PROJECT_DIR$/springboot-hystrix-dashboard/springboot-hystrix-dashboard.iml" />

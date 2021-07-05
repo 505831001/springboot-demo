@@ -31,6 +31,7 @@
         <module name="spring-oauth-server" />
         <module name="springboot-config-server" />
         <module name="springboot-jdbc" />
+        <module name="springboot-excel-poi" />
         <module name="springboot-security-jwt" />
         <module name="springboot-config-client" />
         <module name="springboot-mybatis-dynamic-table" />
@@ -50,6 +51,7 @@
       <module name="springboot-config-server" target="1.8" />
       <module name="springboot-druid" target="1.8" />
       <module name="springboot-eureka" target="1.8" />
+      <module name="springboot-excel-poi" target="1.8" />
       <module name="springboot-feign" target="1.8" />
       <module name="springboot-gateway" target="1.8" />
       <module name="springboot-hystrix" target="1.8" />
@@ -92,6 +94,7 @@
       <module name="springboot-config-server" options="-parameters" />
       <module name="springboot-druid" options="-parameters" />
       <module name="springboot-eureka" options="-parameters" />
+      <module name="springboot-excel-poi" options="-parameters" />
       <module name="springboot-feign" options="-parameters" />
       <module name="springboot-gateway" options="-parameters" />
       <module name="springboot-hystrix" options="-parameters" />
