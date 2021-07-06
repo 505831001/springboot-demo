@@ -146,11 +146,30 @@
             <optional>true</optional>
         </dependency>
 
-        <!-- fastjson -->
+        <!-- Tools -->
+        <!-- alibaba-fastJson - JSON,JSONObject -->
         <dependency>
             <groupId>com.alibaba</groupId>
             <artifactId>fastjson</artifactId>
-            <version>1.2.47</version>
+            <version>1.2.76</version>
+        </dependency>
+        <!-- google-guava - Lists -->
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>23.0</version>
+        </dependency>
+        <!-- apache.commons-collections4 - ListUtils,CollectionUtils -->
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-collections4</artifactId>
+            <version>4.4</version>
+        </dependency>
+        <!-- commons-beanUtils - BeanUtils,PropertyUtils -->
+        <dependency>
+            <groupId>commons-beanutils</groupId>
+            <artifactId>commons-beanutils</artifactId>
+            <version>1.9.4</version>
         </dependency>
     </dependencies>
 

@@ -2,6 +2,7 @@ package org.liuweiwei.service;
 
 import org.liuweiwei.model.TbUser;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
 /**
@@ -23,5 +24,5 @@ public interface TbUserService {
      *
      * @return
      */
-    List<TbUser> findAll();
+    List<TbUser> findAll() throws IllegalAccessException, NoSuchMethodException, InvocationTargetException;
 }

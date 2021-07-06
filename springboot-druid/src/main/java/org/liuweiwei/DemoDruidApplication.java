@@ -43,6 +43,19 @@ import java.util.concurrent.locks.Lock;
  * 1. 通过配置扫描注解：@MapperScan(basePackages = "org.example.dao")
  * 2. 通过注释：@Mapper
  *
+ * [Tools]
+ * com.alibaba.fastjson.JSONObject;
+ * com.google.common.collect.Lists;
+ * org.apache.commons.collections4.CollectionUtils;
+ * org.apache.commons.collections4.ListUtils;
+ * org.apache.commons.beanutils.BeanUtils;
+ * org.apache.commons.beanutils.PropertyUtils;
+ *
+ * [Wrappers]
+ * com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+ * com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+ * com.baomidou.mybatisplus.core.toolkit.Wrappers;
+ *
  * @author Liuweiwei
  * @since 2021-01-05
  */
