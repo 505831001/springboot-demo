@@ -9,6 +9,7 @@ import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.ListUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.liuweiwei.dao.TbUserMapper;
@@ -78,6 +79,9 @@ public class TbUserServiceImpl implements TbUserService {
                     // com.alibaba.fastjson.JSONObject - 此方法将指定的Json反序列化为指定类的对象。
                     TbUser object = JSONObject.parseObject(json, TbUser.class);
                     System.out.println("[json转object] - " + object.toString());
+                    if (StringUtils.isNotEmpty(tbUser.getUsername())) {
+                        System.out.println("");
+                    }
                 }
             }
         }
