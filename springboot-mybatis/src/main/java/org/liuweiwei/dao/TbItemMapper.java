@@ -17,6 +17,7 @@ import java.util.List;
 public interface TbItemMapper {
 
     /**
+     * 查询列表
      *
      * @return
      */

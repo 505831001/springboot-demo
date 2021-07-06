@@ -25,6 +25,7 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 /**
+ * [读取数据源报错]
  * Action:
  * org.apache.ibatis.binding.BindingException: Invalid bound statement (not found):
  * 配置：resources/mapper非<配置在pom.xml中>：java/mapper则YML中添加扫描配置。
@@ -32,6 +33,7 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
  *   mapper-locations: classpath*:/resources/mapper/*.xml 或者相对路径方式：classpath*:mapper/*.xml
  *   type-aliases-package: org.example.dao
  *
+ * [应用启动即报错]
  * Action:
  * Consider defining a bean of type 'org.liuweiwei.dao.TbUserMapper' in your configuration.
  * 1. 通过配置扫描注解：@MapperScan(basePackages = "org.example.dao")
