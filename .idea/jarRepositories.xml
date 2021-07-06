@@ -7,6 +7,11 @@
       <option name="url" value="http://10.58.13.54/repository/maven-release/" />
     </remote-repository>
     <remote-repository>
+      <option name="id" value="central" />
+      <option name="name" value="Central Repository" />
+      <option name="url" value="http://maven.aliyun.com/nexus/content/groups/public/" />
+    </remote-repository>
+    <remote-repository>
       <option name="id" value="maven-3rd" />
       <option name="name" value="maven-3rd" />
       <option name="url" value="http://10.58.13.54/repository/maven-3rd/" />
