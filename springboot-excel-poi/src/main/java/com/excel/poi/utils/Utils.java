@@ -84,8 +84,7 @@ public class Utils {
         if (isExcel2007(file.getOriginalFilename())) {
             isExcel2003 = false;
         }
-        BufferedInputStream is = new BufferedInputStream(
-                file.getInputStream());
+        BufferedInputStream is = new BufferedInputStream(file.getInputStream());
         Workbook wb;
         if (isExcel2003) {
             wb = new HSSFWorkbook(is);

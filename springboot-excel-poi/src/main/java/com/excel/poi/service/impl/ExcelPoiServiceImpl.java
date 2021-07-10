@@ -3,6 +3,7 @@ package com.excel.poi.service.impl;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.toolkit.BeanUtils;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
+import com.excel.poi.constants.NumericConstants;
 import com.excel.poi.dao.TbUserMapper;
 import com.excel.poi.entity.TbUser;
 import com.excel.poi.service.ExcelPoiService;
@@ -11,7 +12,10 @@ import com.google.common.collect.Lists;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.ListUtils;
 import org.apache.poi.hssf.usermodel.*;
-import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,10 +24,12 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
+import java.text.MessageFormat;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
@@ -36,8 +42,16 @@ public class ExcelPoiServiceImpl implements ExcelPoiService {
     @Autowired
     private TbUserMapper tbUserMapper;
 
+    /**
+     * Excel文档导入方式之一
+     *
+     * @param file
+     * @return
+     */
     @Override
     public ResponseEntity uploadExcel(MultipartFile file) {
+        List<TbUser> list = new ArrayList<>(10);
+        int index = 0;
         if (!Utils.checkExtension(file)) {
             return new ResponseEntity("请求文件类型错误:后缀名错误(xls,xlsx,XLS,XLSX).", HttpStatus.BAD_REQUEST);
         }
@@ -49,27 +63,26 @@ public class ExcelPoiServiceImpl implements ExcelPoiService {
                 Sheet sheet = workbook.getSheetAt(0);
                 // 3.High level representation of a row of a spreadsheet. - 电子[表格行]的高级表示。
                 for (Row row : sheet) {
+                    /**获得sheet行有多少单元格*/
                     short lastCellNum = row.getLastCellNum();
                     for (int i = 0; i < lastCellNum; i++) {
                         // 4.High level representation of a cell in a row of a spreadsheet. - 电子表格中一行[单元格]的高级表示。
                         Cell cell = row.getCell(i);
-                        System.out.print("[Cell01] -> " + cell.toString() + ",");
+                        System.out.println("单元格[Cell]数据如何添加到对象保存数据表：" + cell.toString());
                     }
                 }
-                System.out.println("");
-                //获得sheet有多少行
+
+                /**获得sheet有多少行*/
                 int rows = sheet.getPhysicalNumberOfRows();
-                //遍历sheet表格行数rows
                 for (int i = 0; i < rows; i++) {
                     // 3.High level representation of a row of a spreadsheet. - 电子[表格行]的高级表示。
                     Row row = sheet.getRow(i);
-                    short lastCellNum = row.getLastCellNum();
-                    for (int j = 0; j < lastCellNum; j++) {
+                    /**获得sheet每行有多少单元格*/
+                    int cells = row.getPhysicalNumberOfCells();
+                    for (int j = 0; j < cells; j++) {
                         // 4.High level representation of a cell in a row of a spreadsheet. - 电子表格中一行[单元格]的高级表示。
                         Cell cell = row.getCell(j);
-                        if (cell != null) {
-                            System.out.print("[Cell02] -> " + cell.toString() + ",");
-                        }
+                        System.out.println("单元格[Cell]数据如何添加到对象保存数据表：" + cell.toString());
                     }
                 }
             } else {
@@ -81,36 +94,68 @@ public class ExcelPoiServiceImpl implements ExcelPoiService {
         return new ResponseEntity(HttpStatus.OK);
     }
 
+    /**
+     * Excel文档导入方式之二
+     *
+     * @param file
+     * @return
+     * @throws IOException
+     */
     @Override
     public ResponseEntity importExcel(MultipartFile file) throws IOException {
-        //流读取文件
-        FileInputStream is = new FileInputStream(new File("C:/Users/Administrator/Downloads/userinfo.xls"));
+        List<Map<String, Object>> list = new ArrayList<>(10);
+        /**sheet工作簿title行cells单元格*/
+        String[] headers = {"id", "username", "password", "role", "permission", "ban", "phone", "email", "created", "updated"};
+        /**流读取文件*/
+        BufferedInputStream is = new BufferedInputStream(file.getInputStream());
         // 1.High level representation of a Excel workbook. - Excel[工作簿]的高级表示。
         Workbook workbook = new HSSFWorkbook(is);
         // 2.Sheets are the central structures within a workbook. - [工作表]是工作簿中的中心结构。
         Sheet sheet = workbook.getSheetAt(0);
+
         // 3.High level representation of a row of a spreadsheet. - 电子[表格行]的高级表示。
         for (Row row : sheet) {
+            /**获得sheet每行有多少单元格*/
             short lastCellNum = row.getLastCellNum();
             for (int i = 0; i < lastCellNum; i++) {
                 // 4.High level representation of a cell in a row of a spreadsheet. - 电子表格中一行[单元格]的高级表示。
                 Cell cell = row.getCell(i);
-                System.out.println("[Cell01] -> " + cell.toString());
+            }
+            /**获得sheet每行有多少单元格*/
+            int cells = row.getPhysicalNumberOfCells();
+            for (int i = 0; i < cells; i++) {
+                // 4.High level representation of a cell in a row of a spreadsheet. - 电子表格中一行[单元格]的高级表示。
+                Cell cell = row.getCell(i);
             }
         }
 
-        //获得sheet有多少行
+        /**获得sheet有多少行*/
         int rows = sheet.getPhysicalNumberOfRows();
-        //遍历所有行
+        /**遍历所有行*/
         for (int i = 0; i < rows; i++) {
+            /**第一行表头跳过*/
+            if (i == 0) {
+                continue;
+            }
             // 3.High level representation of a row of a spreadsheet. - 电子[表格行]的高级表示。
             Row row = sheet.getRow(i);
-            short lastCellNum = row.getLastCellNum();
-            for (int j = 0; j < lastCellNum; j++) {
+            Map<String, Object> map = new HashMap<>();
+            for (int j = 0; j < headers.length; j++) {
                 // 4.High level representation of a cell in a row of a spreadsheet. - 电子表格中一行[单元格]的高级表示。
                 Cell cell = row.getCell(j);
-                System.out.println("[Cell02] -> " + cell.toString());
+                map.put(headers[j], cell.toString() == null ? null : cell.toString());
             }
+            list.add(map);
+            /**转换成对象写入数据库*/
+            TbUser tbUser = cellsToTbUser(row);
+        }
+        /**转换成集合或转换成json*/
+        System.out.println("总计行：" + list.size());
+        for (Map<String, Object> map : list) {
+            String json = JSONObject.toJSONString(map);
+            System.out.println("行内容：" + json);
+            TbUser tbUser = JSONObject.parseObject(json, TbUser.class);
+            System.out.println("行对象：" + tbUser.toString());
         }
         return new ResponseEntity(HttpStatus.OK);
     }
@@ -128,44 +173,60 @@ public class ExcelPoiServiceImpl implements ExcelPoiService {
             HSSFSheet sheet = workbook.getSheetAt(0);
             // 3.High level representation of a row of a spreadsheet. - 电子[表格行]的高级表示。
             for (Row row : sheet) {
-                //第一行表头跳过
+                /**第一行表头跳过*/
                 if (row.getRowNum() == 0) {
                     continue;
                 }
-                //跳过空值的行，要求此行作废
+                /**跳过空值的行，要求此行作废*/
                 if (row.getCell(0) == null || StringUtils.isBlank(row.getCell(0).getStringCellValue())) {
                     continue;
                 }
-                TbUser tbUser = new TbUser();
-                tbUser.setId(Long.getLong(row.getCell(0).getStringCellValue()));
-                tbUser.setUsername(row.getCell(1).getStringCellValue());
-                tbUser.setPassword(row.getCell(2).getStringCellValue());
-                tbUser.setRole(row.getCell(3).getStringCellValue());
-                tbUser.setPermission(row.getCell(4).getStringCellValue());
-                tbUser.setBan(row.getCell(5).getStringCellValue());
-                tbUser.setPhone(row.getCell(6).getStringCellValue());
-                tbUser.setEmail(row.getCell(7).getStringCellValue());
-                tbUser.setCreated(row.getCell(8).getDateCellValue());
-                tbUser.setUpdated(row.getCell(9).getDateCellValue());
+                TbUser tbUser = cellsToTbUser(row);
                 list.add(tbUser);
             }
-            // 调用业务层
+            /**调用业务层*/
             for (TbUser tbUser : list) {
-                tbUserMapper.insert(tbUser);
+                tbUserMapper.insertSelective(tbUser);
             }
-            //删除文件
+            /**删除文件*/
             myFile.delete();
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (Exception e) {
-            //服务器错误
+            /**服务器错误*/
             return new ResponseEntity<Void>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
+    private TbUser cellsToTbUser(Row row) {
+        TbUser tbUser = new TbUser();
+        int id = UUID.randomUUID().toString().hashCode();
+        id = id < 0 ? -id : id;
+        tbUser.setId(Long.parseLong(String.valueOf(id)));
+        tbUser.setUsername(row.getCell(NumericConstants.ONE)    == null ? null : row.getCell(1).getStringCellValue());
+        tbUser.setPassword(row.getCell(NumericConstants.TWO)    == null ? null : row.getCell(2).getStringCellValue());
+        tbUser.setRole(row.getCell(NumericConstants.THREE)      == null ? null : row.getCell(3).getStringCellValue());
+        tbUser.setPermission(row.getCell(NumericConstants.FOUR) == null ? null : row.getCell(4).getStringCellValue());
+        tbUser.setBan(row.getCell(NumericConstants.FIVE)        == null ? null : row.getCell(5).getStringCellValue());
+        tbUser.setPhone(row.getCell(NumericConstants.SIX)       == null ? null : row.getCell(6).getStringCellValue());
+        tbUser.setEmail(row.getCell(NumericConstants.SEVEN)     == null ? null : row.getCell(7).getStringCellValue());
+        tbUser.setCreated(row.getCell(NumericConstants.EIGHT)   == null ? null : new Date());
+        tbUser.setUpdated(row.getCell(NumericConstants.NINE)    == null ? null : new Date());
+        return tbUser;
+    }
+
+    /**
+     * Excel导出方式之一
+     *
+     * @param response
+     */
     @Override
     public void downloadExcel(HttpServletResponse response) {
-        HSSFWorkbook workbook = new HSSFWorkbook();
-        HSSFSheet sheet = workbook.createSheet("用户信息表");
+        //设置要导出的文件的名字
+        String fileName  = "userinfo" + ".xls";
+        String sheetName = "userinfo";
+        //新增数据行，并且设置单元格数据
+        String[] headers = {"id", "username", "password", "role", "permission", "ban", "phone", "email", "created", "updated"};
+
         List<TbUser> list = tbUserMapper.selectList(null);
         System.out.println("org.apache.commons.collections4.CollectionUtils - 如果指定的集合不为空，则执行空安全检查。");
         if (CollectionUtils.isNotEmpty(list)) {
@@ -191,34 +252,35 @@ public class ExcelPoiServiceImpl implements ExcelPoiService {
                 }
             }
         }
-        //设置要导出的文件的名字
-        String fileName = "userinfo" + ".xls";
-        //新增数据行，并且设置单元格数据
-        int rowNum = 1;
-        String[] headers = {"id", "username", "password", "role", "permission", "ban", "phone", "email", "created", "updated"};
-        //headers表示excel表中第一行的表头
+
+        // 1.High level representation of a Excel workbook. - Excel工作簿的高级表示。
+        HSSFWorkbook workbook = new HSSFWorkbook();
+        // 2.Sheets are the central structures within a workbook. - 工作表是工作簿中的中心结构。
+        HSSFSheet sheet = workbook.createSheet(sheetName);
+        // 3.High level representation of a row of a spreadsheet. - 电子表格行的高级表示。
         HSSFRow row = sheet.createRow(0);
-        //在excel表中添加表头
+        /**在excel表中添加表头*/
         for (int i = 0; i < headers.length; i++) {
+            // 4.High level representation of a cell in a row of a spreadsheet. - 电子表格中一行[单元格]的高级表示。
             HSSFCell cell = row.createCell(i);
             HSSFRichTextString text = new HSSFRichTextString(headers[i]);
             cell.setCellValue(text);
         }
-        //在表中存放查询到的数据放入对应的列
-        for (TbUser tbUser : list) {
-            HSSFRow row1 = sheet.createRow(rowNum);
-            row1.createCell(0).setCellValue(tbUser.getId() == null ? null : tbUser.getId());
-            row1.createCell(1).setCellValue(tbUser.getUsername() == null ? null : tbUser.getUsername());
-            row1.createCell(2).setCellValue(tbUser.getPassword() == null ? null : tbUser.getPassword());
-            row1.createCell(3).setCellValue(tbUser.getRole() == null ? null : tbUser.getRole());
-            row1.createCell(4).setCellValue(tbUser.getPermission() == null ? null : tbUser.getPermission());
-            row1.createCell(5).setCellValue(tbUser.getBan() == null ? null : tbUser.getBan());
-            row1.createCell(6).setCellValue(tbUser.getPhone() == null ? null : tbUser.getPhone());
-            row1.createCell(7).setCellValue(tbUser.getEmail() == null ? null : tbUser.getEmail());
-            row1.createCell(8).setCellValue(tbUser.getCreated() == null ? null : tbUser.getCreated());
-            row1.createCell(9).setCellValue(tbUser.getUpdated() == null ? null : tbUser.getUpdated());
-            rowNum++;
+        /**在表中存放查询到的数据放入对应的列*/
+        for (int i = 0; i < list.size(); i++) {
+            row = sheet.createRow(1 + 1);
+            row.createCell(0).setCellValue(list.get(i).getId()         == null ? null : list.get(i).getId());
+            row.createCell(1).setCellValue(list.get(i).getUsername()   == null ? null : list.get(i).getUsername());
+            row.createCell(2).setCellValue(list.get(i).getPassword()   == null ? null : list.get(i).getPassword());
+            row.createCell(3).setCellValue(list.get(i).getRole()       == null ? null : list.get(i).getRole());
+            row.createCell(4).setCellValue(list.get(i).getPermission() == null ? null : list.get(i).getPermission());
+            row.createCell(5).setCellValue(list.get(i).getBan()        == null ? null : list.get(i).getBan());
+            row.createCell(6).setCellValue(list.get(i).getPhone()      == null ? null : list.get(i).getPhone());
+            row.createCell(7).setCellValue(list.get(i).getEmail()      == null ? null : list.get(i).getEmail());
+            row.createCell(8).setCellValue(list.get(i).getCreated()    == null ? null : new SimpleDateFormat().format(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(list.get(i).getCreated())));
+            row.createCell(9).setCellValue(list.get(i).getUpdated()    == null ? null : new SimpleDateFormat().format(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(list.get(i).getUpdated())));
         }
+        response.reset();
         response.setContentType("application/octet-stream");
         response.setHeader("Content-disposition", "attachment;filename=" + fileName);
         try {
@@ -229,38 +291,52 @@ public class ExcelPoiServiceImpl implements ExcelPoiService {
         }
     }
 
+    /**
+     * Excel导出方式之二
+     *
+     * @param response
+     * @throws IOException
+     */
     @Override
     public void exportExcel(HttpServletResponse response) throws IOException {
+        /**新增数据行，并且设置单元格数据*/
+        String[] headers = {"id", "username", "password", "role", "permission", "ban", "phone", "email", "created", "updated"};
+        /**设置要导出的文件的名字*/
+        String fileName  = "userinfo" + ".xls";
+
         // 1.High level representation of a Excel workbook. - Excel工作簿的高级表示。
         Workbook workbook = new HSSFWorkbook();
         // 2.Sheets are the central structures within a workbook. - 工作表是工作簿中的中心结构。
         Sheet sheet = workbook.createSheet();
         // 3.High level representation of a row of a spreadsheet. - 电子表格行的高级表示。
-        Row row = sheet.createRow(3);
-        // 4.High level representation of a cell in a row of a spreadsheet. - 电子表格中一行[单元格]的高级表示。
-        Cell cell = row.createCell(3);
-
-        //设置内容
-        cell.setCellValue("一统江湖");
-        //设置内容格式
-        Font font = workbook.createFont();
-        //以像素点的方式设置字体大小
-        font.setFontHeightInPoints((short) 24);
-        //设置字体
-        font.setFontName("华文彩云");
-
-        //System.out.println(Short.MIN_VALUE+"-"+Short.MAX_VALUE);
-        //创建格式
-        CellStyle cellStyle = workbook.createCellStyle();
-        cellStyle.setFont(font);
-
-        //将cellStyle给cell
-        cell.setCellStyle(cellStyle);
-        //保存
-        FileOutputStream stream = new FileOutputStream(new File("d://a.xls"));
-        workbook.write(stream);
-        stream.flush();
-        stream.close();
-        System.out.println("运行结束");
+        Row row = sheet.createRow(0);
+        for (int j = 0; j < headers.length; j++) {
+            // 4.High level representation of a cell in a row of a spreadsheet. - 电子表格中一行[单元格]的高级表示。
+            Cell cell = row.createCell(j);
+            cell.setCellValue(headers[j]);
+        }
+        List<TbUser> list = tbUserMapper.selectList(null);
+        for (int i = 0; i < list.size(); i++) {
+            row = sheet.createRow(i + 1);
+            row.createCell(NumericConstants.ZERO).setCellValue(list.get(i).getId()         == null ? null : list.get(i).getId());
+            row.createCell(NumericConstants.ONE).setCellValue(list.get(i).getUsername()    == null ? null : list.get(i).getUsername());
+            row.createCell(NumericConstants.TWO).setCellValue(list.get(i).getPassword()    == null ? null : list.get(i).getPassword());
+            row.createCell(NumericConstants.THREE).setCellValue(list.get(i).getRole()      == null ? null : list.get(i).getRole());
+            row.createCell(NumericConstants.FOUR).setCellValue(list.get(i).getPermission() == null ? null : list.get(i).getPermission());
+            row.createCell(NumericConstants.FIVE).setCellValue(list.get(i).getBan()        == null ? null : list.get(i).getBan());
+            row.createCell(NumericConstants.SIX).setCellValue(list.get(i).getPhone()       == null ? null : list.get(i).getPhone());
+            row.createCell(NumericConstants.SEVEN).setCellValue(list.get(i).getEmail()     == null ? null : list.get(i).getEmail());
+            row.createCell(NumericConstants.EIGHT).setCellValue(list.get(i).getCreated()   == null ? null : new SimpleDateFormat().format(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(list.get(i).getCreated())));
+            row.createCell(NumericConstants.NINE).setCellValue(list.get(i).getUpdated()    == null ? null : new SimpleDateFormat().format(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(list.get(i).getUpdated())));
+        }
+        response.reset();
+        response.setContentType("application/octet-stream");
+        response.setHeader("Content-disposition", "attachment;filename=" + fileName);
+        try {
+            response.flushBuffer();
+            workbook.write(response.getOutputStream());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

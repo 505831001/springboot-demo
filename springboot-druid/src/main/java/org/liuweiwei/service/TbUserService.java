@@ -23,6 +23,9 @@ public interface TbUserService {
      * 查询用户列表
      *
      * @return
+     * @throws IllegalAccessException
+     * @throws NoSuchMethodException
+     * @throws InvocationTargetException
      */
     List<TbUser> findAll() throws IllegalAccessException, NoSuchMethodException, InvocationTargetException;
 }

@@ -174,55 +174,49 @@
         </dependency>
 
         <!-- Tools -->
-        <!-- alibaba.fastJson - JSON,JSONObject -->
+        <!-- Alibaba - FastJson(JSON,JSONObject) -->
         <dependency>
             <groupId>com.alibaba</groupId>
             <artifactId>fastjson</artifactId>
             <version>1.2.76</version>
         </dependency>
-        <!-- google.guava - Lists -->
+        <!-- Google - Guava(Lists) -->
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
             <version>23.0</version>
         </dependency>
-        <!-- apache.commons-collections4 - ListUtils,CollectionUtils -->
+        <!-- apache - Collections4(ListUtils,CollectionUtils) -->
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-collections4</artifactId>
             <version>4.4</version>
         </dependency>
-        <!-- apache.commons-beanUtils - BeanUtils,PropertyUtils -->
+        <!-- apache - BeanUtils(BeanUtils,PropertyUtils) -->
         <dependency>
             <groupId>commons-beanutils</groupId>
             <artifactId>commons-beanutils</artifactId>
             <version>1.9.4</version>
         </dependency>
-        <!-- apache.commons-lang3 -->
+        <!-- apache - Lang3(StringUtils) -->
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
             <version>3.12.0</version>
         </dependency>
-        <!-- apache.commons-logging -->
+        <!-- Apache - Logging -->
         <dependency>
             <groupId>commons-logging</groupId>
             <artifactId>commons-logging</artifactId>
             <version>1.2</version>
         </dependency>
-        <!-- apache.commons-fileupload -->
+        <!-- Apache - FileUpload -->
         <dependency>
             <groupId>commons-fileupload</groupId>
             <artifactId>commons-fileupload</artifactId>
             <version>1.4</version>
         </dependency>
-        <!-- apache.commons-httpclient -->
-        <dependency>
-            <groupId>commons-httpclient</groupId>
-            <artifactId>commons-httpclient</artifactId>
-            <version>3.1</version>
-        </dependency>
-        <!-- apache.httpclient -->
+        <!-- Apache - HttpClient -->
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpclient</artifactId>

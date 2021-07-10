@@ -1,5 +1,8 @@
 package com.excel.poi.entity;
 
+import com.alibaba.fastjson.annotation.JSONField;
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -11,6 +14,7 @@ import java.util.Date;
  */
 @Data
 public class TbUser implements Serializable {
+    @TableId(value = "id", type = IdType.UUID)
     private Long id;
 
     private String username;

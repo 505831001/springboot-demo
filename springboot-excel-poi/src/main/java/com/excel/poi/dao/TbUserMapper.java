@@ -14,13 +14,13 @@ public interface TbUserMapper extends BaseMapper<TbUser> {
 
     int deleteByPrimaryKey(@Param("id") Long id);
 
-    int insert(@Param("record") TbUser record);
+    int insert2(TbUser record);
 
-    int insertSelective(@Param("record") TbUser record);
+    int insertSelective(TbUser record);
 
     TbUser selectByPrimaryKey(@Param("id") Long id);
 
-    int updateByPrimaryKeySelective(@Param("record") TbUser record);
+    int updateByPrimaryKeySelective(TbUser record);
 
-    int updateByPrimaryKey(@Param("record") TbUser record);
+    int updateByPrimaryKey(TbUser record);
 }

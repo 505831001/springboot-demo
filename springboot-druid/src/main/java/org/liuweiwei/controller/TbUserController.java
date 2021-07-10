@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
 /**
@@ -33,7 +34,16 @@ public class TbUserController {
     @ApiOperation(value = "", notes = "查询所有用户信息")
     @ResponseBody
     public String findAll() {
-        List<TbUser> list = userService.findAll();
+        List<TbUser> list = null;
+        try {
+            list = userService.findAll();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
+        } catch (InvocationTargetException e) {
+            e.printStackTrace();
+        }
         return list.toString();
     }
 }
