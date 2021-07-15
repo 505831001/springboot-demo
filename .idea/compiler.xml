@@ -7,43 +7,43 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="springboot-security-jwt" />
-        <module name="springboot-mybatis-generator" />
-        <module name="springboot-eureka" />
-        <module name="springboot-mybatis" />
         <module name="springcloud-nacos-producer" />
+        <module name="springboot-mybatis-plus-generator" />
+        <module name="springboot-ribbon" />
+        <module name="springboot-zuul" />
+        <module name="springboot-shiro" />
+        <module name="springboot-nacos-consumer" />
+        <module name="springboot-logback" />
         <module name="springboot-nacos-provider" />
         <module name="springboot-gateway" />
-        <module name="springboot-druid" />
-        <module name="spring-oauth-client2" />
-        <module name="springboot-swagger2" />
-        <module name="springboot-security" />
         <module name="springboot-hystrix-dashboard" />
-        <module name="springboot-mybatis-dynamic-table" />
-        <module name="springboot-nacos-consumer" />
-        <module name="springboot-openfeign" />
-        <module name="spring-oauth-server" />
+        <module name="springboot-hystrix" />
+        <module name="springcloud-nacos-config" />
+        <module name="springboot-security" />
         <module name="springboot-log4j" />
-        <module name="springboot-logback" />
-        <module name="springcloud-nacos-consumer" />
-        <module name="springboot-excel-poi" />
-        <module name="springboot-jdbc" />
-        <module name="springboot-zuul" />
-        <module name="springboot-nacos-producer" />
+        <module name="springboot-eureka" />
         <module name="springboot-mybatis-plus" />
         <module name="spring-oauth-client" />
+        <module name="springboot-nacos-producer" />
         <module name="springboot-springdata-jpa" />
-        <module name="springboot-mybatis-plus-generator" />
-        <module name="springboot-hystrix" />
-        <module name="springboot-shiro" />
-        <module name="springboot-ribbon" />
-        <module name="springboot-config-client" />
-        <module name="springcloud-nacos-config" />
+        <module name="springboot-druid" />
+        <module name="springboot-mybatis-generator" />
+        <module name="spring-oauth-server" />
         <module name="springboot-config-server" />
+        <module name="springboot-jdbc" />
+        <module name="springboot-excel-poi" />
+        <module name="springboot-security-jwt" />
+        <module name="springboot-config-client" />
+        <module name="springboot-mybatis-dynamic-table" />
+        <module name="springboot-swagger2" />
+        <module name="springboot-mybatis" />
+        <module name="springcloud-nacos-consumer" />
+        <module name="spring-oauth-client2" />
+        <module name="springboot-openfeign" />
         <module name="springboot-mybatis-dynamic-datasource" />
       </profile>
     </annotationProcessing>
-    <bytecodeTargetLevel>
+    <bytecodeTargetLevel target="8">
       <module name="spring-oauth-client" target="1.8" />
       <module name="spring-oauth-client2" target="1.8" />
       <module name="spring-oauth-server" target="1.8" />
@@ -52,7 +52,6 @@
       <module name="springboot-druid" target="1.8" />
       <module name="springboot-eureka" target="1.8" />
       <module name="springboot-excel-poi" target="1.8" />
-      <module name="springboot-feign" target="1.8" />
       <module name="springboot-gateway" target="1.8" />
       <module name="springboot-hystrix" target="1.8" />
       <module name="springboot-hystrix-dashboard" target="1.8" />
@@ -66,7 +65,6 @@
       <module name="springboot-mybatis-plus" target="1.8" />
       <module name="springboot-mybatis-plus-generator" target="1.8" />
       <module name="springboot-nacos" target="1.8" />
-      <module name="springboot-nacos-config" target="1.8" />
       <module name="springboot-nacos-consumer" target="1.8" />
       <module name="springboot-nacos-producer" target="1.8" />
       <module name="springboot-nacos-provider" target="1.8" />
@@ -95,7 +93,6 @@
       <module name="springboot-druid" options="-parameters" />
       <module name="springboot-eureka" options="-parameters" />
       <module name="springboot-excel-poi" options="-parameters" />
-      <module name="springboot-feign" options="-parameters" />
       <module name="springboot-gateway" options="-parameters" />
       <module name="springboot-hystrix" options="-parameters" />
       <module name="springboot-hystrix-dashboard" options="-parameters" />
@@ -108,7 +105,6 @@
       <module name="springboot-mybatis-plus" options="-parameters" />
       <module name="springboot-mybatis-plus-generator" options="-parameters" />
       <module name="springboot-nacos" options="" />
-      <module name="springboot-nacos-config" options="-parameters" />
       <module name="springboot-nacos-consumer" options="-parameters" />
       <module name="springboot-nacos-producer" options="-parameters" />
       <module name="springboot-nacos-provider" options="-parameters" />
