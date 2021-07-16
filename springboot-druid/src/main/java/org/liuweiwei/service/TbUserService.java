@@ -1,5 +1,6 @@
 package org.liuweiwei.service;
 
+import com.baomidou.mybatisplus.extension.service.IService;
 import org.liuweiwei.model.TbUser;
 
 import java.lang.reflect.InvocationTargetException;
@@ -9,7 +10,7 @@ import java.util.List;
  * @author Liuweiwei
  * @since 2021-01-06
  */
-public interface TbUserService {
+public interface TbUserService extends IService<TbUser> {
 
     /**
      * 根据用户ID查询用户信息
@@ -17,7 +18,7 @@ public interface TbUserService {
      * @param tbUser
      * @return
      */
-    TbUser queryOne(TbUser tbUser);
+    TbUser getOne(TbUser tbUser);
 
     /**
      * 查询用户列表
@@ -27,5 +28,5 @@ public interface TbUserService {
      * @throws NoSuchMethodException
      * @throws InvocationTargetException
      */
-    List<TbUser> findAll() throws IllegalAccessException, NoSuchMethodException, InvocationTargetException;
+    List<TbUser> getAll() throws IllegalAccessException, NoSuchMethodException, InvocationTargetException;
 }

@@ -22,7 +22,7 @@ public class DemoDruidApplicationTest {
      */
     @Test
     public void contextLoads() {
-        List<TbUser> list = userMapper.selectAll();
+        List<TbUser> list = userMapper.selectList(null);
         for (TbUser user : list) {
             System.out.println(user.toString());
         }

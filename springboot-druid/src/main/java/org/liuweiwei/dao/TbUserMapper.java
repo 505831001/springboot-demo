@@ -1,11 +1,8 @@
 package org.liuweiwei.dao;
 
-import com.baomidou.mybatisplus.mapper.BaseMapper;
-import org.apache.ibatis.annotations.Param;
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.liuweiwei.model.TbUser;
 import org.springframework.stereotype.Repository;
-
-import java.util.List;
 
 /**
  * Action:
@@ -19,18 +16,4 @@ import java.util.List;
 @Repository
 public interface TbUserMapper extends BaseMapper<TbUser> {
 
-    /**
-     * 根据用户ID查询用户信息
-     *
-     * @param userId
-     * @return
-     */
-    TbUser selectByUserId(@Param("userId") Long userId);
-
-    /**
-     * 查询用户列表
-     *
-     * @return
-     */
-    List<TbUser> selectAll();
 }

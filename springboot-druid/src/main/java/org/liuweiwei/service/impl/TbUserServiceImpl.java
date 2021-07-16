@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.google.common.collect.Lists;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.beanutils.PropertyUtils;
@@ -13,19 +14,16 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.liuweiwei.dao.TbUserMapper;
-import org.liuweiwei.service.TbUserService;
 import org.liuweiwei.model.TbUser;
+import org.liuweiwei.service.TbUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -34,7 +32,7 @@ import java.util.stream.Collectors;
  * @since 2021-01-06
  */
 @Service
-public class TbUserServiceImpl implements TbUserService {
+public class TbUserServiceImpl extends ServiceImpl<TbUserMapper, TbUser> implements TbUserService {
 
     private final Logger logger = LogManager.getLogger(this.getClass());
 
@@ -45,13 +43,13 @@ public class TbUserServiceImpl implements TbUserService {
     private RedisTemplate redisTemplate;
 
     @Override
-    public TbUser queryOne(TbUser tbUser) {
+    public TbUser getOne(TbUser tbUser) {
         Long userId = tbUser.getId();
 
         tbUser = (TbUser) redisTemplate.opsForValue().get(userId);
         if (Objects.isNull(tbUser)) {
             // XML 配置写法
-            tbUser = userMapper.selectByUserId(userId);
+            // tbUser = userMapper.selectByUserId(userId);
             // MyBatis 内嵌脚本
             tbUser = userMapper.selectById(userId);
             logger.info("查询MySQL数据库");
@@ -65,8 +63,29 @@ public class TbUserServiceImpl implements TbUserService {
     }
 
     @Override
-    public List<TbUser> findAll() throws IllegalAccessException, NoSuchMethodException, InvocationTargetException {
-        List<TbUser> list = userMapper.selectAll();
+    public List<TbUser> getAll() throws IllegalAccessException, NoSuchMethodException, InvocationTargetException {
+        QueryWrapper<TbUser> wrapper1 = new QueryWrapper<>();
+        QueryWrapper<TbUser> wrapper2 = Wrappers.query();
+        LambdaQueryWrapper<TbUser> wrapper3 = new LambdaQueryWrapper<>();
+        LambdaQueryWrapper<TbUser> wrapper4 = Wrappers.lambdaQuery();
+        LambdaQueryWrapper<TbUser> wrapper5 = Wrappers.lambdaQuery(TbUser.class);
+
+        List<TbUser> list = new LinkedList<>();
+        list = this.list();
+        list = this.list(wrapper5);
+        list = this.list(null);
+        list = this.getBaseMapper().selectList(wrapper5);
+        list = this.getBaseMapper().selectList(null);
+
+        Set<String> unameSet = list.stream().map(TbUser::getUsername).collect(Collectors.toSet());
+        Set<TbUser> adminSet = list.stream().filter(user -> user.getPermission().equalsIgnoreCase("admin")).collect(Collectors.toSet());
+        Set<TbUser> guestSet = list.stream().filter(user -> user.getPermission().equalsIgnoreCase("guest")).collect(Collectors.toSet());
+        wrapper5.in(TbUser::getUsername, unameSet)
+                .and(user -> user
+                        .in(TbUser::getUsername, adminSet)
+                        .or()
+                        .in(TbUser::getUsername, guestSet));
+
         // org.apache.commons.collections4.CollectionUtils - 如果指定的集合不为空，则执行空安全检查。
         if (CollectionUtils.isNotEmpty(list)) {
             // com.google.common.collect.Lists - 返回一个列表的连续{List.subList(int, int) subList}，每个列表的大小相同(最后的列表可能更小)。

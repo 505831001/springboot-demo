@@ -22,12 +22,6 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
-import java.net.URL;
-import java.util.Map;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.locks.Lock;
-
 /**
  * Druid Monitor 德鲁伊监控器地址：http://localhost:8080/druid/login.html
  *
@@ -51,10 +45,19 @@ import java.util.concurrent.locks.Lock;
  * org.apache.commons.beanutils.BeanUtils;
  * org.apache.commons.beanutils.PropertyUtils;
  *
+ * [Entity]
+ * com.baomidou.mybatisplus.annotation.IdType;
+ * com.baomidou.mybatisplus.annotation.TableId;
+ * com.baomidou.mybatisplus.annotation.TableField;
+ * [Service]
+ * com.baomidou.mybatisplus.extension.service.IService;
+ * com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
  * [Wrappers]
  * com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
  * com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
  * com.baomidou.mybatisplus.core.toolkit.Wrappers;
+ * [Mapper]
+ * com.baomidou.mybatisplus.core.mapper.BaseMapper;
  *
  * @author Liuweiwei
  * @since 2021-01-05

@@ -25,18 +25,18 @@ public class TbUserController {
     @PostMapping(value="/findOne")
     @ApiOperation(value = "", notes = "根据用户查询用户信息")
     @ResponseBody
-    public String findOne(@RequestBody TbUser tbUser) {
-        TbUser user = userService.queryOne(tbUser);
+    public String getOne(@RequestBody TbUser tbUser) {
+        TbUser user = userService.getOne(tbUser);
         return user.toString();
     }
 
     @GetMapping(value="/findAll")
     @ApiOperation(value = "", notes = "查询所有用户信息")
     @ResponseBody
-    public String findAll() {
+    public String getAll() {
         List<TbUser> list = null;
         try {
-            list = userService.findAll();
+            list = userService.getAll();
         } catch (IllegalAccessException e) {
             e.printStackTrace();
         } catch (NoSuchMethodException e) {

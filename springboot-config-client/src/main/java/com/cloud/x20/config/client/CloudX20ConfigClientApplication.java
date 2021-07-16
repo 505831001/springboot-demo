@@ -16,11 +16,10 @@ import org.springframework.core.env.ConfigurableEnvironment;
 @SpringBootApplication
 @EnableEurekaClient
 public class CloudX20ConfigClientApplication {
-
     /**
      * 日志-实现层：slf4j<org.slf4j>
      */
-    private static final org.slf4j.Logger LOG = LoggerFactory.getLogger(CloudX20ConfigClientApplication.class);
+    private static final org.slf4j.Logger log = LoggerFactory.getLogger(CloudX20ConfigClientApplication.class);
 
     /**
      * 日志-实现层：log4j<org.apache.log4j>

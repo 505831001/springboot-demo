@@ -2,6 +2,7 @@ package com.cloud.x20.zuul;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.netflix.zuul.EnableZuulProxy;
@@ -21,6 +22,10 @@ import org.springframework.core.env.ConfigurableEnvironment;
 @SpringBootApplication
 @EnableZuulProxy
 public class CloudX20ZuulApplication {
+    /**
+     * 日志-实现层：logback<org.slf4j>
+     */
+    private static final org.slf4j.Logger log = LoggerFactory.getLogger(CloudX20ZuulApplication.class);
 
     /**
      * 日志-实现层：log4j<org.apache.log4j>
