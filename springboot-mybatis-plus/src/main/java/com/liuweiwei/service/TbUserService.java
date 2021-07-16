@@ -1,6 +1,7 @@
 package com.liuweiwei.service;
 
 
+import com.baomidou.mybatisplus.extension.service.IService;
 import com.liuweiwei.model.TbUser;
 import com.liuweiwei.utils.PageRequest;
 import com.liuweiwei.utils.PageResult;
@@ -11,7 +12,7 @@ import java.util.List;
  * @author Liuweiwei
  * @since 2021-01-06
  */
-public interface TbUserService {
+public interface TbUserService extends IService<TbUser> {
 
     /**
      * 根据用户ID查询用户信息
