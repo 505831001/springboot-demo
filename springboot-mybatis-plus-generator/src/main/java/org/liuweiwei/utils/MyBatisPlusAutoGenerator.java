@@ -27,7 +27,7 @@ public class MyBatisPlusAutoGenerator {
         GlobalConfig global = new GlobalConfig();
         global.setActiveRecord(true); 
         global.setAuthor("liuweiwei");
-        global.setOutputDir("D:\\workspace-idea\\springboot-demo\\springboot-mybatis-plus-generator\\src\\main");
+        global.setOutputDir(System.getProperty("user.dir") + "/springboot-mybatis-plus-generator/src/main/java");
         global.setFileOverride(true);
         global.setIdType(IdType.AUTO);
         global.setServiceName("%sService");
@@ -57,21 +57,7 @@ public class MyBatisPlusAutoGenerator {
         source.setPassword("123456");
 
         /**
-         * 3. 策略配置
-         * 3.1 全局大写
-         * 3.2 指定表名和字段名是否使用下划线
-         * 3.3 数据库表名映射到实体的命名策略
-         * 3.4 生成的表Oracle
-         * 3.5 生成的表Mysql
-         */
-        StrategyConfig strategy = new StrategyConfig();
-        strategy.setCapitalMode(true);
-        strategy.setDbColumnUnderline(true);
-        strategy.setNaming(NamingStrategy.underline_to_camel);
-        strategy.setInclude("tb_user", "tb_item", "tb_order");
-
-        /**
-         * 4. 包名策略配置
+         * 3. 包名策略配置
          */
         PackageConfig packages = new PackageConfig();
         packages.setParent("com.example");
@@ -84,13 +70,31 @@ public class MyBatisPlusAutoGenerator {
         */
 
         /**
+         * 4. 策略配置
+         * 4.1 全局大写
+         * 4.2 指定表名和字段名是否使用下划线
+         * 4.3 数据库表名映射到实体的命名策略
+         * 4.4 生成的表Oracle
+         * 4.5 生成的表Mysql
+         */
+        StrategyConfig strategy = new StrategyConfig();
+        strategy.setCapitalMode(true);
+        strategy.setDbColumnUnderline(true);
+        strategy.setNaming(NamingStrategy.underline_to_camel);
+        strategy.setInclude("tb_user", "tb_item", "tb_order");
+
+        /**
          * 5. 整合配置
+         * 5.1 全局配置
+         * 5.2 数据源配置
+         * 5.3 包名策略配置
+         * 5.4 策略配置
          */
         AutoGenerator auto = new AutoGenerator();
         auto.setGlobalConfig(global);
         auto.setDataSource(source);
-        auto.setStrategy(strategy);
         auto.setPackageInfo(packages);
+        auto.setStrategy(strategy);
 
         /**
          * 6. 执行代码生成器
