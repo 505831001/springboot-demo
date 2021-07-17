@@ -42,8 +42,22 @@ public class TbUserServiceImpl extends ServiceImpl<TbUserMapper, TbUser> impleme
     @Resource
     private RedisTemplate redisTemplate;
 
+    /**
+     * Wrappers.query();
+     * Wrappers.query(T entity);
+     * Wrappers.lambdaQuery();
+     * Wrappers.lambdaQuery(T entity);
+     * Wrappers.lambdaQuery(Class<T> entityClass);
+     * Wrappers.update();
+     * Wrappers.update(T entity);
+     * Wrappers.lambdaUpdate();
+     * Wrappers.lambdaUpdate(T entity);
+     * Wrappers.lambdaUpdate(Class<T> entityClass);
+     *
+     * @return
+     */
     @Override
-    public TbUser queryOne(TbUser tbUser) {
+    public TbUser otherOne(TbUser tbUser) {
         QueryWrapper<TbUser> wrapper1 = new QueryWrapper<>();
         QueryWrapper<TbUser> wrapper2 = Wrappers.query();
         LambdaQueryWrapper<TbUser> wrapper3 = new LambdaQueryWrapper<>();
@@ -57,11 +71,17 @@ public class TbUserServiceImpl extends ServiceImpl<TbUserMapper, TbUser> impleme
             tbUser = JSONObject.parseObject(data, TbUser.class);
         }
         if (Objects.isNull(tbUser)) {
-            // MyBatis 内嵌脚本
+            // 1. XML 脚本格式
+            tbUser = userMapper.selectById(id);
+
+            // 2. MyBatis Plus [顶级 IService]内嵌脚本方式
             tbUser = this.getById(id);
             tbUser = this.getOne(wrapper5);
+
+            // 3. MyBatis [基础 Mapper]内嵌脚本方式
             tbUser = this.getBaseMapper().selectById(id);
             tbUser = this.getBaseMapper().selectOne(wrapper5);
+
             logger.info("查询MySQL数据库:{}", id);
             String data = JSONObject.toJSONString(tbUser);
             redisTemplate.opsForValue().set(id, data);
@@ -72,7 +92,7 @@ public class TbUserServiceImpl extends ServiceImpl<TbUserMapper, TbUser> impleme
     }
 
     @Override
-    public List<TbUser> findAll() throws IllegalAccessException, NoSuchMethodException, InvocationTargetException {
+    public List<TbUser> otherAll() throws IllegalAccessException, NoSuchMethodException, InvocationTargetException {
         List<TbUser> list = new LinkedList<>();
         if (org.springframework.util.CollectionUtils.isEmpty(list)) {
             // 集合数组2次遍历
@@ -183,7 +203,7 @@ public class TbUserServiceImpl extends ServiceImpl<TbUserMapper, TbUser> impleme
     }
 
     @Override
-    public TbUser seekDetails(Serializable id) {
+    public TbUser otherDetails(Serializable id) {
         return this.getById(id);
     }
 }

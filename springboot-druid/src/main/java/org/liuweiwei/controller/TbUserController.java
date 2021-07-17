@@ -27,7 +27,7 @@ public class TbUserController {
     @ApiOperation(value = "", notes = "根据用户字段查询用户信息")
     @ResponseBody
     public String queryOne(@RequestBody TbUser tbUser) {
-        TbUser user = userService.queryOne(tbUser);
+        TbUser user = userService.otherOne(tbUser);
         return user.toString();
     }
 
@@ -37,7 +37,7 @@ public class TbUserController {
     public String findAll() {
         List<TbUser> list = null;
         try {
-            list = userService.findAll();
+            list = userService.otherAll();
         } catch (IllegalAccessException e) {
             e.printStackTrace();
         } catch (NoSuchMethodException e) {
@@ -52,7 +52,7 @@ public class TbUserController {
     @ApiOperation(value = "", notes = "根据用户主键查询用户详情")
     @ResponseBody
     public String seekDetails(@RequestParam("id")Serializable id) {
-        TbUser user = userService.seekDetails(id);
+        TbUser user = userService.otherDetails(id);
         return user.toString();
     }
 }

@@ -18,7 +18,7 @@ public interface TbUserService extends IService<TbUser> {
      * @param tbUser
      * @return
      */
-    TbUser queryOne(TbUser tbUser);
+    TbUser otherOne(TbUser tbUser);
 
     /**
      * 查询用户列表
@@ -28,7 +28,7 @@ public interface TbUserService extends IService<TbUser> {
      * @throws NoSuchMethodException
      * @throws InvocationTargetException
      */
-    List<TbUser> findAll() throws IllegalAccessException, NoSuchMethodException, InvocationTargetException;
+    List<TbUser> otherAll() throws IllegalAccessException, NoSuchMethodException, InvocationTargetException;
 
     /**
      * 根据用户主键查询用户详情
@@ -36,5 +36,5 @@ public interface TbUserService extends IService<TbUser> {
      * @param id
      * @return
      */
-    TbUser seekDetails(Serializable id);
+    TbUser otherDetails(Serializable id);
 }
