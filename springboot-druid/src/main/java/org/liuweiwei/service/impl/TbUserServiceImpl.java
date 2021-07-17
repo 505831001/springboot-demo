@@ -16,12 +16,13 @@ import org.apache.logging.log4j.Logger;
 import org.liuweiwei.dao.TbUserMapper;
 import org.liuweiwei.model.TbUser;
 import org.liuweiwei.service.TbUserService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
+import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
@@ -36,55 +37,86 @@ public class TbUserServiceImpl extends ServiceImpl<TbUserMapper, TbUser> impleme
 
     private final Logger logger = LogManager.getLogger(this.getClass());
 
-    @Autowired
+    @Resource
     private TbUserMapper userMapper;
-
-    @Autowired
+    @Resource
     private RedisTemplate redisTemplate;
 
     @Override
-    public TbUser getOne(TbUser tbUser) {
-        Long userId = tbUser.getId();
+    public TbUser queryOne(TbUser tbUser) {
+        QueryWrapper<TbUser> wrapper1 = new QueryWrapper<>();
+        QueryWrapper<TbUser> wrapper2 = Wrappers.query();
+        LambdaQueryWrapper<TbUser> wrapper3 = new LambdaQueryWrapper<>();
+        LambdaQueryWrapper<TbUser> wrapper4 = Wrappers.lambdaQuery();
+        LambdaQueryWrapper<TbUser> wrapper5 = Wrappers.lambdaQuery(TbUser.class);
+        Long id = tbUser.getId();
 
-        tbUser = (TbUser) redisTemplate.opsForValue().get(userId);
+        if (Objects.nonNull(tbUser)) {
+            Object object = redisTemplate.opsForValue().get(id);
+            String data = object.toString();
+            tbUser = JSONObject.parseObject(data, TbUser.class);
+        }
         if (Objects.isNull(tbUser)) {
-            // XML 配置写法
-            // tbUser = userMapper.selectByUserId(userId);
             // MyBatis 内嵌脚本
-            tbUser = userMapper.selectById(userId);
-            logger.info("查询MySQL数据库");
-            redisTemplate.opsForValue().set(userId, tbUser);
-            redisTemplate.expire(userId, 60L, TimeUnit.SECONDS);
-            logger.info("写入NoSQL数据库");
-        } else {
-            logger.info("查询NoSQL数据库");
+            tbUser = this.getById(id);
+            tbUser = this.getOne(wrapper5);
+            tbUser = this.getBaseMapper().selectById(id);
+            tbUser = this.getBaseMapper().selectOne(wrapper5);
+            logger.info("查询MySQL数据库:{}", id);
+            String data = JSONObject.toJSONString(tbUser);
+            redisTemplate.opsForValue().set(id, data);
+            redisTemplate.expire(id, 60L, TimeUnit.SECONDS);
+            logger.info("写入NoSQL数据库:{}", id);
         }
         return tbUser;
     }
 
     @Override
-    public List<TbUser> getAll() throws IllegalAccessException, NoSuchMethodException, InvocationTargetException {
+    public List<TbUser> findAll() throws IllegalAccessException, NoSuchMethodException, InvocationTargetException {
+        List<TbUser> list = new LinkedList<>();
+        if (org.springframework.util.CollectionUtils.isEmpty(list)) {
+            // 集合数组2次遍历
+            List<Object> abc = redisTemplate.opsForList().range("abc", 0, -1);
+            for (Object object : abc) {
+                String json = object.toString();
+                List<String> strings = JSONObject.parseArray(json, String.class);
+                for (String string : strings) {
+                    TbUser user = JSONObject.parseObject(string, TbUser.class);
+                    list.add(user);
+                }
+            }
+        }
+        if (CollectionUtils.isNotEmpty(list)) {
+            // 序列化集合对象1次遍历
+            List<Object> xyz = redisTemplate.opsForList().range("xyz", 0, -1);
+            for (Object object : xyz) {
+                String string = object.toString();
+                TbUser user = JSONObject.parseObject(string, TbUser.class);
+                list.add(user);
+            }
+        }
+
         QueryWrapper<TbUser> wrapper1 = new QueryWrapper<>();
         QueryWrapper<TbUser> wrapper2 = Wrappers.query();
         LambdaQueryWrapper<TbUser> wrapper3 = new LambdaQueryWrapper<>();
         LambdaQueryWrapper<TbUser> wrapper4 = Wrappers.lambdaQuery();
         LambdaQueryWrapper<TbUser> wrapper5 = Wrappers.lambdaQuery(TbUser.class);
 
-        List<TbUser> list = new LinkedList<>();
         list = this.list();
         list = this.list(wrapper5);
         list = this.list(null);
         list = this.getBaseMapper().selectList(wrapper5);
         list = this.getBaseMapper().selectList(null);
 
+        // 过滤姓名为刘伟伟[并且]邮箱为email@163.com[或者]电话为13812345678的渣男
         Set<String> unameSet = list.stream().map(TbUser::getUsername).collect(Collectors.toSet());
-        Set<TbUser> adminSet = list.stream().filter(user -> user.getPermission().equalsIgnoreCase("admin")).collect(Collectors.toSet());
-        Set<TbUser> guestSet = list.stream().filter(user -> user.getPermission().equalsIgnoreCase("guest")).collect(Collectors.toSet());
+        Set<TbUser> emailSet = list.stream().filter(user -> user.getPermission().equalsIgnoreCase("email")).collect(Collectors.toSet());
+        Set<TbUser> guestSet = list.stream().filter(user -> user.getPermission().equalsIgnoreCase("45678")).collect(Collectors.toSet());
         wrapper5.in(TbUser::getUsername, unameSet)
                 .and(user -> user
-                        .in(TbUser::getUsername, adminSet)
+                        .in(TbUser::getEmail, emailSet)
                         .or()
-                        .in(TbUser::getUsername, guestSet));
+                        .in(TbUser::getPhone, guestSet));
 
         // org.apache.commons.collections4.CollectionUtils - 如果指定的集合不为空，则执行空安全检查。
         if (CollectionUtils.isNotEmpty(list)) {
@@ -132,6 +164,26 @@ public class TbUserServiceImpl extends ServiceImpl<TbUserMapper, TbUser> impleme
                 }
             }).collect(Collectors.toList());
         }
+
+        // 写入缓存 - 列表类型(list)用于存储一个有序的字符串列表List<String>。
+        List<String> data = new ArrayList<>();
+        for (TbUser user : list) {
+            String json = JSONObject.toJSONString(user);
+            data.add(json);
+        }
+        // 集合数组
+        redisTemplate.opsForList().rightPush("abc", data);
+        // 序列化集合对象
+        redisTemplate.opsForList().rightPushAll("xyz", data.stream().collect(Collectors.toList()));
+        // 设置过期时间60s
+        redisTemplate.expire("abc", 60, TimeUnit.SECONDS);
+        redisTemplate.expire("xyz", 60, TimeUnit.SECONDS);
+
         return list;
+    }
+
+    @Override
+    public TbUser seekDetails(Serializable id) {
+        return this.getById(id);
     }
 }

@@ -3,6 +3,7 @@ package org.liuweiwei.service;
 import com.baomidou.mybatisplus.extension.service.IService;
 import org.liuweiwei.model.TbUser;
 
+import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
@@ -11,14 +12,13 @@ import java.util.List;
  * @since 2021-01-06
  */
 public interface TbUserService extends IService<TbUser> {
-
     /**
-     * 根据用户ID查询用户信息
+     * 根据用户字段查询用户信息
      *
      * @param tbUser
      * @return
      */
-    TbUser getOne(TbUser tbUser);
+    TbUser queryOne(TbUser tbUser);
 
     /**
      * 查询用户列表
@@ -28,5 +28,13 @@ public interface TbUserService extends IService<TbUser> {
      * @throws NoSuchMethodException
      * @throws InvocationTargetException
      */
-    List<TbUser> getAll() throws IllegalAccessException, NoSuchMethodException, InvocationTargetException;
+    List<TbUser> findAll() throws IllegalAccessException, NoSuchMethodException, InvocationTargetException;
+
+    /**
+     * 根据用户主键查询用户详情
+     *
+     * @param id
+     * @return
+     */
+    TbUser seekDetails(Serializable id);
 }

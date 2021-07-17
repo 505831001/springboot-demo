@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
@@ -22,21 +23,21 @@ public class TbUserController {
     @Autowired
     private TbUserService userService;
 
-    @PostMapping(value="/findOne")
-    @ApiOperation(value = "", notes = "根据用户查询用户信息")
+    @PostMapping(value="/query")
+    @ApiOperation(value = "", notes = "根据用户字段查询用户信息")
     @ResponseBody
-    public String getOne(@RequestBody TbUser tbUser) {
-        TbUser user = userService.getOne(tbUser);
+    public String queryOne(@RequestBody TbUser tbUser) {
+        TbUser user = userService.queryOne(tbUser);
         return user.toString();
     }
 
-    @GetMapping(value="/findAll")
+    @GetMapping(value="/list")
     @ApiOperation(value = "", notes = "查询所有用户信息")
     @ResponseBody
-    public String getAll() {
+    public String findAll() {
         List<TbUser> list = null;
         try {
-            list = userService.getAll();
+            list = userService.findAll();
         } catch (IllegalAccessException e) {
             e.printStackTrace();
         } catch (NoSuchMethodException e) {
@@ -45,5 +46,13 @@ public class TbUserController {
             e.printStackTrace();
         }
         return list.toString();
+    }
+
+    @GetMapping(value="/details")
+    @ApiOperation(value = "", notes = "根据用户主键查询用户详情")
+    @ResponseBody
+    public String seekDetails(@RequestParam("id")Serializable id) {
+        TbUser user = userService.seekDetails(id);
+        return user.toString();
     }
 }
