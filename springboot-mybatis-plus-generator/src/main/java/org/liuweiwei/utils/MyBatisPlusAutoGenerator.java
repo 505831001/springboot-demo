@@ -62,7 +62,7 @@ public class MyBatisPlusAutoGenerator {
         PackageConfig packages = new PackageConfig();
         packages.setParent("com.example");
         /*
-        packages.setEntity("bean");
+        packages.setEntity("entity");
         packages.setService("service");
         packages.setController("controller");
         packages.setMapper("dao");
