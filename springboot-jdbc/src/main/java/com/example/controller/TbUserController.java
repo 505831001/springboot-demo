@@ -6,10 +6,9 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -23,19 +22,32 @@ public class TbUserController {
     @Autowired
     private TbUserService userService;
 
-    @GetMapping(value="/findByUserId")
+    @GetMapping(value="/otherById")
     @ApiOperation(value = "", notes = "Notes ID查询用户")
     @ResponseBody
-    public String findByUserId(@RequestParam(name = "userId", required = true, defaultValue = "1") Long userId) {
-        TbUser user = userService.findByUserId(userId);
+    public String otherById(@RequestParam(name = "id", required = true, defaultValue = "1") Serializable id) {
+        TbUser user = userService.otherById(id);
         return user.toString();
     }
 
-    @GetMapping(value="/findAll")
-    @ApiOperation(value = "", notes = "Notes 查询All用户")
+    @PostMapping(value="/otherOne")
+    @ApiOperation(value = "", notes = "根据用户字段查询用户信息")
     @ResponseBody
-    public String findAll() {
-        List<TbUser> list = userService.findAll();
+    public String otherOne(@RequestBody TbUser tbUser) {
+        TbUser user = userService.otherOne(tbUser);
+        return user.toString();
+    }
+
+    @GetMapping(value="/otherList")
+    @ApiOperation(value = "", notes = "显示所有用户信息")
+    @ResponseBody
+    public String otherList() {
+        List<TbUser> list = null;
+        try {
+            list = userService.otherList();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
         return list.toString();
     }
 }

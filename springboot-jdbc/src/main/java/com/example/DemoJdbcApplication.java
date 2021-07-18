@@ -4,6 +4,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.rocketmq.client.exception.MQClientException;
 import org.apache.rocketmq.client.producer.DefaultMQProducer;
+import org.mybatis.spring.annotation.MapperScan;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.Banner;
 import org.springframework.boot.SpringApplication;
@@ -22,11 +23,15 @@ import org.springframework.web.client.RestTemplate;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 /**
+ * No qualifying bean of type 'com.example.dao.TbUserMapper' available: expected at least 1 bean which qualifies as autowire candidate.
+ * 没有"com.example.dao.TbUserMapper"类型的合格bean可用：至少需要1个符合autowire候选条件的bean。
+ *
  * @author Liuweiwei
  * @since 2021-01-10
  */
 @SpringBootApplication
 @EnableSwagger2
+@MapperScan(basePackages = {"com.example.dao"})
 public class DemoJdbcApplication extends SpringBootServletInitializer {
 
     /**

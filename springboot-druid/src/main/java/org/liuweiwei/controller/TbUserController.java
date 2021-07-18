@@ -26,7 +26,7 @@ public class TbUserController {
     @PostMapping(value="/query")
     @ApiOperation(value = "", notes = "根据用户字段查询用户信息")
     @ResponseBody
-    public String queryOne(@RequestBody TbUser tbUser) {
+    public String otherOne(@RequestBody TbUser tbUser) {
         TbUser user = userService.otherOne(tbUser);
         return user.toString();
     }
@@ -34,7 +34,7 @@ public class TbUserController {
     @GetMapping(value="/list")
     @ApiOperation(value = "", notes = "查询所有用户信息")
     @ResponseBody
-    public String findAll() {
+    public String otherAll() {
         List<TbUser> list = null;
         try {
             list = userService.otherAll();
@@ -51,7 +51,7 @@ public class TbUserController {
     @GetMapping(value="/details")
     @ApiOperation(value = "", notes = "根据用户主键查询用户详情")
     @ResponseBody
-    public String seekDetails(@RequestParam("id")Serializable id) {
+    public String otherDetails(@RequestParam("id")Serializable id) {
         TbUser user = userService.otherDetails(id);
         return user.toString();
     }

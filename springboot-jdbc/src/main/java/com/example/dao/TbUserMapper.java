@@ -1,5 +1,7 @@
 package com.example.dao;
 
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.example.model.TbUser;
 import org.springframework.stereotype.Repository;
 
 /**
@@ -12,6 +14,6 @@ import org.springframework.stereotype.Repository;
  * @since 2021-01-06
  */
 @Repository
-public interface TbUserMapper {
+public interface TbUserMapper extends BaseMapper<TbUser> {
 
 }
