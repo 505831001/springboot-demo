@@ -1,6 +1,7 @@
 package org.liuweiwei.service.impl;
 
 import com.alibaba.fastjson.JSONObject;
+import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
@@ -8,6 +9,7 @@ import com.baomidou.mybatisplus.extension.conditions.query.LambdaQueryChainWrapp
 import com.baomidou.mybatisplus.extension.conditions.query.QueryChainWrapper;
 import com.baomidou.mybatisplus.extension.conditions.update.LambdaUpdateChainWrapper;
 import com.baomidou.mybatisplus.extension.conditions.update.UpdateChainWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.google.common.collect.Lists;
 import org.apache.commons.beanutils.BeanUtils;
@@ -28,7 +30,6 @@ import org.springframework.web.client.RestTemplate;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 import java.io.Serializable;
-import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
@@ -40,7 +41,7 @@ import java.util.stream.Collectors;
 @Service
 public class TbUserServiceImpl extends ServiceImpl<TbUserMapper, TbUser> implements TbUserService {
 
-    private final Logger logger = LogManager.getLogger(this.getClass());
+    private final Logger LOGGER = LogManager.getLogger(this.getClass());
 
     @Resource
     private TbUserMapper userMapper;
@@ -56,9 +57,9 @@ public class TbUserServiceImpl extends ServiceImpl<TbUserMapper, TbUser> impleme
     protected LambdaQueryWrapper<TbUser> wrapper5 = Wrappers.lambdaQuery();
     protected LambdaQueryWrapper<TbUser> wrapper6 = Wrappers.<TbUser>lambdaQuery();
     protected LambdaQueryWrapper<TbUser> wrapper7 = Wrappers.lambdaQuery(TbUser.class);
-    protected QueryChainWrapper<TbUser>        wrapper08 = this.query();
-    protected UpdateChainWrapper<TbUser>       wrapper09 = this.update();
-    protected LambdaQueryChainWrapper<TbUser>  wrapper10 = this.lambdaQuery();
+    protected QueryChainWrapper<TbUser> wrapper08 = this.query();
+    protected UpdateChainWrapper<TbUser> wrapper09 = this.update();
+    protected LambdaQueryChainWrapper<TbUser> wrapper10 = this.lambdaQuery();
     protected LambdaUpdateChainWrapper<TbUser> wrapper11 = this.lambdaUpdate();
     protected TbUserMapper mapper = this.getBaseMapper();
 
@@ -74,41 +75,93 @@ public class TbUserServiceImpl extends ServiceImpl<TbUserMapper, TbUser> impleme
      * Wrappers.lambdaUpdate(T entity);
      * Wrappers.lambdaUpdate(Class<T> entityClass);
      *
+     * @param id
      * @return
      */
     @Override
-    public TbUser otherOne(TbUser tbUser) {
-        Long id = tbUser.getId();
-
-        if (Objects.nonNull(tbUser)) {
+    public TbUser otherGetById(Serializable id) {
+        TbUser user = null;
+        if (org.springframework.util.StringUtils.isEmpty(id)) {
+            LOGGER.error("查询ID不存在:{}", StringUtils.join(id));
+        } else {
+            user = this.getById(id);
+        }
+        if (Objects.nonNull(user)) {
             // TODO -> 用于简单(或Redis术语"string")值的Redis操作。
             Object object = redisTemplate.opsForValue().get(id);
             String data = object.toString();
-            tbUser = JSONObject.parseObject(data, TbUser.class);
+            user = JSONObject.parseObject(data, TbUser.class);
+        } else {
+            LOGGER.error("查询缓存数据不存在:{}", JSONObject.toJSONString(user));
         }
-        if (Objects.isNull(tbUser)) {
+        if (Objects.isNull(user)) {
             // TODO -> 1. XML 脚本文档格式
-            tbUser = userMapper.selectById(id);
+            user = userMapper.selectById(id);
 
             // TODO -> 2. MyBatis Plus [顶级 IService]内嵌脚本方式
-            tbUser = this.getById(id);
-            tbUser = this.getOne(wrapper1);
+            user = this.getById(id);
+            user = this.getOne(wrapper1);
 
             // TODO -> 3. MyBatis [基础 BaseMapper]内嵌脚本方式
-            tbUser = this.getBaseMapper().selectById(id);
-            tbUser = this.getBaseMapper().selectOne(wrapper2);
+            user = this.getBaseMapper().selectById(id);
+            user = this.getBaseMapper().selectOne(wrapper2);
 
-            logger.info("查询MySQL数据库:{}", id);
-            String data = JSONObject.toJSONString(tbUser);
+            LOGGER.info("查询MySQL数据库:{}", StringUtils.join(id));
+            String data = JSONObject.toJSONString(user);
             redisTemplate.opsForValue().set(id, data);
             redisTemplate.expire(id, 60L, TimeUnit.SECONDS);
-            logger.info("写入NoSQL数据库:{}", id);
+            LOGGER.info("写入NoSQL数据库:{}", StringUtils.join(id));
+        } else {
+            LOGGER.error("查询磁盘数据不存在:{}", JSONObject.toJSONString(user));
         }
-        return tbUser;
+        return user;
     }
 
     @Override
-    public List<TbUser> otherAll() throws IllegalAccessException, NoSuchMethodException, InvocationTargetException {
+    public TbUser otherGetOne(Wrapper<TbUser> queryWrapper) {
+        wrapper08.eq("id", queryWrapper.getEntity().getId());
+        wrapper09.eq("id", queryWrapper.getEntity().getId());
+        wrapper10.eq(TbUser::getId, queryWrapper.getEntity().getId());
+        wrapper11.eq(TbUser::getId, queryWrapper.getEntity().getId());
+        mapper.selectList(null);
+
+        List<Integer> ids = new ArrayList<>();
+        Map<String, Object> map = new HashMap<>();
+
+        List<TbUser> list = this.list();
+        List<TbUser> byIds = this.listByIds(ids);
+        List<TbUser> byMap = this.listByMap(map);
+        List<Map<String, Object>> maps = this.listMaps();
+        List<Object> objs = this.listObjs();
+
+        /**
+         * @param current 当前页
+         * @param size    每页显示条数
+         */
+        long current = 1L;
+        long size = 10L;
+        Page<TbUser> page = this.page(new Page<>(current, size));
+        Page<Map<String, Object>> pageMaps = this.pageMaps(new Page<>(current, size));
+
+        int count = this.count();
+
+        TbUser user1 = this.getById(queryWrapper.getEntity().getId());
+        TbUser user2 = this.getOne(null);
+        Map<String, Object> map1 = this.getMap(null);
+        TbUserMapper baseMapper = this.getBaseMapper();
+        String string = this.getSqlStatement(null);
+
+        return this.getById(queryWrapper.getEntity().getId());
+    }
+
+    @Override
+    public Map<String, Object> otherGetMap(Wrapper<TbUser> queryWrapper) {
+        Map<String, Object> map = this.getMap(queryWrapper);
+        return map;
+    }
+
+    @Override
+    public List<TbUser> otherList() throws Exception {
         List<TbUser> list = new LinkedList<>();
         if (org.springframework.util.CollectionUtils.isEmpty(list)) {
             // TODO -> Redis列出特定的操作。集合数组2次遍历.opsForList()
@@ -213,12 +266,44 @@ public class TbUserServiceImpl extends ServiceImpl<TbUserMapper, TbUser> impleme
     }
 
     @Override
-    public TbUser otherDetails(Serializable id) {
-        wrapper08.eq("id", id);
-        wrapper09.eq("id", id);
-        wrapper10.eq(TbUser::getId, id);
-        wrapper11.eq(TbUser::getId, id);
-        mapper.selectList(null);
-        return this.getById(id);
+    public List<TbUser> otherListByIds(List<Integer> idList) {
+        List<TbUser> list = this.listByIds(idList);
+        return list;
+    }
+
+    @Override
+    public List<TbUser> otherListByMap(Map<String, Object> map) {
+        List<TbUser> list = this.listByMap(map);
+        return list;
+    }
+
+    @Override
+    public List<Map<String, Object>> otherListMaps() {
+        List<Map<String, Object>> list = this.listMaps();
+        return list;
+    }
+
+    @Override
+    public List<Object> otherListObjs() {
+        List<Object> list = this.listObjs();
+        return list;
+    }
+
+    @Override
+    public Page<TbUser> otherPage(long current, long size) {
+        Page<TbUser> page = this.page(new Page<>(current, size));
+        return page;
+    }
+
+    @Override
+    public Page<Map<String, Object>> otherPageMaps(long current, long size) {
+        Page<Map<String, Object>> pageMaps = this.pageMaps(new Page<>(current, size));
+        return pageMaps;
+    }
+
+    @Override
+    public int otherCount() {
+        int count = this.count();
+        return count;
     }
 }

@@ -1,5 +1,6 @@
 package org.liuweiwei.controller;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.liuweiwei.service.TbUserService;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author Liuweiwei
@@ -23,36 +25,44 @@ public class TbUserController {
     @Autowired
     private TbUserService userService;
 
-    @PostMapping(value="/query")
-    @ApiOperation(value = "", notes = "根据用户字段查询用户信息")
+    @GetMapping(value="/getById")
+    @ApiOperation(value = "", notes = "根据ID查询")
     @ResponseBody
-    public String otherOne(@RequestBody TbUser tbUser) {
-        TbUser user = userService.otherOne(tbUser);
+    public String getById(@RequestParam("id")Serializable id) {
+        TbUser user = userService.otherGetById(id);
         return user.toString();
+    }
+
+    @PostMapping(value="/getOne")
+    @ApiOperation(value = "", notes = "根据Wrapper条件，查询一条记录")
+    @ResponseBody
+    public String getOne(@RequestBody TbUser tbUser) {
+        QueryWrapper<TbUser> wrapper = new QueryWrapper<>();
+        wrapper.setEntity(tbUser);
+        TbUser user = userService.otherGetOne(wrapper);
+        return user.toString();
+    }
+
+    @PostMapping(value="/getMap")
+    @ApiOperation(value = "", notes = "根据Wrapper条件，查询全部记录")
+    @ResponseBody
+    public String getMap(@RequestBody TbUser tbUser) {
+        QueryWrapper<TbUser> wrapper = new QueryWrapper<>();
+        wrapper.setEntity(tbUser);
+        Map<String, Object> map = userService.otherGetMap(wrapper);
+        return map.toString();
     }
 
     @GetMapping(value="/list")
-    @ApiOperation(value = "", notes = "查询所有用户信息")
+    @ApiOperation(value = "", notes = "查询所有")
     @ResponseBody
-    public String otherAll() {
-        List<TbUser> list = null;
+    public String list() {
         try {
-            list = userService.otherAll();
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        } catch (NoSuchMethodException e) {
-            e.printStackTrace();
-        } catch (InvocationTargetException e) {
-            e.printStackTrace();
+            List<TbUser> list = userService.otherList();
+            return list.toString();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return null;
         }
-        return list.toString();
-    }
-
-    @GetMapping(value="/details")
-    @ApiOperation(value = "", notes = "根据用户主键查询用户详情")
-    @ResponseBody
-    public String otherDetails(@RequestParam("id")Serializable id) {
-        TbUser user = userService.otherDetails(id);
-        return user.toString();
     }
 }
