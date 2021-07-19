@@ -1,71 +1,157 @@
 package com.liuweiwei.service;
 
 
+import com.baomidou.mybatisplus.core.conditions.Wrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.github.pagehelper.PageInfo;
 import com.liuweiwei.model.TbUser;
-import com.liuweiwei.utils.PageRequest;
-import com.liuweiwei.utils.PageResult;
 
 import java.io.Serializable;
-import java.lang.reflect.InvocationTargetException;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author Liuweiwei
  * @since 2021-01-06
  */
 public interface TbUserService extends IService<TbUser> {
-
     /**
-     * 根据用户ID查询用户信息
+     * 根据 ID 查询
      *
      * @param id
      * @return
      */
-    public TbUser otherById(Serializable id);
+    TbUser otherGetById(Serializable id);
 
     /**
-     * 查询用户
+     * 根据 Wrapper，查询一条记录
      *
-     * @param tbUser
+     * @param queryWrapper
      * @return
      */
-    public TbUser otherOne(TbUser tbUser);
+    TbUser otherGetOne(Wrapper<TbUser> queryWrapper);
 
     /**
-     * 查询用户统计
+     * 根据 Wrapper 条件，查询全部记录
      *
+     * @param queryWrapper
      * @return
      */
-    public Integer otherCount();
+    Map<String, Object> otherGetMap(Wrapper<TbUser> queryWrapper);
 
     /**
-     * 查询用户列表
+     * 查询所有
      *
      * @return
+     * @throws Exception
      */
-    List<TbUser> otherList() throws IllegalAccessException, NoSuchMethodException, InvocationTargetException;
+    List<TbUser> otherList() throws Exception;
 
     /**
-     * 根据用户主键查询用户详情
+     * 根据 entity 条件，查询全部记录
      *
-     * @param id
+     * @param queryWrapper
      * @return
      */
-    TbUser otherDetails(Serializable id);
+    List<TbUser> otherList(Wrapper<TbUser> queryWrapper);
 
     /**
-     * 分页查询用户
+     * 查询（根据ID 批量查询）
      *
+     * @param ids
      * @return
      */
-    PageResult otherPage(PageRequest pageRequest);
+    List<TbUser> otherListByIds(List<Integer> ids);
 
     /**
-     * 根据用户ID更新用户信息
+     * 查询（根据 columnMap 条件）
      *
-     * @param tbUser
+     * @param map
      * @return
      */
-    Integer otherUpdate(TbUser tbUser);
+    List<TbUser> otherListByMap(Map<String, Object> map);
+
+    /**
+     * 查询所有列表
+     *
+     * @return
+     */
+    List<Map<String, Object>> otherListMaps();
+
+    /**
+     * 查询全部记录
+     *
+     * @return
+     */
+    List<Object> otherListObjs();
+
+    /**
+     * 根据 Wrapper 条件，查询全部记录
+     *
+     * @param queryWrapper
+     * @return
+     */
+    List<Map<String, Object>> otherListMaps(Wrapper<TbUser> queryWrapper);
+
+    /**
+     * 根据 Wrapper 条件，查询全部记录
+     *
+     * @param queryWrapper
+     * @return
+     */
+    List<Object> otherListObjs(Wrapper<TbUser> queryWrapper);
+
+    /**
+     * 无条件翻页查询
+     *
+     * @param page
+     * @return
+     */
+    Page<TbUser> otherPage(Page<TbUser> page);
+
+    /**
+     * 根据 entity 条件，查询全部记录（并翻页）
+     *
+     * @param page
+     * @param queryWrapper
+     * @return
+     */
+    Page<TbUser> otherPage(Page<TbUser> page, Wrapper<TbUser> queryWrapper);
+
+    /**
+     * 无条件翻页查询
+     *
+     * @param page
+     * @return
+     */
+    Page<Map<String, Object>> otherPageMaps(Page<TbUser> page);
+
+    /**
+     * 根据 Wrapper 条件，查询全部记录（并翻页）
+     *
+     * @param page
+     * @param queryWrapper
+     * @return
+     */
+    Page<Map<String, Object>> otherPageMaps(Page<TbUser> page, Wrapper<TbUser> queryWrapper);
+
+    /**
+     * 查询总记录数
+     *
+     * @return
+     */
+    Integer otherCount();
+
+    /**
+     * 根据 Wrapper 条件，查询总记录数
+     *
+     * @param queryWrapper
+     * @return
+     */
+    Integer otherCount(Wrapper<TbUser> queryWrapper);
+
+    Integer jdbcUpdate(TbUser user);
+
+    PageInfo<TbUser> githubPage(int currentNum, int pageSize);
 }
