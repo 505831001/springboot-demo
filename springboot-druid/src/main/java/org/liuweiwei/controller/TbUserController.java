@@ -3,14 +3,16 @@ package org.liuweiwei.controller;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import org.liuweiwei.service.TbUserService;
+import org.liuweiwei.components.ValidationGroup;
 import org.liuweiwei.model.TbUser;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.liuweiwei.service.TbUserService;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.Resource;
+import javax.validation.Valid;
 import java.io.Serializable;
-import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.Map;
 
@@ -22,7 +24,7 @@ import java.util.Map;
 @Api(tags = "用户管理控制器")
 public class TbUserController {
 
-    @Autowired
+    @Resource
     private TbUserService userService;
 
     @GetMapping(value="/getById")
@@ -36,7 +38,7 @@ public class TbUserController {
     @PostMapping(value="/getOne")
     @ApiOperation(value = "", notes = "根据Wrapper条件，查询一条记录")
     @ResponseBody
-    public String getOne(@RequestBody TbUser tbUser) {
+    public String getOne(@RequestBody @Valid TbUser tbUser) {
         QueryWrapper<TbUser> wrapper = new QueryWrapper<>();
         wrapper.setEntity(tbUser);
         TbUser user = userService.otherGetOne(wrapper);
@@ -46,7 +48,7 @@ public class TbUserController {
     @PostMapping(value="/getMap")
     @ApiOperation(value = "", notes = "根据Wrapper条件，查询全部记录")
     @ResponseBody
-    public String getMap(@RequestBody TbUser tbUser) {
+    public String getMap(@RequestBody @Validated(value = ValidationGroup.class) TbUser tbUser) {
         QueryWrapper<TbUser> wrapper = new QueryWrapper<>();
         wrapper.setEntity(tbUser);
         Map<String, Object> map = userService.otherGetMap(wrapper);

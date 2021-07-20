@@ -6,6 +6,9 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import lombok.Data;
 import lombok.ToString;
 
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.Date;
 
@@ -21,33 +24,47 @@ import java.util.Date;
 @ToString
 public class TbUser implements Serializable {
     private static final long serialVersionUID = 1L;
+
     /**主键ID*/
+    @NotNull(message = "主键id不能为空")
+    @Min(value = 1, message = "主键id必须为正整数")
     @TableId(value = "id", type = IdType.AUTO)
     private Long id;
+
     /**用户名*/
+    @NotBlank(message = "用户名称不能为空")
     @TableField
     private String username;
+
     /**密码，加密存储*/
+    @NotBlank(message = "用户密码不能为空")
     @TableField
     private String password;
+
     /**角色*/
     @TableField
     private String role;
+
     /**权限*/
     @TableField
     private String permission;
+
     /**账号状态*/
     @TableField
     private String ban;
+
     /**注册手机号*/
     @TableField
     private String phone;
+
     /**注册邮箱*/
     @TableField
     private String email;
+
     /**创建时间*/
     @TableField
     private Date created;
+
     /**更新时间*/
     @TableField
     private Date updated;

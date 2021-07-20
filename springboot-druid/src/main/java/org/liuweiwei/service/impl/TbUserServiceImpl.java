@@ -57,9 +57,9 @@ public class TbUserServiceImpl extends ServiceImpl<TbUserMapper, TbUser> impleme
     protected LambdaQueryWrapper<TbUser> wrapper5 = Wrappers.lambdaQuery();
     protected LambdaQueryWrapper<TbUser> wrapper6 = Wrappers.<TbUser>lambdaQuery();
     protected LambdaQueryWrapper<TbUser> wrapper7 = Wrappers.lambdaQuery(TbUser.class);
-    protected QueryChainWrapper<TbUser> wrapper08 = this.query();
-    protected UpdateChainWrapper<TbUser> wrapper09 = this.update();
-    protected LambdaQueryChainWrapper<TbUser> wrapper10 = this.lambdaQuery();
+    protected QueryChainWrapper<TbUser>        wrapper08 = this.query();
+    protected UpdateChainWrapper<TbUser>       wrapper09 = this.update();
+    protected LambdaQueryChainWrapper<TbUser>  wrapper10 = this.lambdaQuery();
     protected LambdaUpdateChainWrapper<TbUser> wrapper11 = this.lambdaUpdate();
     protected TbUserMapper mapper = this.getBaseMapper();
 
@@ -80,7 +80,34 @@ public class TbUserServiceImpl extends ServiceImpl<TbUserMapper, TbUser> impleme
      */
     @Override
     public TbUser otherGetById(Serializable id) {
-        TbUser user = null;
+        List<Integer>       ids = new ArrayList<>();
+        Map<String, Object> map = new HashMap<>();
+        TbUser  user = null;
+        long current = 1L;
+        long    size = 10L;
+
+        /**列表查询*/
+        List<TbUser>               list1 = this.list();
+        List<TbUser>               list2 = this.list(wrapper1);
+        List<TbUser>               list3 = this.listByIds(ids);
+        List<TbUser>               list4 = this.listByMap(map);
+        List<Map<String, Object>>  maps1 = this.listMaps();
+        List<Object>               objs1 = this.listObjs();
+        List<Map<String, Object>>  maps2 = this.listMaps(wrapper1);
+        List<Object>               objs2 = this.listObjs(wrapper1);
+        /**分页查询*/
+        Page<TbUser>               page1 = this.page(new Page<>(current, size));
+        Page<TbUser>               page2 = this.page(new Page<>(current, size), wrapper1);
+        Page<Map<String, Object>> pages1 = this.pageMaps(new Page<>(current, size));
+        Page<Map<String, Object>> pages2 = this.pageMaps(new Page<>(current, size), wrapper1);
+        /**统计查询*/
+        int                       count1 = this.count();
+        int                       count2 = this.count(wrapper1);
+        /**条件查询*/
+        TbUser                     user1 = this.getById(id);
+        TbUser                     user2 = this.getOne(wrapper1);
+        Map<String, Object>        mapp3 = this.getMap(wrapper1);
+
         if (org.springframework.util.StringUtils.isEmpty(id)) {
             LOGGER.error("查询ID不存在:{}", StringUtils.join(id));
         } else {
@@ -119,38 +146,6 @@ public class TbUserServiceImpl extends ServiceImpl<TbUserMapper, TbUser> impleme
 
     @Override
     public TbUser otherGetOne(Wrapper<TbUser> queryWrapper) {
-        wrapper08.eq("id", queryWrapper.getEntity().getId());
-        wrapper09.eq("id", queryWrapper.getEntity().getId());
-        wrapper10.eq(TbUser::getId, queryWrapper.getEntity().getId());
-        wrapper11.eq(TbUser::getId, queryWrapper.getEntity().getId());
-        mapper.selectList(null);
-
-        List<Integer> ids = new ArrayList<>();
-        Map<String, Object> map = new HashMap<>();
-
-        List<TbUser> list = this.list();
-        List<TbUser> byIds = this.listByIds(ids);
-        List<TbUser> byMap = this.listByMap(map);
-        List<Map<String, Object>> maps = this.listMaps();
-        List<Object> objs = this.listObjs();
-
-        /**
-         * @param current 当前页
-         * @param size    每页显示条数
-         */
-        long current = 1L;
-        long size = 10L;
-        Page<TbUser> page = this.page(new Page<>(current, size));
-        Page<Map<String, Object>> pageMaps = this.pageMaps(new Page<>(current, size));
-
-        int count = this.count();
-
-        TbUser user1 = this.getById(queryWrapper.getEntity().getId());
-        TbUser user2 = this.getOne(null);
-        Map<String, Object> map1 = this.getMap(null);
-        TbUserMapper baseMapper = this.getBaseMapper();
-        String string = this.getSqlStatement(null);
-
         return this.getById(queryWrapper.getEntity().getId());
     }
 

@@ -43,9 +43,7 @@ public interface TbUserService extends IService<TbUser> {
      * 查询所有
      *
      * @return
-     * @throws IllegalAccessException
-     * @throws NoSuchMethodException
-     * @throws InvocationTargetException
+     * @throws Exception
      */
     List<TbUser> otherList() throws Exception;
 
