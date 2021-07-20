@@ -138,8 +138,9 @@ public class TbUserServiceImpl extends ServiceImpl<TbUserMapper, TbUser> impleme
     public TbUser otherGetById(Serializable id) {
         List<Integer>       ids = new ArrayList<>();
         Map<String, Object> map = new HashMap<>();
+        TbUser  user = null;
         long current = 1L;
-        long size    = 10L;
+        long    size = 10L;
 
         /**列表查询*/
         List<TbUser>               list1 = this.list();
@@ -163,27 +164,38 @@ public class TbUserServiceImpl extends ServiceImpl<TbUserMapper, TbUser> impleme
         TbUser                     user2 = this.getOne(wrapper1);
         Map<String, Object>        mapp3 = this.getMap(wrapper1);
 
-        TbUser user = (TbUser) redisTemplate.opsForValue().get("user");
+        if (org.springframework.util.StringUtils.isEmpty(id)) {
+            LOGGER.error("查询ID不存在:{}", StringUtils.join(id));
+        } else {
+            user = this.getById(id);
+        }
+        if (Objects.nonNull(user)) {
+            // TODO -> 用于简单(或Redis术语"string")值的Redis操作。
+            Object object = redisTemplate.opsForValue().get(id);
+            String data = object.toString();
+            user = JSONObject.parseObject(data, TbUser.class);
+        } else {
+            LOGGER.error("查询缓存数据不存在:{}", JSONObject.toJSONString(user));
+        }
         if (Objects.isNull(user)) {
-            // 1. XML 脚本文档方式
+            // TODO -> 1. XML 脚本文档格式
             user = userMapper.selectById(id);
 
-            // 2. MyBatis Plus [顶级 IService]内嵌脚本方式
+            // TODO -> 2. MyBatis Plus [顶级 IService]内嵌脚本方式
             user = this.getById(id);
             user = this.getOne(wrapper1);
 
-            // 3. MyBatis Plus [基础 Mapper]内嵌脚本方式
+            // TODO -> 3. MyBatis [基础 BaseMapper]内嵌脚本方式
             user = this.getBaseMapper().selectById(id);
+            user = this.getBaseMapper().selectOne(wrapper2);
 
-            // 4. MyBatis Plus <Wrappers>工具类内嵌脚本方式
-            user = this.getBaseMapper().selectOne(Wrappers.lambdaQuery(TbUser.class).eq(TbUser::getId, id).last("limit 1"));
-
-            LOGGER.info("查询MySQL数据库");
-            redisTemplate.opsForValue().set("user", user);
-            redisTemplate.expire("user", 60L, TimeUnit.SECONDS);
-            LOGGER.info("写入NoSQL数据库");
+            LOGGER.info("查询MySQL数据库:{}", StringUtils.join(id));
+            String data = JSONObject.toJSONString(user);
+            redisTemplate.opsForValue().set(id, data);
+            redisTemplate.expire(id, 60L, TimeUnit.SECONDS);
+            LOGGER.info("写入NoSQL数据库:{}", StringUtils.join(id));
         } else {
-            LOGGER.info("查询NoSQL数据库");
+            LOGGER.error("查询磁盘数据不存在:{}", JSONObject.toJSONString(user));
         }
         return user;
     }
@@ -257,7 +269,7 @@ public class TbUserServiceImpl extends ServiceImpl<TbUserMapper, TbUser> impleme
     public List<TbUser> otherList() throws Exception {
         List<TbUser> list = new LinkedList<>();
         if (org.springframework.util.CollectionUtils.isEmpty(list)) {
-            // 集合数组2次遍历
+            // TODO -> Redis列出特定的操作。集合数组2次遍历.opsForList()
             List<Object> abc = redisTemplate.opsForList().range("abc", 0, -1);
             for (Object object : abc) {
                 String json = object.toString();
@@ -269,7 +281,7 @@ public class TbUserServiceImpl extends ServiceImpl<TbUserMapper, TbUser> impleme
             }
         }
         if (CollectionUtils.isNotEmpty(list)) {
-            // 序列化集合对象1次遍历
+            // TODO -> Redis列出特定的操作。序列化集合对象1次遍历.opsForList()
             List<Object> xyz = redisTemplate.opsForList().range("xyz", 0, -1);
             for (Object object : xyz) {
                 String string = object.toString();
@@ -279,9 +291,9 @@ public class TbUserServiceImpl extends ServiceImpl<TbUserMapper, TbUser> impleme
         }
 
         list = this.list();
-        list = this.list(wrapper5);
+        list = this.list(wrapper3);
         list = this.list(null);
-        list = this.getBaseMapper().selectList(wrapper5);
+        list = this.getBaseMapper().selectList(wrapper4);
         list = this.getBaseMapper().selectList(null);
 
         // 过滤姓名为刘伟伟[并且]邮箱为email@163.com[或者]电话为13812345678的渣男
@@ -296,14 +308,14 @@ public class TbUserServiceImpl extends ServiceImpl<TbUserMapper, TbUser> impleme
 
         // org.apache.commons.collections4.CollectionUtils - 如果指定的集合不为空，则执行空安全检查。
         if (CollectionUtils.isNotEmpty(list)) {
-            // com.google.common.collect.Lists - 返回一个列表的连续{List.subList(int, int) subList}，每个列表的大小相同(最后的列表可能更小)。
+            // TODO -> com.google.common.collect.Lists - 返回一个列表的连续{List.subList(int, int) subList}，每个列表的大小相同(最后的列表可能更小)。
             List<List<TbUser>> partition = Lists.partition(list, HttpServletResponse.SC_OK);
             for (List<TbUser> users : partition) {
                 for (TbUser tbUser : users) {
                     // com.alibaba.fastjson.JSONObject - 此方法将指定的对象序列化为其等效的Json表示形式。
                     String json = JSONObject.toJSONString(tbUser);
                     System.out.println("[object转json] - " + json);
-                    // com.alibaba.fastjson.JSONObject - 此方法将指定的Json反序列化为指定类的对象。
+                    // TODO -> com.alibaba.fastjson.JSONObject - 此方法将指定的Json反序列化为指定类的对象。
                     TbUser object = JSONObject.parseObject(json, TbUser.class);
                     System.out.println("[json转object] - " + object.toString());
                     if (StringUtils.isNotEmpty(tbUser.getUsername())) {
@@ -313,9 +325,9 @@ public class TbUserServiceImpl extends ServiceImpl<TbUserMapper, TbUser> impleme
             }
         }
         // org.apache.commons.collections.CollectionUtils  - 不建议使用。ListUtils.partition(ist, size)不可用。
-        // org.apache.commons.collections4.CollectionUtils - 如果指定的集合不为空，则执行空安全检查。
+        // TODO -> org.apache.commons.collections4.CollectionUtils - 如果指定的集合不为空，则执行空安全检查。
         if (CollectionUtils.isNotEmpty(list)) {
-            // org.apache.commons.collections4.ListUtils - 返回一个列表的连续{List.subList(int, int) subList}，每个列表的大小相同(最后的列表可能更小)。
+            // TODO -> org.apache.commons.collections4.ListUtils - 返回一个列表的连续{List.subList(int, int) subList}，每个列表的大小相同(最后的列表可能更小)。
             List<List<TbUser>> partition = ListUtils.partition(list, HttpStatus.OK.value());
             for (List<TbUser> users : partition) {
                 for (TbUser tbUser : users) {
@@ -323,14 +335,14 @@ public class TbUserServiceImpl extends ServiceImpl<TbUserMapper, TbUser> impleme
                 }
             }
             for (TbUser tbUser : list) {
-                // org.apache.commons.beanutils.BeanUtils - 返回指定bean为其提供读取方法的整个属性集。
+                // TODO -> org.apache.commons.beanutils.BeanUtils - 返回指定bean为其提供读取方法的整个属性集。
                 Map<String, String> map1 = BeanUtils.describe(tbUser);
                 Map<String, Object> map2 = PropertyUtils.describe(tbUser);
                 System.out.println("BeanUtils和PropertyUtils区别" + map2.get(0).toString());
             }
             List<Map<String, Object>> collect = list.stream().map(tbUser -> {
                 try {
-                    // org.apache.commons.beanutils.PropertyUtils - 返回指定bean为其提供读取方法的整个属性集。
+                    // TODO -> org.apache.commons.beanutils.PropertyUtils - 返回指定bean为其提供读取方法的整个属性集。
                     Map<String, String> map1 = BeanUtils.describe(tbUser);
                     Map<String, Object> map2 = PropertyUtils.describe(tbUser);
                     return map2;
@@ -347,9 +359,9 @@ public class TbUserServiceImpl extends ServiceImpl<TbUserMapper, TbUser> impleme
             String json = JSONObject.toJSONString(user);
             data.add(json);
         }
-        // 集合数组
+        // TODO -> 集合数组
         redisTemplate.opsForList().rightPush("abc", data);
-        // 序列化集合对象
+        // TODO -> 序列化集合对象
         redisTemplate.opsForList().rightPushAll("xyz", data.stream().collect(Collectors.toList()));
         // 设置过期时间60s
         redisTemplate.expire("abc", 60, TimeUnit.SECONDS);
@@ -414,14 +426,14 @@ public class TbUserServiceImpl extends ServiceImpl<TbUserMapper, TbUser> impleme
 
     @Override
     public Page<Map<String, Object>> otherPageMaps(Page<TbUser> page) {
-        // TODO -> 待补
-        return null;
+        Page<Map<String, Object>> pageMaps = this.pageMaps(new Page<>(page.getCurrent(), page.getSize()));
+        return pageMaps;
     }
 
     @Override
     public Page<Map<String, Object>> otherPageMaps(Page<TbUser> page, Wrapper<TbUser> queryWrapper) {
-        // TODO -> 待补
-        return null;
+        Page<Map<String, Object>> pageMaps = this.pageMaps(new Page<>(page.getCurrent(), page.getSize()), queryWrapper);
+        return pageMaps;
     }
 
     @Override
