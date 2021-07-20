@@ -5,12 +5,14 @@ import org.apache.logging.log4j.Logger;
 import org.liuweiwei.dao.TbItemMapper;
 import org.liuweiwei.model.TbItem;
 import org.liuweiwei.service.TbItemService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
+import javax.annotation.Resource;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -23,10 +25,9 @@ public class TbItemServiceImpl implements TbItemService {
 
     private final Logger logger = LogManager.getLogger(this.getClass());
 
-    @Autowired
+    @Resource
     private TbItemMapper itemMapper;
-
-    @Autowired
+    @Resource
     private RedisTemplate<String, Object> redisTemplate;
 
     @Override
@@ -42,6 +43,8 @@ public class TbItemServiceImpl implements TbItemService {
         } else {
             logger.info("查询NoSQL数据库信息");
         }
+        new LinkedList<>();
+        new HashMap<>();
         return list;
     }
 }
