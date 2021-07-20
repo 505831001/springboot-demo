@@ -221,11 +221,11 @@ public class TbUserServiceImpl extends ServiceImpl<TbUserMapper, TbUser> impleme
             user = this.getBaseMapper().selectById(id);
             user = this.getBaseMapper().selectOne(wrapper5);
 
-            LOGGER.info("查询MySQL数据库:{}", id);
+            LOGGER.info("查询MySQL数据库:{}", StringUtils.join(id));
             String data = JSONObject.toJSONString(user);
             redisTemplate.opsForValue().set(String.valueOf(id), data);
             redisTemplate.expire(String.valueOf(id), 60L, TimeUnit.SECONDS);
-            LOGGER.info("写入NoSQL数据库:{}", id);
+            LOGGER.info("写入NoSQL数据库:{}", StringUtils.join(id));
         }
 
         // MyBatis Plus <Wrapper>内嵌脚本方式
