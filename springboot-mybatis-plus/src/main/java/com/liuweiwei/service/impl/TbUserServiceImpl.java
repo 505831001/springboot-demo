@@ -67,7 +67,7 @@ public class TbUserServiceImpl extends ServiceImpl<TbUserMapper, TbUser> impleme
     protected TbUserMapper mapper = this.getBaseMapper();
 
     /**
-     * 顶级：IService - com.baomidou.mybatisplus.extension.service;
+     * TODO -> 顶级：IService - com.baomidou.mybatisplus.extension.service;
      * 1. 新增按钮
      * save(T entity);
      * saveBatch(Collection<T> entityList);
@@ -115,11 +115,25 @@ public class TbUserServiceImpl extends ServiceImpl<TbUserMapper, TbUser> impleme
      * lambdaQuery();
      * lambdaUpdate();
      * getBaseMapper();
-     * 基础：BaseMapper - com.baomidou.mybatisplus.core.mapper;
-     *
+     * TODO -> 基础：BaseMapper - com.baomidou.mybatisplus.core.mapper;
+     * 1. 列表查询
+     * selectList(wrapper09);
+     * selectBatchIds(ids);
+     * selectByMap(map);
+     * selectMaps(wrapper10);
+     * selectObjs(wrapper11);
+     * 2. 分页查询
+     * selectPage(new Page<>(current, size), wrapper7);
+     * selectMapsPage(new Page<>(current, size), wrapper11);
+     * 3. 统计查询
+     * selectCount(wrapper08);
+     * 4. 条件查询
+     * selectById(id);
+     * selectOne(wrapper6);
      */
 
     /**
+     * TODO -> 包装器：Wrappers
      * Wrappers.query();
      * Wrappers.query(T entity);
      * Wrappers.lambdaQuery();
@@ -142,7 +156,7 @@ public class TbUserServiceImpl extends ServiceImpl<TbUserMapper, TbUser> impleme
         long current = 1L;
         long    size = 10L;
 
-        /**列表查询*/
+        /**列表查询 - 顶级IService*/
         List<TbUser>               list1 = this.list();
         List<TbUser>               list2 = this.list(wrapper1);
         List<TbUser>               list3 = this.listByIds(ids);
@@ -151,18 +165,33 @@ public class TbUserServiceImpl extends ServiceImpl<TbUserMapper, TbUser> impleme
         List<Object>               objs1 = this.listObjs();
         List<Map<String, Object>>  maps2 = this.listMaps(wrapper1);
         List<Object>               objs2 = this.listObjs(wrapper1);
-        /**分页查询*/
+        /**分页查询 - 顶级IService*/
         Page<TbUser>               page1 = this.page(new Page<>(current, size));
         Page<TbUser>               page2 = this.page(new Page<>(current, size), wrapper1);
         Page<Map<String, Object>> pages1 = this.pageMaps(new Page<>(current, size));
         Page<Map<String, Object>> pages2 = this.pageMaps(new Page<>(current, size), wrapper1);
-        /**统计查询*/
+        /**统计查询 - 顶级IService*/
         int                       count1 = this.count();
         int                       count2 = this.count(wrapper1);
-        /**条件查询*/
+        /**条件查询 - 顶级IService*/
         TbUser                     user1 = this.getById(id);
         TbUser                     user2 = this.getOne(wrapper1);
         Map<String, Object>        mapp3 = this.getMap(wrapper1);
+
+        /**列表查询 - 基础BaseMapper*/
+        List<TbUser>               list5 = this.getBaseMapper().selectList(wrapper09);
+        List<TbUser>               list6 = this.getBaseMapper().selectBatchIds(ids);
+        List<TbUser>               list7 = this.getBaseMapper().selectByMap(map);
+        List<Map<String, Object>>  list8 = this.getBaseMapper().selectMaps(wrapper10);
+        List<Object>               list9 = this.getBaseMapper().selectObjs(wrapper11);
+        /**分页查询 - 基础BaseMapper*/
+        Page<TbUser>               page3 = this.getBaseMapper().selectPage(new Page<>(current, size), wrapper7);
+        Page<Map<String, Object>> pages3 = this.getBaseMapper().selectMapsPage(new Page<>(current, size), wrapper11);
+        /**统计查询 - 基础BaseMapper*/
+        Integer                   count3 = this.getBaseMapper().selectCount(wrapper08);
+        /**条件查询 - 基础BaseMapper*/
+        TbUser                     user3 = this.getBaseMapper().selectById(id);
+        TbUser                     user4 = this.getBaseMapper().selectOne(wrapper6);
 
         if (org.springframework.util.StringUtils.isEmpty(id)) {
             LOGGER.error("查询ID不存在:{}", StringUtils.join(id));
