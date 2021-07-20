@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.extension.activerecord.Model;
 import lombok.Data;
 import lombok.ToString;
 
+import javax.validation.constraints.NotBlank;
 import java.io.Serializable;
 import java.util.Date;
 
@@ -26,9 +27,11 @@ public class TbUser extends Model<TbUser> implements Serializable {
     @TableId(value = "id", type = IdType.AUTO)
     private Long id;
     /**用户名*/
+    @NotBlank(message = "用户名不能为空")
     @TableField
     private String username;
     /**密码，加密存储*/
+    @NotBlank(message = "密码不能为空")
     @TableField
     private String password;
     /**角色*/

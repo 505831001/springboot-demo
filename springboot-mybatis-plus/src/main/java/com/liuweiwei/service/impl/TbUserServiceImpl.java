@@ -1,9 +1,15 @@
 package com.liuweiwei.service.impl;
 
 import com.alibaba.fastjson.JSONObject;
+import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.baomidou.mybatisplus.extension.conditions.query.LambdaQueryChainWrapper;
+import com.baomidou.mybatisplus.extension.conditions.query.QueryChainWrapper;
+import com.baomidou.mybatisplus.extension.conditions.update.LambdaUpdateChainWrapper;
+import com.baomidou.mybatisplus.extension.conditions.update.UpdateChainWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
@@ -11,9 +17,6 @@ import com.google.common.collect.Lists;
 import com.liuweiwei.dao.TbUserMapper;
 import com.liuweiwei.model.TbUser;
 import com.liuweiwei.service.TbUserService;
-import com.liuweiwei.utils.PageRequest;
-import com.liuweiwei.utils.PageResult;
-import com.liuweiwei.utils.PageUtils;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.collections4.CollectionUtils;
@@ -25,11 +28,11 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 import java.io.Serializable;
-import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
@@ -41,45 +44,80 @@ import java.util.stream.Collectors;
 @Service
 public class TbUserServiceImpl extends ServiceImpl<TbUserMapper, TbUser> implements TbUserService {
 
-    private final Logger logger = LogManager.getLogger(this.getClass());
+    private final Logger LOGGER = LogManager.getLogger(this.getClass());
 
     @Resource
-    private TbUserMapper tbUserMapper;
+    private TbUserMapper userMapper;
     @Resource
-    private RedisTemplate<String, Object> redisTemplate;
+    private RestTemplate restTemplate;
+    @Resource
+    private RedisTemplate redisTemplate;
 
-    @Override
-    public TbUser otherById(Serializable id) {
-        QueryWrapper<TbUser> wrapper1 = new QueryWrapper<>();
-        QueryWrapper<TbUser> wrapper2 = Wrappers.query();
-        LambdaQueryWrapper<TbUser> wrapper3 = new LambdaQueryWrapper<>();
-        LambdaQueryWrapper<TbUser> wrapper4 = Wrappers.lambdaQuery();
-        LambdaQueryWrapper<TbUser> wrapper5 = Wrappers.lambdaQuery(TbUser.class);
+    protected QueryWrapper<TbUser> wrapper1 = new QueryWrapper<>();
+    protected QueryWrapper<TbUser> wrapper2 = Wrappers.query();
+    protected QueryWrapper<TbUser> wrapper3 = Wrappers.<TbUser>query();
+    protected LambdaQueryWrapper<TbUser> wrapper4 = new LambdaQueryWrapper<>();
+    protected LambdaQueryWrapper<TbUser> wrapper5 = Wrappers.lambdaQuery();
+    protected LambdaQueryWrapper<TbUser> wrapper6 = Wrappers.<TbUser>lambdaQuery();
+    protected LambdaQueryWrapper<TbUser> wrapper7 = Wrappers.lambdaQuery(TbUser.class);
+    protected QueryChainWrapper<TbUser>        wrapper08 = this.query();
+    protected UpdateChainWrapper<TbUser>       wrapper09 = this.update();
+    protected LambdaQueryChainWrapper<TbUser>  wrapper10 = this.lambdaQuery();
+    protected LambdaUpdateChainWrapper<TbUser> wrapper11 = this.lambdaUpdate();
+    protected TbUserMapper mapper = this.getBaseMapper();
 
-        TbUser user = (TbUser) redisTemplate.opsForValue().get("user");
-        if (Objects.isNull(user)) {
-            // 1. XML 脚本文档方式
-            user = tbUserMapper.selectById(id);
-
-            // 2. MyBatis Plus [顶级 IService]内嵌脚本方式
-            user = this.getById(id);
-            user = this.getOne(wrapper1);
-
-            // 3. MyBatis Plus [基础 Mapper]内嵌脚本方式
-            user = this.getBaseMapper().selectById(id);
-
-            // 4. MyBatis Plus <Wrappers>工具类内嵌脚本方式
-            user = this.getBaseMapper().selectOne(Wrappers.lambdaQuery(TbUser.class).eq(TbUser::getId, id).last("limit 1"));
-
-            logger.info("查询MySQL数据库");
-            redisTemplate.opsForValue().set("user", user);
-            redisTemplate.expire("user", 60L, TimeUnit.SECONDS);
-            logger.info("写入NoSQL数据库");
-        } else {
-            logger.info("查询NoSQL数据库");
-        }
-        return user;
-    }
+    /**
+     * 顶级：IService - com.baomidou.mybatisplus.extension.service;
+     * 1. 新增按钮
+     * save(T entity);
+     * saveBatch(Collection<T> entityList);
+     * saveBatch(Collection<T> entityList, int batchSize);
+     * saveOrUpdateBatch(Collection<T> entityList);
+     * saveOrUpdateBatch(Collection<T> entityList, int batchSize);
+     * saveOrUpdate(T entity);
+     * saveOrUpdate(T entity, Wrapper<T> updateWrapper);
+     * 2. 删除按钮
+     * removeById(Serializable id);
+     * removeByMap(Map<String, Object> columnMap);
+     * remove(Wrapper<T> queryWrapper);
+     * removeByIds(Collection<? extends Serializable> idList);
+     * 3. 编辑按钮
+     * updateById(T entity);
+     * update(Wrapper<T> updateWrapper);
+     * update(T entity, Wrapper<T> updateWrapper);
+     * updateBatchById(Collection<T> entityList);
+     * updateBatchById(Collection<T> entityList, int batchSize);
+     * 4. 查询按钮
+     * getById(Serializable id);
+     * getOne(Wrapper<T> queryWrapper);
+     * getOne(Wrapper<T> queryWrapper, boolean throwEx);
+     * getMap(Wrapper<T> queryWrapper);
+     * getObj(Wrapper<T> queryWrapper, Function<? super Object, V> mapper);
+     * list();
+     * list(Wrapper<T> queryWrapper);
+     * listByIds(Collection<? extends Serializable> idList);
+     * listByMap(Map<String, Object> columnMap);
+     * listMaps(Wrapper<T> queryWrapper);
+     * listMaps();
+     * listObjs();
+     * listObjs(Function<? super Object, V> mapper);
+     * listObjs(Wrapper<T> queryWrapper);
+     * listObjs(Wrapper<T> queryWrapper, Function<? super Object, V> mapper);
+     * page(E page, Wrapper<T> queryWrapper);
+     * page(E page);
+     * pageMaps(E page, Wrapper<T> queryWrapper);
+     * pageMaps(E page);
+     * count();
+     * count(Wrapper<T> queryWrapper);
+     * 0. 包装器
+     * query();
+     * update();
+     * lambdaQuery();
+     * lambdaUpdate();
+     * getBaseMapper();
+     * 基础：BaseMapper - com.baomidou.mybatisplus.core.mapper;
+     *
+     */
 
     /**
      * Wrappers.query();
@@ -93,90 +131,130 @@ public class TbUserServiceImpl extends ServiceImpl<TbUserMapper, TbUser> impleme
      * Wrappers.lambdaUpdate(T entity);
      * Wrappers.lambdaUpdate(Class<T> entityClass);
      *
+     * @param id
      * @return
      */
     @Override
-    public TbUser otherOne(TbUser tbUser) {
-        QueryWrapper<TbUser> wrapper1 = new QueryWrapper<>();
-        QueryWrapper<TbUser> wrapper2 = Wrappers.query();
-        LambdaQueryWrapper<TbUser> wrapper3 = new LambdaQueryWrapper<>();
-        LambdaQueryWrapper<TbUser> wrapper4 = Wrappers.lambdaQuery();
-        LambdaQueryWrapper<TbUser> wrapper5 = Wrappers.lambdaQuery(TbUser.class);
-        Long id = tbUser.getId();
+    public TbUser otherGetById(Serializable id) {
+        List<Integer>       ids = new ArrayList<>();
+        Map<String, Object> map = new HashMap<>();
+        long current = 1L;
+        long size    = 10L;
 
-        if (Objects.nonNull(tbUser)) {
-            Object object = redisTemplate.opsForValue().get(id);
-            String data = object.toString();
-            tbUser = JSONObject.parseObject(data, TbUser.class);
-        }
-        if (Objects.isNull(tbUser)) {
+        /**列表查询*/
+        List<TbUser>               list1 = this.list();
+        List<TbUser>               list2 = this.list(wrapper1);
+        List<TbUser>               list3 = this.listByIds(ids);
+        List<TbUser>               list4 = this.listByMap(map);
+        List<Map<String, Object>>  maps1 = this.listMaps();
+        List<Object>               objs1 = this.listObjs();
+        List<Map<String, Object>>  maps2 = this.listMaps(wrapper1);
+        List<Object>               objs2 = this.listObjs(wrapper1);
+        /**分页查询*/
+        Page<TbUser>               page1 = this.page(new Page<>(current, size));
+        Page<TbUser>               page2 = this.page(new Page<>(current, size), wrapper1);
+        Page<Map<String, Object>> pages1 = this.pageMaps(new Page<>(current, size));
+        Page<Map<String, Object>> pages2 = this.pageMaps(new Page<>(current, size), wrapper1);
+        /**统计查询*/
+        int                       count1 = this.count();
+        int                       count2 = this.count(wrapper1);
+        /**条件查询*/
+        TbUser                     user1 = this.getById(id);
+        TbUser                     user2 = this.getOne(wrapper1);
+        Map<String, Object>        mapp3 = this.getMap(wrapper1);
+
+        TbUser user = (TbUser) redisTemplate.opsForValue().get("user");
+        if (Objects.isNull(user)) {
             // 1. XML 脚本文档方式
-            tbUser = tbUserMapper.selectById(id);
+            user = userMapper.selectById(id);
 
             // 2. MyBatis Plus [顶级 IService]内嵌脚本方式
-            tbUser = this.getById(id);
-            tbUser = this.getOne(wrapper5);
+            user = this.getById(id);
+            user = this.getOne(wrapper1);
+
+            // 3. MyBatis Plus [基础 Mapper]内嵌脚本方式
+            user = this.getBaseMapper().selectById(id);
+
+            // 4. MyBatis Plus <Wrappers>工具类内嵌脚本方式
+            user = this.getBaseMapper().selectOne(Wrappers.lambdaQuery(TbUser.class).eq(TbUser::getId, id).last("limit 1"));
+
+            LOGGER.info("查询MySQL数据库");
+            redisTemplate.opsForValue().set("user", user);
+            redisTemplate.expire("user", 60L, TimeUnit.SECONDS);
+            LOGGER.info("写入NoSQL数据库");
+        } else {
+            LOGGER.info("查询NoSQL数据库");
+        }
+        return user;
+    }
+
+    @Override
+    public TbUser otherGetOne(Wrapper<TbUser> queryWrapper) {
+        TbUser user = queryWrapper.getEntity();
+        Long id = null;
+        if (Objects.nonNull(user)) {
+            Object object = redisTemplate.opsForValue().get(id);
+            String data = object.toString();
+            user = JSONObject.parseObject(data, TbUser.class);
+        }
+        if (Objects.isNull(user)) {
+            // 1. XML 脚本文档方式
+            user = userMapper.selectById(id);
+
+            // 2. MyBatis Plus [顶级 IService]内嵌脚本方式
+            user = this.getById(id);
+            user = this.getOne(wrapper5);
 
             // 3. MyBatis [基础 Mapper]内嵌脚本方式
-            tbUser = this.getBaseMapper().selectById(id);
-            tbUser = this.getBaseMapper().selectOne(wrapper5);
+            user = this.getBaseMapper().selectById(id);
+            user = this.getBaseMapper().selectOne(wrapper5);
 
-            logger.info("查询MySQL数据库:{}", id);
-            String data = JSONObject.toJSONString(tbUser);
+            LOGGER.info("查询MySQL数据库:{}", id);
+            String data = JSONObject.toJSONString(user);
             redisTemplate.opsForValue().set(String.valueOf(id), data);
             redisTemplate.expire(String.valueOf(id), 60L, TimeUnit.SECONDS);
-            logger.info("写入NoSQL数据库:{}", id);
+            LOGGER.info("写入NoSQL数据库:{}", id);
         }
 
         // MyBatis Plus <Wrapper>内嵌脚本方式
         QueryWrapper<TbUser> wrapper01 = new QueryWrapper<>();
         wrapper01.eq("name", "李湘").last("LIMIT 1");
-        tbUser = this.getBaseMapper().selectOne(wrapper01);
+        user = this.getBaseMapper().selectOne(wrapper01);
 
         QueryWrapper<TbUser> wrapper02 = Wrappers.query();
         wrapper02.eq("name", "李湘").last("LIMIT 1");
-        tbUser = this.getBaseMapper().selectOne(wrapper02);
+        user = this.getBaseMapper().selectOne(wrapper02);
 
         // MyBatis Plus <Wrappers>工具类内嵌脚本方式
         LambdaQueryWrapper<TbUser> wrapper03 = wrapper01.lambda();
         wrapper03.eq(TbUser::getUsername, "李湘").last("LIMIT 1");
-        tbUser = this.getBaseMapper().selectOne(wrapper03);
+        user = this.getBaseMapper().selectOne(wrapper03);
 
         LambdaQueryWrapper<TbUser> wrapper04 = Wrappers.lambdaQuery(TbUser.class);
         wrapper04.eq(TbUser::getUsername, "李湘").last("LIMIT 1");
-        tbUser = this.getBaseMapper().selectOne(wrapper04);
+        user = this.getBaseMapper().selectOne(wrapper04);
 
         LambdaQueryWrapper<TbUser> wrapper05 = Wrappers.<TbUser>lambdaQuery().eq(TbUser::getUsername, "李湘").last("LIMIT 1");
-        tbUser = this.getBaseMapper().selectOne(wrapper05);
+        user = this.getBaseMapper().selectOne(wrapper05);
 
         LambdaQueryWrapper<TbUser> wrapper06 = Wrappers.lambdaQuery(TbUser.class).eq(TbUser::getUsername, "李湘").last("LIMIT 1");
-        tbUser = this.getBaseMapper().selectOne(wrapper06);
+        user = this.getBaseMapper().selectOne(wrapper06);
 
-        tbUser = this.getBaseMapper().selectOne(Wrappers.<TbUser>query().eq("name", "李湘").last("LIMIT 1"));
-        tbUser = this.getBaseMapper().selectOne(Wrappers.<TbUser>lambdaQuery().eq(TbUser::getUsername, "李湘").last("LIMIT 1"));
-        tbUser = this.getBaseMapper().selectOne(Wrappers.lambdaQuery(TbUser.class).eq(TbUser::getUsername, "李湘").last("LIMIT 1"));
+        user = this.getBaseMapper().selectOne(Wrappers.<TbUser>query().eq("name", "李湘").last("LIMIT 1"));
+        user = this.getBaseMapper().selectOne(Wrappers.<TbUser>lambdaQuery().eq(TbUser::getUsername, "李湘").last("LIMIT 1"));
+        user = this.getBaseMapper().selectOne(Wrappers.lambdaQuery(TbUser.class).eq(TbUser::getUsername, "李湘").last("LIMIT 1"));
 
-        return tbUser;
+        return user;
     }
 
     @Override
-    public Integer otherCount() {
-        QueryWrapper<TbUser> wrapper1 = new QueryWrapper<>();
-        QueryWrapper<TbUser> wrapper2 = Wrappers.query();
-        LambdaQueryWrapper<TbUser> wrapper3 = new LambdaQueryWrapper<>();
-        LambdaQueryWrapper<TbUser> wrapper4 = Wrappers.lambdaQuery();
-        LambdaQueryWrapper<TbUser> wrapper5 = Wrappers.lambdaQuery(TbUser.class);
-
-        Integer count = 0;
-        count = this.count();
-        count = this.count(wrapper1);
-        count = this.getBaseMapper().selectCount(wrapper1);
-        count = this.getBaseMapper().selectCount(null);
-        return count;
+    public Map<String, Object> otherGetMap(Wrapper<TbUser> queryWrapper) {
+        Map<String, Object> map = this.getMap(queryWrapper);
+        return map;
     }
 
     @Override
-    public List<TbUser> otherList() throws IllegalAccessException, NoSuchMethodException, InvocationTargetException {
+    public List<TbUser> otherList() throws Exception {
         List<TbUser> list = new LinkedList<>();
         if (org.springframework.util.CollectionUtils.isEmpty(list)) {
             // 集合数组2次遍历
@@ -199,12 +277,6 @@ public class TbUserServiceImpl extends ServiceImpl<TbUserMapper, TbUser> impleme
                 list.add(user);
             }
         }
-
-        QueryWrapper<TbUser> wrapper1 = new QueryWrapper<>();
-        QueryWrapper<TbUser> wrapper2 = Wrappers.query();
-        LambdaQueryWrapper<TbUser> wrapper3 = new LambdaQueryWrapper<>();
-        LambdaQueryWrapper<TbUser> wrapper4 = Wrappers.lambdaQuery();
-        LambdaQueryWrapper<TbUser> wrapper5 = Wrappers.lambdaQuery(TbUser.class);
 
         list = this.list();
         list = this.list(wrapper5);
@@ -287,44 +359,102 @@ public class TbUserServiceImpl extends ServiceImpl<TbUserMapper, TbUser> impleme
     }
 
     @Override
-    public TbUser otherDetails(Serializable id) {
-        return this.getById(id);
+    public List<TbUser> otherList(Wrapper<TbUser> queryWrapper) {
+        List<TbUser> list = this.list(queryWrapper);
+        return list;
     }
 
     @Override
-    public PageResult otherPage(PageRequest pageRequest) {
-        PageResult pageResult = PageUtils.getPageResult(pageRequest, getPageInfo(pageRequest));
-        return pageResult;
+    public List<TbUser> otherListByIds(List<Integer> ids) {
+        List<TbUser> list = this.listByIds(ids);
+        return list;
     }
 
-    /**调用分页插件完成分页*/
-    private PageInfo<TbUser> getPageInfo(PageRequest pageRequest) {
-        QueryWrapper<TbUser> wrapper1 = new QueryWrapper<>();
-        QueryWrapper<TbUser> wrapper2 = Wrappers.query();
-        LambdaQueryWrapper<TbUser> wrapper3 = new LambdaQueryWrapper<>();
-        LambdaQueryWrapper<TbUser> wrapper4 = Wrappers.lambdaQuery();
-        LambdaQueryWrapper<TbUser> wrapper5 = Wrappers.lambdaQuery(TbUser.class);
+    @Override
+    public List<TbUser> otherListByMap(Map<String, Object> map) {
+        List<TbUser> list = this.listByMap(map);
+        return list;
+    }
 
-        PageHelper.startPage(pageRequest.getPageNum(), pageRequest.getPageSize());
-        List<TbUser> list = new LinkedList<>();
-        list = this.list();
-        list = this.list(wrapper5);
-        list = this.list(null);
-        list = this.getBaseMapper().selectList(wrapper5);
-        list = this.getBaseMapper().selectList(null);
-        PageInfo<TbUser> pageInfo = new PageInfo<>(list);
-        return pageInfo;
+    @Override
+    public List<Map<String, Object>> otherListMaps() {
+        List<Map<String, Object>> maps = this.listMaps();
+        return maps;
+    }
+
+    @Override
+    public List<Object> otherListObjs() {
+        List<Object> objs = this.listObjs();
+        return objs;
+    }
+
+    @Override
+    public List<Map<String, Object>> otherListMaps(Wrapper<TbUser> queryWrapper) {
+        List<Map<String, Object>> maps = this.listMaps(queryWrapper);
+        return maps;
+    }
+
+    @Override
+    public List<Object> otherListObjs(Wrapper<TbUser> queryWrapper) {
+        List<Object> objs = this.listObjs(queryWrapper);
+        return objs;
+    }
+
+    @Override
+    public Page<TbUser> otherPage(Page<TbUser> page) {
+        Page<TbUser> pages = this.page(page);
+        return pages;
+    }
+
+    @Override
+    public Page<TbUser> otherPage(Page<TbUser> page, Wrapper<TbUser> queryWrapper) {
+        Page<TbUser> pages = this.page(page, queryWrapper);
+        return pages;
+    }
+
+    @Override
+    public Page<Map<String, Object>> otherPageMaps(Page<TbUser> page) {
+        // TODO -> 待补
+        return null;
+    }
+
+    @Override
+    public Page<Map<String, Object>> otherPageMaps(Page<TbUser> page, Wrapper<TbUser> queryWrapper) {
+        // TODO -> 待补
+        return null;
+    }
+
+    @Override
+    public Integer otherCount() {
+        int count = this.count();
+        return count;
+    }
+
+    @Override
+    public Integer otherCount(Wrapper<TbUser> queryWrapper) {
+        int count = this.count(queryWrapper);
+        return count;
     }
 
     @Resource
     private JdbcTemplate primaryJdbcTemplate;
     @Resource
     private JdbcTemplate secondaryJdbcTemplate;
+
     @Override
-    public Integer otherUpdate(TbUser tbUser) {
+    public Integer jdbcUpdate(TbUser user) {
         int index = 0;
         index += primaryJdbcTemplate.update("update tb_user set username = ? where id = ?", "李四A", 14);
         index += secondaryJdbcTemplate.update("update tb_user set username = ? where id = ?", "李四B", 14);
         return index;
+    }
+
+    @Override
+    public PageInfo<TbUser> githubPage(int currentNum, int pageSize) {
+        /**开始分页*/
+        PageHelper.startPage(currentNum, pageSize);
+        /**包装Page对象*/
+        PageInfo<TbUser> pageInfo = new PageInfo<>(this.list());
+        return pageInfo;
     }
 }
