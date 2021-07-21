@@ -64,6 +64,73 @@ public class TbUserServiceImpl extends ServiceImpl<TbUserMapper, TbUser> impleme
     protected TbUserMapper mapper = this.getBaseMapper();
 
     /**
+     * TODO -> 顶级：IService - com.baomidou.mybatisplus.extension.service;
+     * 1. 新增按钮
+     * save(T entity);
+     * saveBatch(Collection<T> entityList);
+     * saveBatch(Collection<T> entityList, int batchSize);
+     * saveOrUpdateBatch(Collection<T> entityList);
+     * saveOrUpdateBatch(Collection<T> entityList, int batchSize);
+     * saveOrUpdate(T entity);
+     * saveOrUpdate(T entity, Wrapper<T> updateWrapper);
+     * 2. 删除按钮
+     * removeById(Serializable id);
+     * removeByMap(Map<String, Object> columnMap);
+     * remove(Wrapper<T> queryWrapper);
+     * removeByIds(Collection<? extends Serializable> idList);
+     * 3. 编辑按钮
+     * updateById(T entity);
+     * update(Wrapper<T> updateWrapper);
+     * update(T entity, Wrapper<T> updateWrapper);
+     * updateBatchById(Collection<T> entityList);
+     * updateBatchById(Collection<T> entityList, int batchSize);
+     * 4. 查询按钮
+     * getById(Serializable id);
+     * getOne(Wrapper<T> queryWrapper);
+     * getOne(Wrapper<T> queryWrapper, boolean throwEx);
+     * getMap(Wrapper<T> queryWrapper);
+     * getObj(Wrapper<T> queryWrapper, Function<? super Object, V> mapper);
+     * list();
+     * list(Wrapper<T> queryWrapper);
+     * listByIds(Collection<? extends Serializable> idList);
+     * listByMap(Map<String, Object> columnMap);
+     * listMaps(Wrapper<T> queryWrapper);
+     * listMaps();
+     * listObjs();
+     * listObjs(Function<? super Object, V> mapper);
+     * listObjs(Wrapper<T> queryWrapper);
+     * listObjs(Wrapper<T> queryWrapper, Function<? super Object, V> mapper);
+     * page(E page, Wrapper<T> queryWrapper);
+     * page(E page);
+     * pageMaps(E page, Wrapper<T> queryWrapper);
+     * pageMaps(E page);
+     * count();
+     * count(Wrapper<T> queryWrapper);
+     * 0. 包装器
+     * query();
+     * update();
+     * lambdaQuery();
+     * lambdaUpdate();
+     * getBaseMapper();
+     * TODO -> 基础：BaseMapper - com.baomidou.mybatisplus.core.mapper;
+     * 1. 列表查询
+     * selectList(wrapper09);
+     * selectBatchIds(ids);
+     * selectByMap(map);
+     * selectMaps(wrapper10);
+     * selectObjs(wrapper11);
+     * 2. 分页查询
+     * selectPage(new Page<>(current, size), wrapper7);
+     * selectMapsPage(new Page<>(current, size), wrapper11);
+     * 3. 统计查询
+     * selectCount(wrapper08);
+     * 4. 条件查询
+     * selectById(id);
+     * selectOne(wrapper6);
+     */
+
+    /**
+     * TODO -> 包装器：Wrappers
      * Wrappers.query();
      * Wrappers.query(T entity);
      * Wrappers.lambdaQuery();
