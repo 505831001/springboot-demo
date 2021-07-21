@@ -29,7 +29,7 @@ public class TbUser extends Model<TbUser> implements Serializable {
     /**主键ID*/
     @NotNull(message = "主键id不能为空")
     @Min(value = 1, message = "主键id必须为正整数")
-    @TableId(value = "id", type = IdType.AUTO)
+    @TableId(value = "id", type = IdType.UUID)
     private Long id;
 
     /**用户名*/

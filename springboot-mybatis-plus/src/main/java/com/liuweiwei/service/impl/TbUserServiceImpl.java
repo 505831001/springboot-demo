@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.toolkit.GlobalConfigUtils;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.conditions.query.LambdaQueryChainWrapper;
 import com.baomidou.mybatisplus.extension.conditions.query.QueryChainWrapper;
@@ -15,8 +16,10 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.google.common.collect.Lists;
 import com.liuweiwei.dao.TbUserMapper;
+import com.liuweiwei.dto.TbUserDTO;
 import com.liuweiwei.model.TbUser;
 import com.liuweiwei.service.TbUserService;
+import com.liuweiwei.vo.TbUserVO;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.collections4.CollectionUtils;
@@ -33,6 +36,8 @@ import org.springframework.web.client.RestTemplate;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 import java.io.Serializable;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
@@ -442,9 +447,35 @@ public class TbUserServiceImpl extends ServiceImpl<TbUserMapper, TbUser> impleme
     }
 
     @Override
-    public Page<TbUser> otherPage(Page<TbUser> page) {
+    public Page<TbUserVO> otherPage(Page<TbUser> page) {
+        /**字符串转日期格式*/
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
         Page<TbUser> pages = this.page(page);
-        return pages;
+        List<TbUser> list = pages.getRecords();
+        List<TbUserVO> records = new ArrayList<>();
+        list.stream().forEach(source -> {
+            TbUserVO target = new TbUserVO();
+            org.springframework.beans.BeanUtils.copyProperties(source, target);
+            target.setId(String.valueOf(source.getId()));
+            target.setCreated(format.format(source.getCreated()));
+            target.setUpdated(format.format(source.getUpdated()));
+            records.add(target);
+        });
+
+        Page<TbUserVO> data = new Page<>();
+        data.setRecords(records);
+        data.setTotal(pages.getTotal());
+        data.setSize(pages.getSize());
+        data.setCurrent(pages.getCurrent());
+        data.setOrders(pages.getOrders());
+        data.setOptimizeCountSql(pages.optimizeCountSql());
+        data.setHitCount(pages.isHitCount());
+        data.setCountId(pages.countId());
+        data.setMaxLimit(pages.maxLimit());
+        data.setSearchCount(pages.isSearchCount());
+        data.setPages(pages.getPages());
+        return data;
     }
 
     @Override
@@ -475,6 +506,24 @@ public class TbUserServiceImpl extends ServiceImpl<TbUserMapper, TbUser> impleme
     public Integer otherCount(Wrapper<TbUser> queryWrapper) {
         int count = this.count(queryWrapper);
         return count;
+    }
+
+    @Override
+    public Boolean otherSave(TbUserDTO source) throws ParseException {
+        /**UUID生成纯数字*/
+        Integer uuid = UUID.randomUUID().toString().hashCode();
+        uuid = uuid < 0 ? -uuid : uuid;
+        /**字符串转日期格式*/
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
+        TbUser target = new TbUser();
+        org.springframework.beans.BeanUtils.copyProperties(source, target);
+        target.setId(Long.parseLong(String.valueOf(uuid)));
+        target.setCreated(format.parse(source.getCreated()));
+        target.setUpdated(format.parse(source.getUpdated()));
+
+        boolean flag = this.save(target);
+        return flag;
     }
 
     @Resource

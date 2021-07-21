@@ -5,9 +5,12 @@ import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.github.pagehelper.PageInfo;
+import com.liuweiwei.dto.TbUserDTO;
 import com.liuweiwei.model.TbUser;
+import com.liuweiwei.vo.TbUserVO;
 
 import java.io.Serializable;
+import java.text.ParseException;
 import java.util.List;
 import java.util.Map;
 
@@ -108,7 +111,7 @@ public interface TbUserService extends IService<TbUser> {
      * @param page
      * @return
      */
-    Page<TbUser> otherPage(Page<TbUser> page);
+    Page<TbUserVO> otherPage(Page<TbUser> page);
 
     /**
      * 根据 entity 条件，查询全部记录（并翻页）
@@ -150,6 +153,14 @@ public interface TbUserService extends IService<TbUser> {
      * @return
      */
     Integer otherCount(Wrapper<TbUser> queryWrapper);
+
+    /**
+     * 插入一条记录（选择字段，策略插入）
+     *
+     * @param dto
+     * @return
+     */
+    Boolean otherSave(TbUserDTO dto) throws ParseException;
 
     Integer jdbcUpdate(TbUser user);
 

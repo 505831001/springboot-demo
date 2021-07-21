@@ -1,5 +1,12 @@
 package com.liuweiwei;
 
+import com.baomidou.mybatisplus.annotation.DbType;
+import com.baomidou.mybatisplus.autoconfigure.MybatisPlusPropertiesCustomizer;
+import com.baomidou.mybatisplus.core.incrementer.IKeyGenerator;
+import com.baomidou.mybatisplus.core.incrementer.IdentifierGenerator;
+import com.baomidou.mybatisplus.extension.incrementer.H2KeyGenerator;
+import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;
+import com.baomidou.mybatisplus.extension.plugins.inner.PaginationInnerInterceptor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.rocketmq.client.exception.MQClientException;
@@ -36,6 +43,36 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
  * 1. 通过配置扫描注解：@MapperScan(basePackages = "org.example.dao")
  * 2. 通过注释：@Mapper
  *
+ * TODO -> MyBatis-Plus - https://mp.baomidou.com/guide/
+ * 核心功能：
+ * 1. 代码生成器
+ *     0. 生成文件 - new AutoGenerator();
+ *     1. 全局配置 - new GlobalConfig();
+ *     2. 数据库配置 - new DataSourceConfig();
+ *     3. 跟包相关的配置项 - new PackageConfig();
+ *     4. 策略配置项 - new StrategyConfig();
+ * 2. CRUD 接口
+ *     1. 顶级 IService
+ *     2. 基础 BaseMapper
+ * 3. 条件构造器
+ *     2. LambdaQueryWrapper;
+ *     1. QueryWrapper;
+ *     3. Wrappers;
+ * 4. 分页插件
+ *     1. 旧版 - PaginationInterceptor
+ *     2. 新版 - MybatisPlusInterceptor
+ * 5. Sequence 主键
+ *     1. IKeyGenerator
+ *     2. MybatisPlusPropertiesCustomizer
+ *     TODO -> 内置支持。如果内置支持不满足你的需求，可实现IKeyGenerator接口来进行扩展。
+ *     1. DB2KeyGenerator
+ *     2. H2KeyGenerator
+ *     3. KingbaseKeyGenerator
+ *     4. OracleKeyGenerator
+ *     5. PostgreKeyGenerator
+ * 6. 自定义ID生成器
+ *     1. IdentifierGenerator
+ *     2. MybatisPlusPropertiesCustomizer
  * [Tools]
  * com.alibaba.fastjson.JSONObject;
  * com.google.common.collect.Lists;
@@ -134,4 +171,77 @@ public class DemoMyBatisPlusApplication {
         producer.start();
         return producer;
     }
+
+    /**
+     * TODO -> 4. 分页插件：分布插件注入之前
+     * {
+     *   "records": [...],
+     *   "total": 0,
+     *   "size": 5,
+     *   "current": 1,
+     *   "orders": [],
+     *   "optimizeCountSql": true,
+     *   "hitCount": false,
+     *   "countId": null,
+     *   "maxLimit": null,
+     *   "searchCount": true,
+     *   "pages": 0
+     * }
+     * TODO -> 4. 分页插件：分页插件注入之后，你品，你细品
+     * {
+     *   "records": [...],
+     *   "total": 20,
+     *   "size": 5,
+     *   "current": 1,
+     *   "orders": [],
+     *   "optimizeCountSql": true,
+     *   "hitCount": false,
+     *   "countId": null,
+     *   "maxLimit": null,
+     *   "searchCount": true,
+     *   "pages": 4
+     * }
+     * @return
+     */
+    @Bean
+    public MybatisPlusInterceptor mybatisPlusInterceptor() {
+        MybatisPlusInterceptor interceptor = new MybatisPlusInterceptor();
+        interceptor.addInnerInterceptor(new PaginationInnerInterceptor(DbType.H2));
+        return interceptor;
+    }
+
+    /**
+     * SpringBoot Sequence 主键 - 方式一：使用配置类
+     *
+     * @return
+     */
+    @Bean
+    public IKeyGenerator keyGenerator() {
+        return new H2KeyGenerator();
+    }
+
+    /**
+     * SpringBoot Sequence 主键 - 方式二：通过 MybatisPlusPropertiesCustomizer 自定义
+     *
+     * @return
+     */
+    @Bean
+    public MybatisPlusPropertiesCustomizer plusPropertiesCustomizer() {
+        return plusProperties -> plusProperties.getGlobalConfig().getDbConfig().setKeyGenerator(new H2KeyGenerator());
+    }
+
+    /** SpringBoot 自定义ID生成器 - 方式一：使用配置类
+    @Bean
+    public IdentifierGenerator idGenerator() {
+        return new CustomIdGenerator();
+    }
+    */
+
+    /**
+     * SpringBoot 自定义ID生成器 - 方式二：通过 MybatisPlusPropertiesCustomizer 自定义
+    @Bean
+    public MybatisPlusPropertiesCustomizer plusPropertiesCustomizer() {
+        return plusProperties -> plusProperties.getGlobalConfig().setIdentifierGenerator(new CustomIdGenerator());
+    }
+    */
 }
