@@ -50,13 +50,13 @@ public class TbUserServiceImpl extends ServiceImpl<TbUserMapper, TbUser> impleme
     @Resource
     private RedisTemplate redisTemplate;
 
-    protected QueryWrapper<TbUser> wrapper1 = new QueryWrapper<>();
-    protected QueryWrapper<TbUser> wrapper2 = Wrappers.query();
-    protected QueryWrapper<TbUser> wrapper3 = Wrappers.<TbUser>query();
-    protected LambdaQueryWrapper<TbUser> wrapper4 = new LambdaQueryWrapper<>();
-    protected LambdaQueryWrapper<TbUser> wrapper5 = Wrappers.lambdaQuery();
-    protected LambdaQueryWrapper<TbUser> wrapper6 = Wrappers.<TbUser>lambdaQuery();
-    protected LambdaQueryWrapper<TbUser> wrapper7 = Wrappers.lambdaQuery(TbUser.class);
+    protected QueryWrapper<TbUser>             wrapper01 = new QueryWrapper<>();
+    protected QueryWrapper<TbUser>             wrapper02 = Wrappers.query();
+    protected QueryWrapper<TbUser>             wrapper03 = Wrappers.<TbUser>query();
+    protected LambdaQueryWrapper<TbUser>       wrapper04 = new LambdaQueryWrapper<>();
+    protected LambdaQueryWrapper<TbUser>       wrapper05 = Wrappers.lambdaQuery();
+    protected LambdaQueryWrapper<TbUser>       wrapper06 = Wrappers.<TbUser>lambdaQuery();
+    protected LambdaQueryWrapper<TbUser>       wrapper07 = Wrappers.lambdaQuery(TbUser.class);
     protected QueryChainWrapper<TbUser>        wrapper08 = this.query();
     protected UpdateChainWrapper<TbUser>       wrapper09 = this.update();
     protected LambdaQueryChainWrapper<TbUser>  wrapper10 = this.lambdaQuery();
@@ -88,25 +88,25 @@ public class TbUserServiceImpl extends ServiceImpl<TbUserMapper, TbUser> impleme
 
         /**列表查询*/
         List<TbUser>               list1 = this.list();
-        List<TbUser>               list2 = this.list(wrapper1);
+        List<TbUser>               list2 = this.list(wrapper01);
         List<TbUser>               list3 = this.listByIds(ids);
         List<TbUser>               list4 = this.listByMap(map);
         List<Map<String, Object>>  maps1 = this.listMaps();
         List<Object>               objs1 = this.listObjs();
-        List<Map<String, Object>>  maps2 = this.listMaps(wrapper1);
-        List<Object>               objs2 = this.listObjs(wrapper1);
+        List<Map<String, Object>>  maps2 = this.listMaps(wrapper02);
+        List<Object>               objs2 = this.listObjs(wrapper03);
         /**分页查询*/
         Page<TbUser>               page1 = this.page(new Page<>(current, size));
-        Page<TbUser>               page2 = this.page(new Page<>(current, size), wrapper1);
+        Page<TbUser>               page2 = this.page(new Page<>(current, size), wrapper04);
         Page<Map<String, Object>> pages1 = this.pageMaps(new Page<>(current, size));
-        Page<Map<String, Object>> pages2 = this.pageMaps(new Page<>(current, size), wrapper1);
+        Page<Map<String, Object>> pages2 = this.pageMaps(new Page<>(current, size), wrapper05);
         /**统计查询*/
         int                       count1 = this.count();
-        int                       count2 = this.count(wrapper1);
+        int                       count2 = this.count(wrapper06);
         /**条件查询*/
         TbUser                     user1 = this.getById(id);
-        TbUser                     user2 = this.getOne(wrapper1);
-        Map<String, Object>        mapp3 = this.getMap(wrapper1);
+        TbUser                     user2 = this.getOne(wrapper07);
+        Map<String, Object>        mapp3 = this.getMap(wrapper08);
 
         if (org.springframework.util.StringUtils.isEmpty(id)) {
             LOGGER.error("查询ID不存在:{}", StringUtils.join(id));
@@ -127,11 +127,11 @@ public class TbUserServiceImpl extends ServiceImpl<TbUserMapper, TbUser> impleme
 
             // TODO -> 2. MyBatis Plus [顶级 IService]内嵌脚本方式
             user = this.getById(id);
-            user = this.getOne(wrapper1);
+            user = this.getOne(wrapper11);
 
             // TODO -> 3. MyBatis [基础 BaseMapper]内嵌脚本方式
             user = this.getBaseMapper().selectById(id);
-            user = this.getBaseMapper().selectOne(wrapper2);
+            user = this.getBaseMapper().selectOne(wrapper11);
 
             LOGGER.info("查询MySQL数据库:{}", StringUtils.join(id));
             String data = JSONObject.toJSONString(user);
@@ -181,17 +181,17 @@ public class TbUserServiceImpl extends ServiceImpl<TbUserMapper, TbUser> impleme
         }
 
         list = this.list();
-        list = this.list(wrapper3);
+        list = this.list(wrapper11);
         list = this.list(null);
-        list = this.getBaseMapper().selectList(wrapper4);
+        list = this.getBaseMapper().selectList(wrapper11);
         list = this.getBaseMapper().selectList(null);
 
         // 过滤姓名为刘伟伟[并且]邮箱为email@163.com[或者]电话为13812345678的渣男
         Set<String> unameSet = list.stream().map(TbUser::getUsername).collect(Collectors.toSet());
         Set<TbUser> emailSet = list.stream().filter(user -> user.getPermission().equalsIgnoreCase("email")).collect(Collectors.toSet());
         Set<TbUser> guestSet = list.stream().filter(user -> user.getPermission().equalsIgnoreCase("45678")).collect(Collectors.toSet());
-        wrapper5.in(TbUser::getUsername, unameSet)
-                .and(user -> user
+        wrapper11.in(TbUser::getUsername, unameSet)
+                 .and(user -> user
                         .in(TbUser::getEmail, emailSet)
                         .or()
                         .in(TbUser::getPhone, guestSet));
