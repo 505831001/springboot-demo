@@ -1,6 +1,8 @@
 package com.excel.poi.controller;
 
 import com.excel.poi.service.ExcelPoiService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -16,22 +18,26 @@ import java.io.IOException;
  * @since 2021-07-04
  */
 @RestController
+@Api(value = "", tags = "Excel-Poi导入导出控制器")
 public class ExcelPoiController {
 
     @Autowired
     ExcelPoiService excelPoiService;
 
     @RequestMapping(value = "/uploadExcel", method = RequestMethod.POST, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @ApiOperation(value = "上传按钮", notes = "上传按钮", tags = "")
     public ResponseEntity<Object> uploadExcel(@RequestParam("file") MultipartFile file) {
         return excelPoiService.uploadExcel(file);
     }
 
     @RequestMapping(value = "downloadExcel", method = RequestMethod.GET)
+    @ApiOperation(value = "下载按钮", notes = "下载按钮", tags = "")
     public void downloadExcel(HttpServletResponse response) {
         excelPoiService.downloadExcel(response);
     }
 
     @RequestMapping(value = "/importExcel", method = RequestMethod.POST, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @ApiOperation(value = "导入按钮", notes = "导入按钮", tags = "")
     public ResponseEntity<Object> importExcel(@RequestParam("file") MultipartFile file) {
         try {
             return excelPoiService.importExcel(file);
@@ -42,6 +48,7 @@ public class ExcelPoiController {
     }
 
     @RequestMapping(value = "exportExcel", method = RequestMethod.GET)
+    @ApiOperation(value = "导出按钮", notes = "导出按钮", tags = "")
     public void exportExcel(HttpServletResponse response) {
         try {
             excelPoiService.exportExcel(response);
