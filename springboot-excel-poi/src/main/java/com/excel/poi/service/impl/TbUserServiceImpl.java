@@ -2,8 +2,9 @@ package com.excel.poi.service.impl;
 
 import com.excel.poi.dao.TbUserMapper;
 import com.excel.poi.service.TbUserService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import javax.annotation.Resource;
 
 /**
  * @author Liuweiwei
@@ -12,8 +13,6 @@ import org.springframework.stereotype.Service;
 @Service
 public class TbUserServiceImpl implements TbUserService {
 
-    @Autowired
+    @Resource
     private TbUserMapper tbUserMapper;
-
-
 }

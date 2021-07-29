@@ -1,6 +1,7 @@
 package com.excel.poi.controller;
 
 import com.excel.poi.service.ExcelPoiService;
+import com.excel.poi.utils.ResultData;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,13 +39,13 @@ public class ExcelPoiController {
 
     @RequestMapping(value = "/importExcel", method = RequestMethod.POST, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @ApiOperation(value = "导入按钮", notes = "导入按钮", tags = "")
-    public ResponseEntity<Object> importExcel(@RequestParam("file") MultipartFile file) {
+    public ResultData importExcel(@RequestParam("file") MultipartFile file) {
         try {
             return excelPoiService.importExcel(file);
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return ResponseEntity.ok(Object.class);
+        return ResultData.success();
     }
 
     @RequestMapping(value = "exportExcel", method = RequestMethod.GET)

@@ -1,5 +1,6 @@
 package com.excel.poi.service;
 
+import com.excel.poi.utils.ResultData;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -27,7 +28,7 @@ public interface ExcelPoiService {
      * @return
      * @throws IOException
      */
-    ResponseEntity importExcel(MultipartFile file) throws IOException;
+    ResultData importExcel(MultipartFile file) throws IOException;
 
     /**
      * Excel导出

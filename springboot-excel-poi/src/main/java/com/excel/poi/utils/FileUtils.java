@@ -15,7 +15,7 @@ import java.util.Objects;
  * @date 2021-07-04
  * @description 文档类型判断工具类
  */
-public class Utils {
+public class FileUtils {
     /**
      * 判断是否office文件
      *

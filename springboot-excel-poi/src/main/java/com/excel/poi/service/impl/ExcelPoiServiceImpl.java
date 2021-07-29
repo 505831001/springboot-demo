@@ -7,7 +7,8 @@ import com.excel.poi.dao.TbUserMapper;
 import com.excel.poi.entity.TbUser;
 import com.excel.poi.service.ExcelPoiService;
 import com.excel.poi.utils.ExcelUtils;
-import com.excel.poi.utils.Utils;
+import com.excel.poi.utils.FileUtils;
+import com.excel.poi.utils.ResultData;
 import com.excel.poi.vo.TbUserVO;
 import com.google.common.collect.Lists;
 import org.apache.commons.beanutils.PropertyUtils;
@@ -102,13 +103,13 @@ public class ExcelPoiServiceImpl implements ExcelPoiService {
         List<Map<String, Object>> list1 = new ArrayList<>(10);
         List<Map<String, Object>> list2 = new ArrayList<>(10);
         int index = 0;
-        if (!Utils.checkExtension(file)) {
+        if (!FileUtils.checkExtension(file)) {
             return new ResponseEntity("请求文件类型错误:后缀名错误(xls,xlsx,XLS,XLSX).", HttpStatus.BAD_REQUEST);
         }
         try {
-            if (Utils.isOfficeFile(file)) {
+            if (FileUtils.isOfficeFile(file)) {
                 // 1.High level representation of a Excel workbook. - Excel[工作簿]的高级表示。
-                Workbook workbook = Utils.getWorkbookAuto(file);
+                Workbook workbook = FileUtils.getWorkbookAuto(file);
                 // 2.Sheets are the central structures within a workbook. - [工作表]是工作簿中的中心结构。
                 Sheet sheet = workbook.getSheetAt(0);
                 // 3.High level representation of a row of a spreadsheet. - 电子[表格行]的高级表示。
@@ -183,8 +184,9 @@ public class ExcelPoiServiceImpl implements ExcelPoiService {
      * @throws IOException
      */
     @Override
-    public ResponseEntity importExcel(MultipartFile file) throws IOException {
-        List<Map<String, Object>> list = new ArrayList<>(10);
+    public ResultData importExcel(MultipartFile file) throws IOException {
+        List<Map<String, Object>> data = new ArrayList<>(10);
+
         /**流读取文件*/
         BufferedInputStream is = new BufferedInputStream(file.getInputStream());
         // 1.High level representation of a Excel workbook. - Excel[工作簿]的高级表示。
@@ -224,30 +226,106 @@ public class ExcelPoiServiceImpl implements ExcelPoiService {
                 Cell cell = row.getCell(j);
                 map.put(cnTitles[j], cell.toString() == null ? null : cell.toString());
             }
-            list.add(map);
+            data.add(map);
         }
-        List<TbUser>              what = new ArrayList<>(10);
-        List<TbUser>              objs = new ArrayList<>(10);
-        List<Map<String, Object>> maps = new ArrayList<>(10);
+
         /**中文[cnTitles]切换英文[enFields]来转换成[map]或[对象]存储*/
-        for (Map<String, Object> map : list) {
-            JSONObject          fast = new JSONObject();
+        List<Map<String, Object>> maps = new ArrayList<>(10);
+        for (Map<String, Object> map : data) {
             Map<String, Object> temp = new HashMap<>();
             for (Map.Entry<String, Object> entry : map.entrySet()) {
                 String cnKey = entry.getKey();
                 String enKey = excelCNtoENConvert().get(cnKey);
                 temp.put(enKey, entry.getValue());
-                fast.put(enKey, entry.getValue());
             }
             /**封装到集合*/
             maps.add(temp);
             /**转换集合json再到对象*/
             String json = JSONObject.toJSONString(temp);
-            what.add(JSONObject.parseObject(json, TbUser.class));
-            /**直接利用fast进行集合封装转对象*/
-            objs.add(fast.toJavaObject(TbUser.class));
+            TbUser user = JSONObject.parseObject(json, TbUser.class);
         }
-        return new ResponseEntity(HttpStatus.OK);
+
+        /**中文[cnTitles]切换英文[enFields]来转换成[map]或[对象]存储*/
+        List<TbUser> list = new ArrayList<>(10);
+        for (Map<String, Object> map : data) {
+            JSONObject object = new JSONObject();
+            for (Map.Entry<String, Object> entry : map.entrySet()) {
+                String cnKey = entry.getKey();
+                String enKey = excelCNtoENConvert().get(cnKey);
+                object.put(enKey, entry.getValue());
+            }
+            /**直接利用fast进行集合封装转对象*/
+            list.add(object.toJavaObject(TbUser.class));
+        }
+
+        List<String> errors = new ArrayList<>();
+        //检查导入数据，是否空集合，据类型是否正确，数据类型有错误。
+        List<Map<String, Object>> checks = checkData(list);
+        for (int i = 0; i < checks.size(); i++) {
+            Map<String, Object> map = checks.get(i);
+            if (Objects.nonNull(map.get("error"))) {
+                errors.add("第" + (i + 2) + "行:" + map.get("error").toString());
+            }
+        }
+
+        if (org.springframework.util.CollectionUtils.isEmpty(data)) {
+            return ResultData.failure(errors.toString());
+        }
+        return ResultData.success(data);
+    }
+
+    /**
+     * 检查导入数据
+     *
+     * @param list
+     * @return
+     */
+    private List<Map<String, Object>> checkData(List<TbUser> list) {
+        //TODO -> 查询数据库来校验比如物料编码是否存在。map.containsKey(Object key)方法。
+        //TODO -> 查询数据库来校验比如物料编码是否存在。map.containsValue(Object value)方法。
+        Map<String, String> database = new HashMap<String, String>() {
+            {
+                put("admin", "管理员");
+                put("guest", "宾客");
+            }
+        };
+        //TODO -> 远程调用字典库查询用户是否存在。list.contains(Object obj)方法。
+        List<String> rest = new ArrayList<>();
+        rest.add("admin");
+        rest.add("guest");
+
+        List<Map<String, Object>> errors = new ArrayList<>();
+        Iterator<TbUser> iterator = list.iterator();
+        while (iterator.hasNext()) {
+            TbUser user = iterator.next();
+            Map<String, Object> map = new HashMap<>();
+            if (org.springframework.util.StringUtils.isEmpty(user.getUsername())) {
+                map.put("error", "用户名称不能为空");
+                errors.add(map);
+                iterator.remove();
+            }
+            if (!database.containsValue(user.getUsername())) {
+                map.put("error", "用户字典表不存在此用户");
+                errors.add(map);
+                iterator.remove();
+            }
+            if (list.contains(user.getUsername())) {
+                map.put("error", "用户字典表不存在此用户");
+                errors.add(map);
+                iterator.remove();
+            }
+            if (org.springframework.util.StringUtils.isEmpty(user.getPassword())) {
+                map.put("error", "用户密码不能为空");
+                errors.add(map);
+                iterator.remove();
+            }
+            if (org.springframework.util.StringUtils.isEmpty(user.getRole())) {
+                map.put("error", "用户角色不能为空");
+                errors.add(map);
+                iterator.remove();
+            }
+        }
+        return errors;
     }
 
     /**
