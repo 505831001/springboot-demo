@@ -2,7 +2,6 @@ package com.excel.poi.service.impl;
 
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.toolkit.BeanUtils;
-import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.excel.poi.dao.TbUserMapper;
 import com.excel.poi.entity.TbUser;
 import com.excel.poi.service.ExcelPoiService;
@@ -24,6 +23,7 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
@@ -33,6 +33,7 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 /**
  * @author Liuweiwei
@@ -295,6 +296,20 @@ public class ExcelPoiServiceImpl implements ExcelPoiService {
         rest.add("guest");
 
         List<Map<String, Object>> errors = new ArrayList<>();
+        /**
+         * java中list集合删除其中的某一个元素
+         * 1.Iterator 去除
+         *     缺点：虽然也能去除，但是列表改造成 Iterator 类型的了，还要转换。
+         * 2.stream 去除
+         *     优点：没有改变list格式并且更简洁。
+         *     缺点：remove的时候会再次遍历整个list来找出 这个元素，性能会有一定的损耗。
+         *     实现：list.stream().filter(user -> StringUtils.isEmpty(user.getUsername())).collect(Collectors.toList());
+         *     实现：list.stream().findFirst().map(user -> {if (StringUtils.isEmpty(user.getUsername())) {list.remove(user);}return user;});
+         * 3.stream+索引 去除
+         *     优点：更简洁，高效。
+         *     实现：IntStream.range(0,list.size()).filter(i-> StringUtils.isEmpty(list.get(i).getUsername())).boxed().findFirst().map(i->list.remove((int)i));
+         * 4.fori()和forEach()去除都会有问题。
+         */
         Iterator<TbUser> iterator = list.iterator();
         while (iterator.hasNext()) {
             TbUser user = iterator.next();
@@ -537,7 +552,7 @@ public class ExcelPoiServiceImpl implements ExcelPoiService {
                     continue;
                 }
                 /**跳过空值的行，要求此行作废*/
-                if (row.getCell(0) == null || StringUtils.isBlank(row.getCell(0).getStringCellValue())) {
+                if (row.getCell(0) == null || org.apache.commons.lang3.StringUtils.isBlank(row.getCell(0).getStringCellValue())) {
                     continue;
                 }
                 /**获得sheet行有多少单元格*/
