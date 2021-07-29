@@ -3,33 +3,35 @@ package com.excel.poi.service.impl;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.toolkit.BeanUtils;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
-import com.excel.poi.constants.NumericConstants;
 import com.excel.poi.dao.TbUserMapper;
 import com.excel.poi.entity.TbUser;
 import com.excel.poi.service.ExcelPoiService;
+import com.excel.poi.utils.ExcelUtils;
 import com.excel.poi.utils.Utils;
+import com.excel.poi.vo.TbUserVO;
 import com.google.common.collect.Lists;
+import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.ListUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.hssf.usermodel.*;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * @author Liuweiwei
@@ -38,7 +40,9 @@ import java.util.Map;
 @Service
 public class ExcelPoiServiceImpl implements ExcelPoiService {
 
-    @Autowired
+    private final Logger LOGGER = LogManager.getLogger(this.getClass());
+
+    @Resource
     private TbUserMapper tbUserMapper;
 
     /**字符串格式cn字符串和en字符串*/
@@ -253,12 +257,6 @@ public class ExcelPoiServiceImpl implements ExcelPoiService {
      */
     @Override
     public void downloadExcel(HttpServletResponse response) {
-        //设置要导出的文件的名字
-        String fileName  = "userinfo" + ".xls";
-        String sheetName = "userinfo";
-        //新增数据行，并且设置单元格数据
-        String[] headers = {"id", "username", "password", "role", "permission", "ban", "phone", "email", "created", "updated"};
-
         List<TbUser> list = tbUserMapper.selectList(null);
         System.out.println("org.apache.commons.collections4.CollectionUtils - 如果指定的集合不为空，则执行空安全检查。");
         if (CollectionUtils.isNotEmpty(list)) {
@@ -285,6 +283,11 @@ public class ExcelPoiServiceImpl implements ExcelPoiService {
             }
         }
 
+        /**设置要导出的文件的名字*/
+        String fileName  = "userinfo" + ".xls";
+        String sheetName = "userinfo";
+        /**新增数据行，并且设置单元格数据*/
+        String[] headers = {"id", "username", "password", "role", "permission", "ban", "phone", "email", "created", "updated"};
         // 1.High level representation of a Excel workbook. - Excel工作簿的高级表示。
         HSSFWorkbook workbook = new HSSFWorkbook();
         // 2.Sheets are the central structures within a workbook. - 工作表是工作簿中的中心结构。
@@ -331,44 +334,102 @@ public class ExcelPoiServiceImpl implements ExcelPoiService {
      */
     @Override
     public void exportExcel(HttpServletResponse response) throws IOException {
+        List<TbUserVO> voList = new ArrayList<>(10);
+        List<TbUser>   poList = tbUserMapper.selectList(null);
+        //持久层PO对象转视图层VO对象，DTO对象入参给接口传递使用。
+        poList.stream().forEach(source -> {
+            TbUserVO target = new TbUserVO();
+            org.springframework.beans.BeanUtils.copyProperties(source, target);
+            target.setId(String.valueOf(source.getId()));
+            target.setCreated(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(source.getCreated()));
+            target.setUpdated(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(source.getUpdated()));
+            voList.add(target);
+        });
+
+        /**
+         * 对象列表转集合列表。TODO -> stream().map(单例集合list)方法。
+         * Returns a stream consisting of the results of applying the given function to the elements of this stream.
+         * 返回一个流，该流包含将给定函数应用于该流元素的结果。
+         */
+        List<Map<String, Object>> mapList = voList.stream().map(tbUserVO -> {
+            try {
+                Map<String, Object> map = PropertyUtils.describe(tbUserVO);
+                return map;
+            } catch (Exception ex) {
+                LOGGER.error("导出异常-> msg:{}, data:{}", ex.getMessage(), JSONObject.toJSONString(tbUserVO));
+                ex.printStackTrace();
+            }
+            return null;
+        }).collect(Collectors.toList());
+        if (voList.stream().filter(vo -> Objects.isNull(vo)).collect(Collectors.toList()).size() > 0) {
+            throw new RuntimeException("导出列表无数据");
+        }
+        voList.stream().forEach(vo -> {
+            Map<String, String> statusMap = ExcelUtils.statusMaps();
+            for (Map.Entry<String, String> entry : statusMap.entrySet()) {
+                if (vo.getBan().equalsIgnoreCase(entry.getKey())) {
+                    vo.setBan(entry.getValue());
+                }
+            }
+            Map<String, String> roleMap = ExcelUtils.roleMaps();
+            for (Map.Entry<String, String> entry : roleMap.entrySet()) {
+                if (vo.getRole().equalsIgnoreCase(entry.getKey())) {
+                    vo.setRole(entry.getValue());
+                }
+            }
+        });
+
+        /**
+         * 遍历集合列表下集合键值对。TODO -> stream().flatMap(双列集合map)方法。
+         * Returns a stream consisting of the results of replacing each element of this stream with the contents of a mapped stream produced by applying the provided mapping function to each element.
+         * 返回一个流，该流由将提供的映射函数应用于每个元素而生成的映射流的内容替换该流的每个元素的结果组成。
+         */
+        mapList.stream().flatMap(map -> map.entrySet().stream()).forEach(entry -> {
+            if (entry.getKey().equalsIgnoreCase("ban")) {
+                System.out.println("用户状态数值描述切换");
+            }
+            if (entry.getKey().equalsIgnoreCase("role")) {
+                System.out.println("用户角色数值描述替换");
+            }
+        });
+
         /**字符串数组格式cn标题Title*/
         String[] cnHeaders = {"主键", "用户名称", "用户密码", "用户角色", "用户权限", "用户状态", "电话号码", "邮箱地址", "创建时间", "修改时间"};
         /**字符串数组格式en标题Title*/
         String[] enHeaders = {"id", "username", "password", "role", "permission", "ban", "phone", "email", "created", "updated"};
         /**设置要导出的文件的名字*/
         String fileName  = "userinfo" + ".xls";
-
-        // 1.High level representation of a Excel workbook. - Excel工作簿的高级表示。
+        // TODO -> 1.High level representation of a Excel workbook. - Excel工作簿的高级表示。
         Workbook workbook = new HSSFWorkbook();
-        // 2.Sheets are the central structures within a workbook. - 工作表是工作簿中的中心结构。
+        // TODO -> 2.Sheets are the central structures within a workbook. - 工作表是工作簿中的中心结构。
         Sheet sheet = workbook.createSheet();
-        // 3.High level representation of a row of a spreadsheet. - 电子表格行的高级表示。
+        // TODO -> 3.High level representation of a row of a spreadsheet. - 电子表格行的高级表示。
         Row row = sheet.createRow(0);
         for (int j = 0; j < cnHeaders.length; j++) {
-            // 4.High level representation of a cell in a row of a spreadsheet. - 电子表格中一行[单元格]的高级表示。
+            // TODO -> 4.High level representation of a cell in a row of a spreadsheet. - 电子表格中一行[单元格]的高级表示。
             Cell cell = row.createCell(j);
             cell.setCellValue(cnHeaders[j]);
         }
         /*
         for (int j = 0; j < enHeaders.length; j++) {
-            // 4.High level representation of a cell in a row of a spreadsheet. - 电子表格中一行[单元格]的高级表示。
+            // TODO -> 4.High level representation of a cell in a row of a spreadsheet. - 电子表格中一行[单元格]的高级表示。
             Cell cell = row.createCell(j);
             cell.setCellValue(enHeaders[j]);
         }
         */
-        List<TbUser> list = tbUserMapper.selectList(null);
-        for (int i = 0; i < list.size(); i++) {
+        /**sheet中第0+1行添加每个单元格cell数值*/
+        for (int i = 0; i < voList.size(); i++) {
             row = sheet.createRow(i + 1);
-            row.createCell(NumericConstants.ZERO).setCellValue(list.get(i).getId()         == null ? null : list.get(i).getId());
-            row.createCell(NumericConstants.ONE).setCellValue(list.get(i).getUsername()    == null ? null : list.get(i).getUsername());
-            row.createCell(NumericConstants.TWO).setCellValue(list.get(i).getPassword()    == null ? null : list.get(i).getPassword());
-            row.createCell(NumericConstants.THREE).setCellValue(list.get(i).getRole()      == null ? null : list.get(i).getRole());
-            row.createCell(NumericConstants.FOUR).setCellValue(list.get(i).getPermission() == null ? null : list.get(i).getPermission());
-            row.createCell(NumericConstants.FIVE).setCellValue(list.get(i).getBan()        == null ? null : list.get(i).getBan());
-            row.createCell(NumericConstants.SIX).setCellValue(list.get(i).getPhone()       == null ? null : list.get(i).getPhone());
-            row.createCell(NumericConstants.SEVEN).setCellValue(list.get(i).getEmail()     == null ? null : list.get(i).getEmail());
-            row.createCell(NumericConstants.EIGHT).setCellValue(list.get(i).getCreated()   == null ? null : new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(list.get(i).getCreated()));
-            row.createCell(NumericConstants.NINE).setCellValue(list.get(i).getUpdated()    == null ? null : new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(list.get(i).getUpdated()));
+            row.createCell(0).setCellValue(voList.get(i).getId()         == null ? null : voList.get(i).getId());
+            row.createCell(1).setCellValue(voList.get(i).getUsername()   == null ? null : voList.get(i).getUsername());
+            row.createCell(2).setCellValue(voList.get(i).getPassword()   == null ? null : voList.get(i).getPassword());
+            row.createCell(3).setCellValue(voList.get(i).getRole()       == null ? null : voList.get(i).getRole());
+            row.createCell(4).setCellValue(voList.get(i).getPermission() == null ? null : voList.get(i).getPermission());
+            row.createCell(5).setCellValue(voList.get(i).getBan()        == null ? null : voList.get(i).getBan());
+            row.createCell(6).setCellValue(voList.get(i).getPhone()      == null ? null : voList.get(i).getPhone());
+            row.createCell(7).setCellValue(voList.get(i).getEmail()      == null ? null : voList.get(i).getEmail());
+            row.createCell(8).setCellValue(voList.get(i).getCreated()    == null ? null : voList.get(i).getCreated());
+            row.createCell(9).setCellValue(voList.get(i).getUpdated()    == null ? null : voList.get(i).getUpdated());
         }
         response.reset();
         response.setContentType("application/octet-stream");
