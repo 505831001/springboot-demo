@@ -6,13 +6,14 @@ import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
 import java.io.Serializable;
+import java.util.Date;
 
 /**
  * @author Liuweiwei
  * @since 2021-07-21
  */
 @Data
-@ApiModel(description = "用户表入参对象DTO，出参对象VO")
+@ApiModel(description = "用户表入参对象DTO（所有字段保持和PO一样），出参对象VO（所有字段字符串类型响应）")
 public class TbUserDTO implements Serializable {
     /**主键ID*/
     @ApiModelProperty(value = "主键ID", required = false)
@@ -50,9 +51,9 @@ public class TbUserDTO implements Serializable {
 
     /**创建时间*/
     @ApiModelProperty(value = "创建时间（年-月-日 时:分:秒）", required = false)
-    private String created;
+    private Date created;
 
     /**更新时间*/
     @ApiModelProperty(value = "更新时间（年-月-日 时:分:秒）", required = false)
-    private String updated;
+    private Date updated;
 }
