@@ -10,9 +10,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -32,8 +29,7 @@ public class TbItemServiceImpl implements TbItemService {
 
     @Override
     public List<TbItem> findAll() {
-        List<TbItem> list = new ArrayList<>();
-        list = (List<TbItem>) redisTemplate.opsForValue().get("list");
+        List<TbItem> list = (List<TbItem>) redisTemplate.opsForValue().get("list");
         if (CollectionUtils.isEmpty(list)) {
             list = itemMapper.selectAll();
             redisTemplate.opsForValue().set("list", list);
@@ -43,8 +39,6 @@ public class TbItemServiceImpl implements TbItemService {
         } else {
             logger.info("查询NoSQL数据库信息");
         }
-        new LinkedList<>();
-        new HashMap<>();
         return list;
     }
 }
