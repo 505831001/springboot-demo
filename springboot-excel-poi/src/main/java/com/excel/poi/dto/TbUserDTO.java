@@ -13,7 +13,7 @@ import java.util.Date;
  * @since 2021-07-21
  */
 @Data
-@ApiModel(description = "用户表入参对象DTO（所有字段保持和PO一样），出参对象VO（所有字段字符串类型响应）")
+@ApiModel(description = "用户表入参对象DTO（所有字段类型保持和PO一样），出参对象VO（所有字段转字符串类型响应）")
 public class TbUserDTO implements Serializable {
     /**主键ID*/
     @ApiModelProperty(value = "主键ID", required = false)

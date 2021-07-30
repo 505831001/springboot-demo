@@ -288,7 +288,7 @@ public class ExcelPoiServiceImpl extends ServiceImpl<TbUserMapper, TbUser> imple
         Map<String, String> database = new HashMap<String, String>() {
             {
                 put("admin", "管理员");
-                put("guest", "宾客");
+                put("guest", "访宾客");
             }
         };
         //TODO -> 远程调用字典库查询用户是否存在。list.contains(Object obj)方法。
