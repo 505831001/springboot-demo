@@ -269,6 +269,40 @@ public class ExcelPoiServiceImpl extends ServiceImpl<TbUserMapper, TbUser> imple
                 errors.add("第" + (i + 2) + "行:" + map.get("error").toString());
             }
         }
+        //excel数据判断重复
+        String[] uniqueIndexFields = new String[]{"supplierCode", "materialsCode"};
+        List<Map<String, Object>> errorList = new ArrayList<>();
+        Map<String, String> map = new HashMap<>();
+        for (int i = 0; i < data.size(); i++) {
+            String dtoJson = JSONObject.toJSONString(data.get(i));
+            System.out.println("dto对象：" + dtoJson.toString());
+            Map<String, String> dtoMap = (Map<String, String>) JSONObject.parse(dtoJson);
+            System.out.println("dto集合：" + dtoMap.toString());
+            if (dtoMap.size() > 0) {
+                String supplierMaterial = new String();
+                for (String fields : uniqueIndexFields) {
+                    supplierMaterial += dtoMap.get(fields);
+                }
+                Map<String, Object> errorMap = new HashMap<>();
+                System.out.println("供应商和物料码：" + supplierMaterial.toString());
+                if (null != map.get(supplierMaterial)) {
+                    System.out.println("第" + (i + 1) +  "行数据重复");
+                    checks.get(i).put("错误信息", "第" + (i + 1) + "行数据重复");
+                    errorMap.put("错误信息", "第" + (i + 1) + "行数据重复");
+                    map.put("" + (i + 1), "第" + (i + 1) + "行数据：");
+                    errorList.add(errorMap);
+                    continue;
+                } else {
+                    map.put(supplierMaterial, "第" + (i + 1) + "行数据：");
+                    errorMap.put("正确信息", "第" + (i + 1) + "行数据唯一");
+                }
+            }
+        }
+        for (Map<String, Object> errorMap : errorList) {
+            for (Map.Entry<String, Object> entry : errorMap.entrySet()) {
+                System.out.println("重复数据：" + entry.toString());
+            }
+        }
 
         if (org.springframework.util.CollectionUtils.isEmpty(data)) {
             return ResultData.failure(errors.toString());
