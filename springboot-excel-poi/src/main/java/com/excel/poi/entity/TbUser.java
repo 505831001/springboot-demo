@@ -16,22 +16,22 @@ import java.util.Date;
 public class TbUser implements Serializable {
     @TableId(value = "id", type = IdType.UUID)
     private Long id;
-    @TableField(value = "用户名称")
+    @TableField(value = "username")
     private String username;
-    @TableField(value = "用户密码")
+    @TableField(value = "password")
     private String password;
-    @TableField(value = "用户角色(admin-管理员，guest-宾客)")
+    @TableField(value = "role")
     private String role;
-    @TableField(value = "用户权限")
+    @TableField(value = "permission")
     private String permission;
-    @TableField(value = "用户状态(1-可用，0停用)")
+    @TableField(value = "ban")
     private String ban;
-    @TableField(value = "电话号码")
+    @TableField(value = "phone")
     private String phone;
-    @TableField(value = "邮箱地址")
+    @TableField(value = "email")
     private String email;
-    @TableField(value = "创建时间(年-月-日 时:分:秒)")
+    @TableField(value = "created")
     private Date created;
-    @TableField(value = "修改时间(年-月-日 时:分:秒)")
+    @TableField(value = "updated")
     private Date updated;
 }

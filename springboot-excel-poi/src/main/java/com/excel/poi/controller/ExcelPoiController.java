@@ -34,7 +34,11 @@ public class ExcelPoiController {
     @RequestMapping(value = "downloadExcel", method = RequestMethod.GET)
     @ApiOperation(value = "下载按钮", notes = "下载按钮", tags = "")
     public void downloadExcel(HttpServletResponse response) {
-        excelPoiService.downloadExcel(response);
+        try {
+            excelPoiService.downloadExcel(response);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
     }
 
     @RequestMapping(value = "/importExcel", method = RequestMethod.POST, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
@@ -53,8 +57,8 @@ public class ExcelPoiController {
     public void exportExcel(HttpServletResponse response) {
         try {
             excelPoiService.exportExcel(response);
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (Exception ex) {
+            ex.printStackTrace();
         }
     }
 }

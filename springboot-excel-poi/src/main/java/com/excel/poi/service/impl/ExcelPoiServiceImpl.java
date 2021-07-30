@@ -1,7 +1,8 @@
 package com.excel.poi.service.impl;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import com.baomidou.mybatisplus.core.toolkit.BeanUtils;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.excel.poi.dao.TbUserMapper;
 import com.excel.poi.entity.TbUser;
 import com.excel.poi.service.ExcelPoiService;
@@ -10,6 +11,7 @@ import com.excel.poi.utils.FileUtils;
 import com.excel.poi.utils.ResultData;
 import com.excel.poi.vo.TbUserVO;
 import com.google.common.collect.Lists;
+import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.ListUtils;
@@ -23,24 +25,23 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 import java.io.BufferedInputStream;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 /**
  * @author Liuweiwei
  * @since 2021-07-04
  */
 @Service
-public class ExcelPoiServiceImpl implements ExcelPoiService {
+public class ExcelPoiServiceImpl extends ServiceImpl<TbUserMapper, TbUser> implements ExcelPoiService {
 
     private final Logger LOGGER = LogManager.getLogger(this.getClass());
 
@@ -349,29 +350,39 @@ public class ExcelPoiServiceImpl implements ExcelPoiService {
      * @param response
      */
     @Override
-    public void downloadExcel(HttpServletResponse response) {
-        List<TbUser> list = tbUserMapper.selectList(null);
+    public void downloadExcel(HttpServletResponse response) throws IllegalAccessException, NoSuchMethodException, InvocationTargetException {
+        List<TbUser> list = this.list();
         System.out.println("org.apache.commons.collections4.CollectionUtils - 如果指定的集合不为空，则执行空安全检查。");
         if (CollectionUtils.isNotEmpty(list)) {
+            System.out.println("com.google.common.collect.Lists - 返回一个列表的连续{List.subList(int,int) subList}，每个列表的大小相同(最后的列表可能更小)。");
             List<List<TbUser>> partition = Lists.partition(list, HttpStatus.OK.value());
             for (List<TbUser> users : partition) {
                 for (TbUser tbUser : users) {
-                    System.out.println("com.google.common.collect.Lists - 返回一个列表的连续{List.subList(int,int) subList}，每个列表的大小相同(最后的列表可能更小)。");
-                    String json = JSONObject.toJSONString(tbUser);
                     System.out.println("com.alibaba.fastjson.JSONObject - 此方法将指定的对象序列化为其等效的json表示形式。");
-                    TbUser object = JSONObject.parseObject(json, TbUser.class);
+                    String json = JSONObject.toJSONString(tbUser);
                     System.out.println("com.alibaba.fastjson.JSONObject - 此方法将指定的json反序列化为指定类的对象。");
-                    List<Map<String, Object>> maps = BeanUtils.beansToMaps(list);
-                    System.out.println("");
+                    TbUser user = JSONObject.parseObject(json, TbUser.class);
+                    System.out.println("org.apache.commons.beanutils.BeanUtils - 返回指定bean提供读取方法的整个属性集。");
+                    Map<String, String> map1 = BeanUtils.describe(user);
+                    System.out.println("org.apache.commons.beanutils.PropertyUtils - 返回指定bean提供读取方法的整个属性集。");
+                    Map<String, Object> map2 = PropertyUtils.describe(user);
                 }
             }
         }
         System.out.println("org.springframework.util.CollectionUtils - 如果提供的集合为{null}或空，则返回{true}。");
         if (org.springframework.util.CollectionUtils.isEmpty(list)) {
+            System.out.println("org.apache.commons.collections4.ListUtils - 返回一个列表的连续{List.subList(int,int) subList}，每个列表的大小相同(最后的列表可能更小)。");
             List<List<TbUser>> partition = ListUtils.partition(list, HttpServletResponse.SC_OK);
             for (List<TbUser> users : partition) {
                 for (TbUser tbUser : users) {
-                    System.out.println("org.apache.commons.collections4.ListUtils - 返回一个列表的连续{List.subList(int,int) subList}，每个列表的大小相同(最后的列表可能更小)。");
+                    System.out.println("com.alibaba.fastjson.JSON - 此方法将指定的对象序列化为其等效的json表示形式。");
+                    String json = JSON.toJSONString(tbUser);
+                    System.out.println("com.alibaba.fastjson.JSON - 此方法将指定的json反序列化为指定类的对象。");
+                    TbUser user = JSON.parseObject(json, TbUser.class);
+                    System.out.println("org.apache.commons.beanutils.BeanUtils - 返回指定bean提供读取方法的整个属性集。");
+                    Map<String, String> map1 = BeanUtils.describe(user);
+                    System.out.println("org.apache.commons.beanutils.PropertyUtils - 返回指定bean提供读取方法的整个属性集。");
+                    Map<String, Object> map2 = PropertyUtils.describe(user);
                 }
             }
         }
@@ -379,8 +390,10 @@ public class ExcelPoiServiceImpl implements ExcelPoiService {
         /**设置要导出的文件的名字*/
         String fileName  = "userinfo" + ".xls";
         String sheetName = "userinfo";
-        /**新增数据行，并且设置单元格数据*/
-        String[] headers = {"id", "username", "password", "role", "permission", "ban", "phone", "email", "created", "updated"};
+        /**字符串数组格式cn标题Title*/
+        String[] cnHeaders = {"主键", "用户名称", "用户密码", "用户角色", "用户权限", "用户状态", "电话号码", "邮箱地址", "创建时间", "修改时间"};
+        /**字符串数组格式en标题Title*/
+        String[] enHeaders = {"id", "username", "password", "role", "permission", "ban", "phone", "email", "created", "updated"};
         // 1.High level representation of a Excel workbook. - Excel工作簿的高级表示。
         HSSFWorkbook workbook = new HSSFWorkbook();
         // 2.Sheets are the central structures within a workbook. - 工作表是工作簿中的中心结构。
@@ -388,15 +401,23 @@ public class ExcelPoiServiceImpl implements ExcelPoiService {
         // 3.High level representation of a row of a spreadsheet. - 电子表格行的高级表示。
         HSSFRow row = sheet.createRow(0);
         /**在excel表中添加表头*/
-        for (int i = 0; i < headers.length; i++) {
-            // 4.High level representation of a cell in a row of a spreadsheet. - 电子表格中一行[单元格]的高级表示。
-            HSSFCell cell = row.createCell(i);
-            HSSFRichTextString text = new HSSFRichTextString(headers[i]);
+        for (int j = 0; j < cnHeaders.length; j++) {
+            // TODO -> 4.High level representation of a cell in a row of a spreadsheet. - 电子表格中一行[单元格]的高级表示。
+            HSSFCell cell = row.createCell(j);
+            HSSFRichTextString text = new HSSFRichTextString(cnHeaders[j]);
             cell.setCellValue(text);
         }
+        /*
+        for (int j = 0; j < enHeaders.length; j++) {
+            // TODO -> 4.High level representation of a cell in a row of a spreadsheet. - 电子表格中一行[单元格]的高级表示。
+            HSSFCell cell = row.createCell(j);
+            HSSFRichTextString text = new HSSFRichTextString(enHeaders[j]);
+            cell.setCellValue(text);
+        }
+        */
         /**在表中存放查询到的数据放入对应的列*/
         for (int i = 0; i < list.size(); i++) {
-            row = sheet.createRow(1 + 1);
+            row = sheet.createRow(i + 1);
             row.createCell(0).setCellValue(list.get(i).getId()         == null ? null : list.get(i).getId());
             row.createCell(1).setCellValue(list.get(i).getUsername()   == null ? null : list.get(i).getUsername());
             row.createCell(2).setCellValue(list.get(i).getPassword()   == null ? null : list.get(i).getPassword());
@@ -426,18 +447,36 @@ public class ExcelPoiServiceImpl implements ExcelPoiService {
      * @throws IOException
      */
     @Override
-    public void exportExcel(HttpServletResponse response) throws IOException {
+    public void exportExcel(HttpServletResponse response) {
         List<TbUserVO> voList = new ArrayList<>(10);
         List<TbUser>   poList = tbUserMapper.selectList(null);
         //持久层PO对象转视图层VO对象，DTO对象入参给接口传递使用。
-        poList.stream().forEach(source -> {
+        poList.stream().forEach(po -> {
             TbUserVO target = new TbUserVO();
-            org.springframework.beans.BeanUtils.copyProperties(source, target);
-            target.setId(String.valueOf(source.getId()));
-            target.setCreated(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(source.getCreated()));
-            target.setUpdated(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(source.getUpdated()));
+            org.springframework.beans.BeanUtils.copyProperties(po, target);
+            target.setId(String.valueOf(po.getId()));
+            target.setCreated(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(po.getCreated()));
+            target.setUpdated(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(po.getUpdated()));
             voList.add(target);
         });
+        //导入导出状态和来源之数值切换描述
+        voList.stream().forEach(vo -> {
+            Map<String, String> statusMap = ExcelUtils.statusMaps();
+            for (Map.Entry<String, String> entry : statusMap.entrySet()) {
+                if (vo.getBan().equalsIgnoreCase(entry.getKey())) {
+                    vo.setBan(entry.getValue());
+                }
+            }
+            Map<String, String> roleMap = ExcelUtils.roleMaps();
+            for (Map.Entry<String, String> entry : roleMap.entrySet()) {
+                if (vo.getRole().equalsIgnoreCase(entry.getKey())) {
+                    vo.setRole(entry.getValue());
+                }
+            }
+        });
+        if (voList.stream().filter(vo -> Objects.isNull(vo)).collect(Collectors.toList()).size() > 0) {
+            throw new RuntimeException("导出列表无数据");
+        }
 
         /**
          * 对象列表转集合列表。TODO -> stream().map(单例集合list)方法。
@@ -454,24 +493,6 @@ public class ExcelPoiServiceImpl implements ExcelPoiService {
             }
             return null;
         }).collect(Collectors.toList());
-        if (voList.stream().filter(vo -> Objects.isNull(vo)).collect(Collectors.toList()).size() > 0) {
-            throw new RuntimeException("导出列表无数据");
-        }
-        voList.stream().forEach(vo -> {
-            Map<String, String> statusMap = ExcelUtils.statusMaps();
-            for (Map.Entry<String, String> entry : statusMap.entrySet()) {
-                if (vo.getBan().equalsIgnoreCase(entry.getKey())) {
-                    vo.setBan(entry.getValue());
-                }
-            }
-            Map<String, String> roleMap = ExcelUtils.roleMaps();
-            for (Map.Entry<String, String> entry : roleMap.entrySet()) {
-                if (vo.getRole().equalsIgnoreCase(entry.getKey())) {
-                    vo.setRole(entry.getValue());
-                }
-            }
-        });
-
         /**
          * 遍历集合列表下集合键值对。TODO -> stream().flatMap(双列集合map)方法。
          * Returns a stream consisting of the results of replacing each element of this stream with the contents of a mapped stream produced by applying the provided mapping function to each element.

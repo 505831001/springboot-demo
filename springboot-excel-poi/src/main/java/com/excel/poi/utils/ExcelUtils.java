@@ -17,7 +17,7 @@ public class ExcelUtils {
         return new HashMap<String, String>() {
             {
                 put("0", "停用");
-                put("1", "可用");
+                put("1", "正常");
             }
         };
     }
@@ -31,7 +31,7 @@ public class ExcelUtils {
         return new HashMap<String, String>() {
             {
                 put("admin", "管理员");
-                put("guest", "宾客");
+                put("guest", "访宾客");
             }
         };
     }
