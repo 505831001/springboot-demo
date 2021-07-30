@@ -23,24 +23,35 @@ import java.util.Date;
  */
 @Data
 public class TbUser implements Serializable {
+    private static final long serialVersionUID = 4445608153487429917L;
+    /**主键ID*/
     @TableId(value = "id", type = IdType.UUID)
     private Long id;
+    /**用户名*/
     @TableField(value = "username")
     private String username;
+    /**密码，加密存储*/
     @TableField(value = "password")
     private String password;
+    /**角色*/
     @TableField(value = "role")
     private String role;
+    /**权限*/
     @TableField(value = "permission")
     private String permission;
+    /**账号状态*/
     @TableField(value = "ban")
     private String ban;
+    /**注册手机号*/
     @TableField(value = "phone")
     private String phone;
+    /**注册邮箱*/
     @TableField(value = "email")
     private String email;
+    /**创建时间*/
     @TableField(value = "created")
     private Date created;
+    /**更新时间*/
     @TableField(value = "updated")
     private Date updated;
 }

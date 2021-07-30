@@ -33,39 +33,39 @@ public class TbUser implements Serializable {
 
     /**用户名*/
     @NotBlank(message = "用户名称不能为空")
-    @TableField
+    @TableField(value = "username")
     private String username;
 
     /**密码，加密存储*/
     @NotBlank(message = "用户密码不能为空")
-    @TableField
+    @TableField(value = "password")
     private String password;
 
     /**角色*/
-    @TableField
+    @TableField(value = "role")
     private String role;
 
     /**权限*/
-    @TableField
+    @TableField(value = "permission")
     private String permission;
 
     /**账号状态*/
-    @TableField
+    @TableField(value = "ban")
     private String ban;
 
     /**注册手机号*/
-    @TableField
+    @TableField(value = "phone")
     private String phone;
 
     /**注册邮箱*/
-    @TableField
+    @TableField(value = "email")
     private String email;
 
     /**创建时间*/
-    @TableField
+    @TableField(value = "created")
     private Date created;
 
     /**更新时间*/
-    @TableField
+    @TableField(value = "updated")
     private Date updated;
 }
