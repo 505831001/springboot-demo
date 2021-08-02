@@ -24,6 +24,7 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -50,6 +51,12 @@ public class ExcelPoiServiceImpl extends ServiceImpl<TbUserMapper, TbUser> imple
     @Resource
     private TbUserMapper tbUserMapper;
 
+    /**阿里巴巴w3c提示:魔法值.不允许任何魔法值(即未经定义的常量)直接出现在代码中.*/
+    private static final String  XLS = "xls";
+    private static final String XLSX = "xlsx";
+    private static final String  BAN = "ban";
+    private static final String ROLE = "role";
+
     /**字符串格式cn字符串和en字符串*/
     public static String cnTitleStrings = "主键,用户名称,用户密码,用户角色,用户权限,用户状态,电话号码,邮箱地址,创建时间,修改时间";
     public static String enFieldStrings = "id,username,password,role,permission,ban,phone,email,created,updated";
@@ -72,7 +79,7 @@ public class ExcelPoiServiceImpl extends ServiceImpl<TbUserMapper, TbUser> imple
      * @return
      */
     public static Map<String, String> excelCNtoENSwitch() {
-        Map<String, String> convertMap = new HashMap<>();
+        Map<String, String> convertMap = new HashMap<>(10);
         String[] titles = cnTitleStrings.split(",");
         String[] fields = enFieldStrings.split(",");
         for (int i = 0; i < titles.length; i++) {
@@ -87,7 +94,7 @@ public class ExcelPoiServiceImpl extends ServiceImpl<TbUserMapper, TbUser> imple
      * @return
      */
     public static Map<String, String> excelCNtoENConvert() {
-        Map<String, String> convertMap = new HashMap<>();
+        Map<String, String> convertMap = new HashMap<>(10);
         String[] titles = cnTitles;
         String[] fields = enFields;
         for (int i = 0; i < titles.length; i++) {
@@ -128,7 +135,7 @@ public class ExcelPoiServiceImpl extends ServiceImpl<TbUserMapper, TbUser> imple
                     }
                     /**获得sheet每行有多少单元格*/
                     short lastCellNum = row.getLastCellNum();
-                    Map<String, Object> map0 = new HashMap<>();
+                    Map<String, Object> map0 = new HashMap<>(10);
                     for (int i = 0; i < lastCellNum; i++) {
                         // 4.High level representation of a cell in a row of a spreadsheet. - 电子表格中一行[单元格]的高级表示。
                         Cell cell = row.getCell(i);
@@ -139,7 +146,7 @@ public class ExcelPoiServiceImpl extends ServiceImpl<TbUserMapper, TbUser> imple
                             String value = cell.toString().trim();
                             /**cell单元格值一些字符的替换*/
                             //value.replaceAll("\\(" + "s" + "\\)", "").replaceAll("\\（" + "s" + "\\）", "").replaceAll(" ", "").replaceAll("　", "");
-                            switch (cell.getCellTypeEnum()) {
+                            switch (cell.getCellType()) {
                                 case STRING:
                                     value = cell.getStringCellValue();
                                     break;
@@ -163,7 +170,7 @@ public class ExcelPoiServiceImpl extends ServiceImpl<TbUserMapper, TbUser> imple
 
                     /**获得sheet每行有多少单元格*/
                     int cells = row.getPhysicalNumberOfCells();
-                    Map<String, Object> map1 = new HashMap<>();
+                    Map<String, Object> map1 = new HashMap<>(10);
                     for (int i = 0; i < cells; i++) {
                         // 4.High level representation of a cell in a row of a spreadsheet. - 电子表格中一行[单元格]的高级表示。
                         Cell cell = row.getCell(i);
@@ -188,7 +195,7 @@ public class ExcelPoiServiceImpl extends ServiceImpl<TbUserMapper, TbUser> imple
                     Row row = sheet.getRow(i);
                     /**获得sheet每行有多少单元格*/
                     int cells = row.getPhysicalNumberOfCells();
-                    Map<String, Object> map2 = new HashMap<>();
+                    Map<String, Object> map2 = new HashMap<>(10);
                     for (int j = 0; j < cells; j++) {
                         // 4.High level representation of a cell in a row of a spreadsheet. - 电子表格中一行[单元格]的高级表示。
                         Cell cell = row.getCell(j);
@@ -199,7 +206,7 @@ public class ExcelPoiServiceImpl extends ServiceImpl<TbUserMapper, TbUser> imple
                             String value = cell.toString().trim();
                             /**cell单元格值一些字符的替换*/
                             //value.replaceAll("\\(" + "s" + "\\)", "").replaceAll("\\（" + "s" + "\\）", "").replaceAll(" ", "").replaceAll("　", "");
-                            switch (cell.getCellTypeEnum()) {
+                            switch (cell.getCellType()) {
                                 case STRING:
                                     value = cell.getStringCellValue();
                                     break;
@@ -241,7 +248,7 @@ public class ExcelPoiServiceImpl extends ServiceImpl<TbUserMapper, TbUser> imple
         List<Map<String, Object>> list3 = new ArrayList<>(10);
         Map<String, String> cNtoENConvert = excelCNtoENConvert();
         for (Map<String, Object> cnTitles : list0/**或者list1或者list2都行*/) {
-            Map<String, Object> enFields = new HashMap<>();
+            Map<String, Object> enFields = new HashMap<>(10);
             for (Map.Entry<String, Object> entry : cnTitles.entrySet()) {
                 String cnField = entry.getKey();
                 String enField = cNtoENConvert.get(cnField);
@@ -258,7 +265,7 @@ public class ExcelPoiServiceImpl extends ServiceImpl<TbUserMapper, TbUser> imple
         List<TbUser> list4 = new ArrayList<>(10);
         for (Map<String, Object> map : list3) {
             JSONObject            object = new JSONObject();
-            Map<String, Object> enFields = new HashMap<>();
+            Map<String, Object> enFields = new HashMap<>(10);
             for (Map.Entry<String, Object> entry : map.entrySet()) {
                 enFields.put(entry.getKey(), entry.getValue());
                 object.put(entry.getKey(), entry.getValue());
@@ -283,24 +290,18 @@ public class ExcelPoiServiceImpl extends ServiceImpl<TbUserMapper, TbUser> imple
             System.out.println("Sheet表单获取完单元格后中文[cnTitles]标题切换英文[enFields]字段来转换成[对象]存储后再转换中文描述值到数据表数值06：" + user.toString());
         }
 
+        List<Map<String, Object>> checks = new ArrayList<>(10);
         /**检查导入数据，是否空集合，据类型是否正确，数据类型有错误。*/
-        List<Map<String, Object>> checks = checkData(list5);
-        for (int i = 0; i < checks.size(); i++) {
-            Map<String, Object> map = checks.get(i);
-            if (Objects.nonNull(map.get("错误信息"))) {
-                System.out.println("第" + (i + 2) + "行:" + map.get("错误信息").toString());
-            }
-        }
-
-        //检查导入数据，是否重复，分别添加错误列表，或者保存列表。
+        checks = checkData(list5);
+        /**检查导入数据，是否有重复，分别添加错误列表，或者保存列表。*/
         checks = repeatData(list5, checks);
+        //自测可以打印结果看看
         for (int i = 0; i < checks.size(); i++) {
-            Map<String, Object> map = checks.get(i);
-            if (Objects.nonNull(map.get("错误信息"))) {
-                System.out.println("第" + (i + 2) + "行:" + map.get("错误信息").toString());
+            Map<String, Object> error = checks.get(i);
+            if (Objects.nonNull(error.get("错误信息"))) {
+                System.out.println("第" + (i + 2) + "行:" + error.get("错误信息").toString());
             }
         }
-
         /**如果有错误数据则返回400+errors，否则才返回成功200*/
         if (CollectionUtils.isNotEmpty(checks)) {
             return new ResponseEntity(checks.toString(), HttpStatus.BAD_REQUEST);
@@ -326,10 +327,19 @@ public class ExcelPoiServiceImpl extends ServiceImpl<TbUserMapper, TbUser> imple
         List<Map<String, Object>> list2 = new ArrayList<>(10);
         int index = 0;
 
-        /**流读取文件*/
+        /**获取文件路径*/
+        String filename = file.getOriginalFilename();
+        /**获取文件后缀类型*/
+        String fileSuffix = filename.substring(filename.lastIndexOf(".") + 1);
+        /**读取文件流*/
         BufferedInputStream is = new BufferedInputStream(file.getInputStream());
         // 1.High level representation of a Excel workbook. - Excel[工作簿]的高级表示。
-        Workbook workbook = new HSSFWorkbook(is);
+        Workbook workbook = null;
+        if (XLS.equalsIgnoreCase(fileSuffix)) {
+            workbook = new HSSFWorkbook(is);
+        } else if (XLSX.equalsIgnoreCase(fileSuffix)) {
+            workbook = new XSSFWorkbook(is);
+        }
         // 2.Sheets are the central structures within a workbook. - [工作表]是工作簿中的中心结构。
         Sheet sheet = workbook.getSheetAt(0);
         // 3.High level representation of a row of a spreadsheet. - 电子[表格行]的高级表示。
@@ -340,7 +350,7 @@ public class ExcelPoiServiceImpl extends ServiceImpl<TbUserMapper, TbUser> imple
             }
             /**获得sheet每行有多少单元格*/
             short lastCellNum = row.getLastCellNum();
-            Map<String, Object> map0 = new HashMap<>();
+            Map<String, Object> map0 = new HashMap<>(10);
             for (int i = 0; i < lastCellNum; i++) {
                 // 4.High level representation of a cell in a row of a spreadsheet. - 电子表格中一行[单元格]的高级表示。
                 Cell cell = row.getCell(i);
@@ -351,7 +361,7 @@ public class ExcelPoiServiceImpl extends ServiceImpl<TbUserMapper, TbUser> imple
                     String value = cell.toString().trim();
                     /**cell单元格值一些字符的替换*/
                     //value.replaceAll("\\(" + "s" + "\\)", "").replaceAll("\\（" + "s" + "\\）", "").replaceAll(" ", "").replaceAll("　", "");
-                    switch (cell.getCellTypeEnum()) {
+                    switch (cell.getCellType()) {
                         case STRING:
                             value = cell.getStringCellValue();
                             break;
@@ -375,7 +385,7 @@ public class ExcelPoiServiceImpl extends ServiceImpl<TbUserMapper, TbUser> imple
 
             /**获得sheet每行有多少单元格*/
             int cells = row.getPhysicalNumberOfCells();
-            Map<String, Object> map1 = new HashMap<>();
+            Map<String, Object> map1 = new HashMap<>(10);
             for (int i = 0; i < cells; i++) {
                 // 4.High level representation of a cell in a row of a spreadsheet. - 电子表格中一行[单元格]的高级表示。
                 Cell cell = row.getCell(i);
@@ -400,7 +410,7 @@ public class ExcelPoiServiceImpl extends ServiceImpl<TbUserMapper, TbUser> imple
             Row row = sheet.getRow(i);
             /**获得sheet每行有多少单元格*/
             int cells = row.getPhysicalNumberOfCells();
-            Map<String, Object> map2 = new HashMap<>();
+            Map<String, Object> map2 = new HashMap<>(10);
             for (int j = 0; j < cells; j++) {
                 // 4.High level representation of a cell in a row of a spreadsheet. - 电子表格中一行[单元格]的高级表示。
                 Cell cell = row.getCell(j);
@@ -411,7 +421,7 @@ public class ExcelPoiServiceImpl extends ServiceImpl<TbUserMapper, TbUser> imple
                     String value = cell.toString().trim();
                     /**cell单元格值一些字符的替换*/
                     //value.replaceAll("\\(" + "s" + "\\)", "").replaceAll("\\（" + "s" + "\\）", "").replaceAll(" ", "").replaceAll("　", "");
-                    switch (cell.getCellTypeEnum()) {
+                    switch (cell.getCellType()) {
                         case STRING:
                             value = cell.getStringCellValue();
                             break;
@@ -450,7 +460,7 @@ public class ExcelPoiServiceImpl extends ServiceImpl<TbUserMapper, TbUser> imple
         List<Map<String, Object>> list3 = new ArrayList<>(10);
         for (Map<String, Object> map : list0/**或者list1或者list2都行*/) {
             JSONObject object = new JSONObject();
-            Map<String, Object> temp = new HashMap<>();
+            Map<String, Object> temp = new HashMap<>(10);
             for (Map.Entry<String, Object> entry : map.entrySet()) {
                 String cnKey = entry.getKey();
                 String enKey = excelCNtoENConvert().get(cnKey);
@@ -479,27 +489,21 @@ public class ExcelPoiServiceImpl extends ServiceImpl<TbUserMapper, TbUser> imple
         /**Sheet表单获取完单元格后中文[cnTitles]标题切换英文[enFields]字段来转换成[对象]存储后再转换中文描述值到数据表数值*/
         buildTitlesToFields(list5);
         for (TbUser user : list5) {
-            System.out.println("Sheet表单获取完单元格后中文[cnTitles]标题切换英文[enFields]字段来转换成[对象]存储后再转换中文描述值到数据表数值06：" + user.toString());
+            //System.out.println("Sheet表单获取完单元格后中文[cnTitles]标题切换英文[enFields]字段来转换成[对象]存储后再转换中文描述值到数据表数值06：" + user.toString());
         }
 
-        //检查导入数据，是否空集合，据类型是否正确，数据类型有错误。
-        List<Map<String, Object>> checks = checkData(list5);
-        for (int i = 0; i < checks.size(); i++) {
-            Map<String, Object> map = checks.get(i);
-            if (Objects.nonNull(map.get("错误信息"))) {
-                System.out.println("第" + (i + 2) + "行:" + map.get("错误信息").toString());
-            }
-        }
-
-        //检查导入数据，是否重复，分别添加错误列表，或者保存列表。
+        List<Map<String, Object>> checks = new ArrayList<>(10);
+        /**检查导入数据，是否空集合，据类型是否正确，数据类型有错误。*/
+        checks = checkData(list5);
+        /**检查导入数据，是否有重复，分别添加错误列表，或者保存列表。*/
         checks = repeatData(list5, checks);
+        //自测可以打印结果看看
         for (int i = 0; i < checks.size(); i++) {
-            Map<String, Object> map = checks.get(i);
-            if (Objects.nonNull(map.get("错误信息"))) {
-                System.out.println("第" + (i + 2) + "行:" + map.get("错误信息").toString());
+            Map<String, Object> error = checks.get(i);
+            if (Objects.nonNull(error.get("错误信息"))) {
+                System.out.println("第" + (i + 2) + "行:" + error.get("错误信息").toString());
             }
         }
-
         /**如果有错误数据则返回400+errors，否则才返回成功200*/
         if (CollectionUtils.isNotEmpty(checks)) {
             return ResultData.failure(checks.toString());
@@ -544,7 +548,7 @@ public class ExcelPoiServiceImpl extends ServiceImpl<TbUserMapper, TbUser> imple
     private List<Map<String, Object>> checkData(List<TbUser> list) {
         //TODO -> 查询数据库来校验比如物料编码是否存在。map.containsKey(Object key)方法。
         //TODO -> 查询数据库来校验比如物料编码是否存在。map.containsValue(Object value)方法。
-        Map<String, String> database = new HashMap<String, String>() {
+        Map<String, String> database = new HashMap<String, String>(10) {
             {
                 put("admin", "管理员");
                 put("guest", "访宾客");
@@ -574,7 +578,7 @@ public class ExcelPoiServiceImpl extends ServiceImpl<TbUserMapper, TbUser> imple
         Iterator<TbUser> iterator = list.iterator();
         while (iterator.hasNext()) {
             TbUser user = iterator.next();
-            Map<String, Object> map = new HashMap<>();
+            Map<String, Object> map = new HashMap<>(10);
             /**多个字段非空判断*/
             //Checks if any value in the given array is {@code null}.判断条件有一个为空则满足。
             if (ObjectUtils.anyNull(user.getUsername(), user.getPassword(), user.getRole())) {
@@ -638,7 +642,7 @@ public class ExcelPoiServiceImpl extends ServiceImpl<TbUserMapper, TbUser> imple
      */
     private List<Map<String, Object>> repeatData(List<TbUser> list5, List<Map<String, Object>> checks) {
         String[] uniqueIndexFields = new String[]{"username", "phone"};
-        Map<String, String> map = new HashMap<>();
+        Map<String, String> map = new HashMap<>(10);
         for (int i = 0; i < list5.size(); i++) {
             String dtoJson = JSONObject.toJSONString(list5.get(i));
             Map<String, String> dtoMap = (Map<String, String>) JSONObject.parse(dtoJson);
@@ -647,7 +651,7 @@ public class ExcelPoiServiceImpl extends ServiceImpl<TbUserMapper, TbUser> imple
                 for (String fields : uniqueIndexFields) {
                     supplierMaterial += dtoMap.get(fields);
                 }
-                Map<String, Object> errorMap = new HashMap<>();
+                Map<String, Object> errorMap = new HashMap<>(10);
                 if (null != map.get(supplierMaterial)) {
                     errorMap.put("错误信息", "第" + (i + 1) + "行数据重复(可以添加到错误列表)");
                     checks.add(errorMap);
@@ -754,10 +758,10 @@ public class ExcelPoiServiceImpl extends ServiceImpl<TbUserMapper, TbUser> imple
          * 返回一个流，该流由将提供的映射函数应用于每个元素而生成的映射流的内容替换该流的每个元素的结果组成。
          */
         mapList.stream().flatMap(map -> map.entrySet().stream()).forEach(entry -> {
-            if (entry.getKey().equalsIgnoreCase("ban")) {
+            if (entry.getKey().equalsIgnoreCase(BAN)) {
                 System.out.println("用户状态数值描述切换");
             }
-            if (entry.getKey().equalsIgnoreCase("role")) {
+            if (entry.getKey().equalsIgnoreCase(ROLE)) {
                 System.out.println("用户角色数值描述替换");
             }
         });
@@ -874,10 +878,10 @@ public class ExcelPoiServiceImpl extends ServiceImpl<TbUserMapper, TbUser> imple
          * 返回一个流，该流由将提供的映射函数应用于每个元素而生成的映射流的内容替换该流的每个元素的结果组成。
          */
         mapList.stream().flatMap(map -> map.entrySet().stream()).forEach(entry -> {
-            if (entry.getKey().equalsIgnoreCase("ban")) {
+            if (entry.getKey().equalsIgnoreCase(BAN)) {
                 System.out.println("用户状态数值描述切换");
             }
-            if (entry.getKey().equalsIgnoreCase("role")) {
+            if (entry.getKey().equalsIgnoreCase(ROLE)) {
                 System.out.println("用户角色数值描述替换");
             }
         });
@@ -935,12 +939,21 @@ public class ExcelPoiServiceImpl extends ServiceImpl<TbUserMapper, TbUser> imple
         List<Map<String, Object>> list1 = new ArrayList<>(10);
         List<Map<String, Object>> list2 = new ArrayList<>(10);
         try {
+            /**获取文件路径*/
+            String filename = file.getOriginalFilename();
+            /**获取文件后缀类型*/
+            String fileSuffix = filename.substring(filename.lastIndexOf(".") + 1);
             /**流读取文件*/
-            BufferedInputStream input = new BufferedInputStream(file.getInputStream());
+            BufferedInputStream is = new BufferedInputStream(file.getInputStream());
             // 1.High level representation of a Excel workbook. - Excel[工作簿]的高级表示。
-            HSSFWorkbook workbook = new HSSFWorkbook(input);
+            Workbook workbook = null;
+            if (XLS.equalsIgnoreCase(fileSuffix)) {
+                workbook = new HSSFWorkbook(is);
+            } else if (XLSX.equalsIgnoreCase(fileSuffix)) {
+                workbook = new XSSFWorkbook(is);
+            }
             // 2.Sheets are the central structures within a workbook. - [工作表]是工作簿中的中心结构。
-            HSSFSheet sheet = workbook.getSheetAt(0);
+            Sheet sheet = workbook.getSheetAt(0);
             // 3.High level representation of a row of a spreadsheet. - 电子[表格行]的高级表示。
             for (Row row : sheet) {
                 /**第一行表头跳过*/
@@ -953,7 +966,7 @@ public class ExcelPoiServiceImpl extends ServiceImpl<TbUserMapper, TbUser> imple
                 }
                 /**获得sheet行有多少单元格*/
                 short lastCellNum = row.getLastCellNum();
-                Map<String, Object> map1 = new HashMap<>();
+                Map<String, Object> map1 = new HashMap<>(10);
                 for (int i = 0; i < lastCellNum; i++) {
                     // 4.High level representation of a cell in a row of a spreadsheet. - 电子表格中一行[单元格]的高级表示。
                     Cell cell = row.getCell(i);
@@ -973,7 +986,7 @@ public class ExcelPoiServiceImpl extends ServiceImpl<TbUserMapper, TbUser> imple
                 Row row = sheet.getRow(i);
                 /**获得sheet每行有多少单元格*/
                 int cells = row.getPhysicalNumberOfCells();
-                Map<String, Object> map2 = new HashMap<>();
+                Map<String, Object> map2 = new HashMap<>(10);
                 for (int j = 0; j < cells; j++) {
                     // 4.High level representation of a cell in a row of a spreadsheet. - 电子表格中一行[单元格]的高级表示。
                     Cell cell = row.getCell(j);
