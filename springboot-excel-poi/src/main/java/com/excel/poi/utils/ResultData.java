@@ -1,7 +1,7 @@
 package com.excel.poi.utils;
 
 import lombok.Data;
-import org.apache.http.HttpStatus;
+import org.springframework.http.HttpStatus;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.Serializable;
@@ -30,21 +30,21 @@ public class ResultData implements Serializable {
     private Boolean status;
 
     /**
-     * 响应成功方法，无参
+     * 响应成功方法，无参（200-Success）
      *
      * @return
      */
     public static ResultData success() {
         ResultData result = new ResultData();
         result.setStatus(true);
-        result.setCode(HttpStatus.SC_OK);
+        result.setCode(HttpStatus.OK.value());
         result.setCode(HttpServletResponse.SC_OK);
         result.setMessage(org.springframework.http.HttpStatus.OK.getReasonPhrase());
         return result;
     }
 
     /**
-     * 返回成功方法，带参
+     * 返回成功方法，带参（200-Success）
      *
      * @param data
      * @return
@@ -53,28 +53,28 @@ public class ResultData implements Serializable {
         ResultData result = new ResultData();
         result.setData(data);
         result.setStatus(true);
-        result.setCode(HttpStatus.SC_OK);
+        result.setCode(org.apache.http.HttpStatus.SC_OK);
         result.setCode(HttpServletResponse.SC_OK);
         result.setMessage(org.springframework.http.HttpStatus.OK.getReasonPhrase());
         return result;
     }
 
     /**
-     * 返回失败方法，无参
+     * 返回失败方法，无参（400-Bad Request）
      *
      * @return
      */
     public static ResultData failure() {
         ResultData result = new ResultData();
         result.setStatus(false);
-        result.setCode(HttpStatus.SC_NO_CONTENT);
-        result.setCode(HttpServletResponse.SC_NO_CONTENT);
+        result.setCode(HttpStatus.BAD_REQUEST.value());
+        result.setCode(HttpServletResponse.SC_BAD_REQUEST);
         result.setMessage(org.springframework.http.HttpStatus.NO_CONTENT.getReasonPhrase());
         return result;
     }
 
     /**
-     * 返回失败方法，带参
+     * 返回失败方法，带参（400-Bad Request）
      *
      * @return
      */
@@ -82,7 +82,7 @@ public class ResultData implements Serializable {
         ResultData result = new ResultData();
         result.setData(data);
         result.setStatus(false);
-        result.setCode(HttpStatus.SC_NO_CONTENT);
+        result.setCode(org.apache.http.HttpStatus.SC_BAD_REQUEST);
         result.setCode(HttpServletResponse.SC_NO_CONTENT);
         result.setMessage(org.springframework.http.HttpStatus.NO_CONTENT.getReasonPhrase());
         return result;

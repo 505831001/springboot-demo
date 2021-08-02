@@ -16,6 +16,7 @@ import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.ListUtils;
 import org.apache.commons.lang3.ObjectUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.poi.hssf.usermodel.*;
@@ -131,8 +132,32 @@ public class ExcelPoiServiceImpl extends ServiceImpl<TbUserMapper, TbUser> imple
                     for (int i = 0; i < lastCellNum; i++) {
                         // 4.High level representation of a cell in a row of a spreadsheet. - 电子表格中一行[单元格]的高级表示。
                         Cell cell = row.getCell(i);
-                        /**TODO -> cell写法报错: Cell C2 is not part of an array formula.正确写法: cell.toString()或者cell.toString().trim()*/
-                        map0.put(cnTitles[i], cell.toString().trim() == null ? null : cell.toString().trim());
+                        /**TODO -> sheet表单row行cell单元格非空判断，否则报错: Cell C2 is not part of an array formula.或者空指针异常*/
+                        if (cell == null) {
+                            map0.put(cnTitles[i], null);
+                        } else {
+                            String value = cell.toString().trim();
+                            /**cell单元格值一些字符的替换*/
+                            //value.replaceAll("\\(" + "s" + "\\)", "").replaceAll("\\（" + "s" + "\\）", "").replaceAll(" ", "").replaceAll("　", "");
+                            switch (cell.getCellTypeEnum()) {
+                                case STRING:
+                                    value = cell.getStringCellValue();
+                                    break;
+                                case NUMERIC:
+                                    value = String.valueOf(cell.getNumericCellValue());
+                                    break;
+                                case BOOLEAN:
+                                    value = String.valueOf(cell.getBooleanCellValue());
+                                    break;
+                                case BLANK:
+                                    value = null;
+                                    break;
+                                default:
+                                    value = cell.toString().trim();
+                                    break;
+                            }
+                            map0.put(cnTitles[i], cell.toString().trim());
+                        }
                     }
                     list0.add(map0);
 
@@ -142,8 +167,12 @@ public class ExcelPoiServiceImpl extends ServiceImpl<TbUserMapper, TbUser> imple
                     for (int i = 0; i < cells; i++) {
                         // 4.High level representation of a cell in a row of a spreadsheet. - 电子表格中一行[单元格]的高级表示。
                         Cell cell = row.getCell(i);
-                        /**TODO -> 当Sheet表中单元格有空值，此处不要使用cell.toString()和cell.toString().trim()会报空指针异常*/
-                        map1.put(cnTitles[i], cell.toString().trim());
+                        /**当Sheet表中单元格有空值，会报空指针异常*/
+                        if (cell == null) {
+                            map1.put(cnTitles[i], null);
+                        } else {
+                            map1.put(cnTitles[i], cell.toString().trim());
+                        }
                     }
                     list1.add(map1);
                 }
@@ -163,8 +192,32 @@ public class ExcelPoiServiceImpl extends ServiceImpl<TbUserMapper, TbUser> imple
                     for (int j = 0; j < cells; j++) {
                         // 4.High level representation of a cell in a row of a spreadsheet. - 电子表格中一行[单元格]的高级表示。
                         Cell cell = row.getCell(j);
-                        /**TODO -> 当Sheet表中单元格有空值，此处不要使用cell.toString()和cell.toString().trim()会报空指针异常*/
-                        map2.put(cnTitles[j], cell.toString().trim());
+                        /**TODO -> sheet表单row行cell单元格非空判断，否则报错: Cell C2 is not part of an array formula.或者空指针异常*/
+                        if (cell == null) {
+                            map2.put(cnTitles[j], null);
+                        } else {
+                            String value = cell.toString().trim();
+                            /**cell单元格值一些字符的替换*/
+                            //value.replaceAll("\\(" + "s" + "\\)", "").replaceAll("\\（" + "s" + "\\）", "").replaceAll(" ", "").replaceAll("　", "");
+                            switch (cell.getCellTypeEnum()) {
+                                case STRING:
+                                    value = cell.getStringCellValue();
+                                    break;
+                                case NUMERIC:
+                                    value = String.valueOf(cell.getNumericCellValue());
+                                    break;
+                                case BOOLEAN:
+                                    value = String.valueOf(cell.getBooleanCellValue());
+                                    break;
+                                case BLANK:
+                                    value = null;
+                                    break;
+                                default:
+                                    value = cell.toString().trim();
+                                    break;
+                            }
+                            map2.put(cnTitles[j], cell.toString().trim());
+                        }
                     }
                     list2.add(map2);
                 }
@@ -175,19 +228,19 @@ public class ExcelPoiServiceImpl extends ServiceImpl<TbUserMapper, TbUser> imple
             e.printStackTrace();
         }
         for (Map<String, Object> map0 : list0) {
-            //System.out.println("导入Excel集合0：" + map0.toString());
+            //System.out.println("Sheet表单获取单元格方式00：" + map0.toString());
         }
         for (Map<String, Object> map1 : list1) {
-            //System.out.println("导入Excel集合1：" + map1.toString());
+            //System.out.println("Sheet表单获取单元格方式01：" + map1.toString());
         }
         for (Map<String, Object> map2 : list2) {
-            //System.out.println("导入Excel集合2：" + map2.toString());
+            //System.out.println("Sheet表单获取单元格方式02：" + map2.toString());
         }
 
-        /**Sheet表单获取完单元格后中文[cnTitles]切换英文[enFields]来转换成[map]存储*/
+        /**Sheet表单获取完单元格后中文[cnTitles]标题切换英文[enFields]字段来转换成[map]存储*/
         List<Map<String, Object>> list3 = new ArrayList<>(10);
         Map<String, String> cNtoENConvert = excelCNtoENConvert();
-        for (Map<String, Object> cnTitles : list1/**或者list2都行*/) {
+        for (Map<String, Object> cnTitles : list0/**或者list1或者list2都行*/) {
             Map<String, Object> enFields = new HashMap<>();
             for (Map.Entry<String, Object> entry : cnTitles.entrySet()) {
                 String cnField = entry.getKey();
@@ -197,10 +250,10 @@ public class ExcelPoiServiceImpl extends ServiceImpl<TbUserMapper, TbUser> imple
             list3.add(enFields);
         }
         for (Map<String, Object> map : list3) {
-            //System.out.println("转换Excel集合3：" + map.toString());
+            //System.out.println("Sheet表单获取完单元格后中文[cnTitles]标题切换英文[enFields]字段来转换成[map]存储03：" + map.toString());
         }
 
-        /**Sheet表单获取完单元格后中文[cnTitles]切换英文[enFields]来转换成[对象]存储*/
+        /**Sheet表单获取完单元格后中文[cnTitles]标题切换英文[enFields]字段来转换成[对象]存储*/
         List<TbUser> list5 = new ArrayList<>(10);
         List<TbUser> list4 = new ArrayList<>(10);
         for (Map<String, Object> map : list3) {
@@ -218,28 +271,42 @@ public class ExcelPoiServiceImpl extends ServiceImpl<TbUserMapper, TbUser> imple
             list5.add(object.toJavaObject(TbUser.class));
         }
         for (TbUser user : list4) {
-            //System.out.println("转换Excel对象4：" + user.toString());
+            //System.out.println("Sheet表单获取完单元格后中文[cnTitles]标题切换英文[enFields]字段来转换成[对象]存储04：" + user.toString());
         }
         for (TbUser user : list5) {
-            //System.out.println("转换Excel对象5：" + user.toString());
+            //System.out.println("Sheet表单获取完单元格后中文[cnTitles]标题切换英文[enFields]字段来转换成[对象]存储05：" + user.toString());
         }
 
-        /**Sheet表单获取完单元格后中文[cnTitles]切换英文[enFields]来转换成[对象]存储后再转换中文描述值到数据表数值*/
+        /**Sheet表单获取完单元格后中文[cnTitles]标题切换英文[enFields]字段来转换成[对象]存储后再转换中文描述值到数据表数值*/
         buildTitlesToFields(list5);
         for (TbUser user : list5) {
-            System.out.println("转换Excel对象6：" + user.toString());
+            System.out.println("Sheet表单获取完单元格后中文[cnTitles]标题切换英文[enFields]字段来转换成[对象]存储后再转换中文描述值到数据表数值06：" + user.toString());
         }
 
         /**检查导入数据，是否空集合，据类型是否正确，数据类型有错误。*/
         List<Map<String, Object>> checks = checkData(list5);
         for (int i = 0; i < checks.size(); i++) {
             Map<String, Object> map = checks.get(i);
-            if (Objects.nonNull(map.get("error"))) {
-                System.out.println("第" + (i + 2) + "行:" + map.get("error").toString());
+            if (Objects.nonNull(map.get("错误信息"))) {
+                System.out.println("第" + (i + 2) + "行:" + map.get("错误信息").toString());
             }
         }
 
-        return new ResponseEntity(HttpStatus.OK);
+        //检查导入数据，是否重复，分别添加错误列表，或者保存列表。
+        checks = repeatData(list5, checks);
+        for (int i = 0; i < checks.size(); i++) {
+            Map<String, Object> map = checks.get(i);
+            if (Objects.nonNull(map.get("错误信息"))) {
+                System.out.println("第" + (i + 2) + "行:" + map.get("错误信息").toString());
+            }
+        }
+
+        /**如果有错误数据则返回400+errors，否则才返回成功200*/
+        if (CollectionUtils.isNotEmpty(checks)) {
+            return new ResponseEntity(checks.toString(), HttpStatus.BAD_REQUEST);
+        }
+        /**如果有错误数据则返回400，否则才返回成功200+data*/
+        return new ResponseEntity(list5.toString(), HttpStatus.OK);
     }
 
     /**
@@ -277,8 +344,32 @@ public class ExcelPoiServiceImpl extends ServiceImpl<TbUserMapper, TbUser> imple
             for (int i = 0; i < lastCellNum; i++) {
                 // 4.High level representation of a cell in a row of a spreadsheet. - 电子表格中一行[单元格]的高级表示。
                 Cell cell = row.getCell(i);
-                /**TODO -> cell写法报错: Cell C2 is not part of an array formula.正确写法: cell.toString()或者cell.toString().trim()*/
-                map0.put(cnTitles[i], cell.toString().trim() == null ? null : cell.toString().trim());
+                /**TODO -> sheet表单row行cell单元格非空判断，否则报错: Cell C2 is not part of an array formula.或者空指针异常*/
+                if (cell == null) {
+                    map0.put(cnTitles[i], null);
+                } else {
+                    String value = cell.toString().trim();
+                    /**cell单元格值一些字符的替换*/
+                    //value.replaceAll("\\(" + "s" + "\\)", "").replaceAll("\\（" + "s" + "\\）", "").replaceAll(" ", "").replaceAll("　", "");
+                    switch (cell.getCellTypeEnum()) {
+                        case STRING:
+                            value = cell.getStringCellValue();
+                            break;
+                        case NUMERIC:
+                            value = String.valueOf(cell.getNumericCellValue());
+                            break;
+                        case BOOLEAN:
+                            value = String.valueOf(cell.getBooleanCellValue());
+                            break;
+                        case BLANK:
+                            value = null;
+                            break;
+                        default:
+                            value = cell.toString().trim();
+                            break;
+                    }
+                    map0.put(cnTitles[i], cell.toString().trim());
+                }
             }
             list0.add(map0);
 
@@ -288,8 +379,12 @@ public class ExcelPoiServiceImpl extends ServiceImpl<TbUserMapper, TbUser> imple
             for (int i = 0; i < cells; i++) {
                 // 4.High level representation of a cell in a row of a spreadsheet. - 电子表格中一行[单元格]的高级表示。
                 Cell cell = row.getCell(i);
-                /**TODO -> 当Sheet表中单元格有空值，此处不要使用cell.toString()和cell.toString().trim()会报空指针异常*/
-                map1.put(cnTitles[i], cell.toString().trim());
+                /**当Sheet表中单元格有空值，会报空指针异常*/
+                if (cell == null) {
+                    map1.put(cnTitles[i], null);
+                } else {
+                    map1.put(cnTitles[i], cell.toString().trim());
+                }
             }
             list1.add(map1);
         }
@@ -309,27 +404,51 @@ public class ExcelPoiServiceImpl extends ServiceImpl<TbUserMapper, TbUser> imple
             for (int j = 0; j < cells; j++) {
                 // 4.High level representation of a cell in a row of a spreadsheet. - 电子表格中一行[单元格]的高级表示。
                 Cell cell = row.getCell(j);
-                /**TODO -> 当Sheet表中单元格有空值，此处不要使用cell.toString()和cell.toString().trim()会报空指针异常*/
-                map2.put(cnTitles[j], cell.toString().trim());
+                /**TODO -> sheet表单row行cell单元格非空判断，否则报错: Cell C2 is not part of an array formula.或者空指针异常*/
+                if (cell == null) {
+                    map2.put(cnTitles[j], null);
+                } else {
+                    String value = cell.toString().trim();
+                    /**cell单元格值一些字符的替换*/
+                    //value.replaceAll("\\(" + "s" + "\\)", "").replaceAll("\\（" + "s" + "\\）", "").replaceAll(" ", "").replaceAll("　", "");
+                    switch (cell.getCellTypeEnum()) {
+                        case STRING:
+                            value = cell.getStringCellValue();
+                            break;
+                        case NUMERIC:
+                            value = String.valueOf(cell.getNumericCellValue());
+                            break;
+                        case BOOLEAN:
+                            value = String.valueOf(cell.getBooleanCellValue());
+                            break;
+                        case BLANK:
+                            value = null;
+                            break;
+                        default:
+                            value = cell.toString().trim();
+                            break;
+                    }
+                    map2.put(cnTitles[j], cell.toString().trim());
+                }
             }
             list2.add(map2);
         }
 
         for (Map<String, Object> map0 : list0) {
-            //System.out.println("导入Excel集合0：" + map0.toString());
+            //System.out.println("Sheet表单获取单元格方式00：" + map0.toString());
         }
         for (Map<String, Object> map1 : list1) {
-            //System.out.println("导入Excel集合1：" + map1.toString());
+            //System.out.println("Sheet表单获取单元格方式01：" + map1.toString());
         }
         for (Map<String, Object> map2 : list2) {
-            //System.out.println("导入Excel集合2：" + map2.toString());
+            //System.out.println("Sheet表单获取单元格方式02：" + map2.toString());
         }
 
-        /**中文[cnTitles]切换英文[enFields]来转换成[map]或[对象]存储*/
+        /**中文[cnTitles]标题切换英文[enFields]字段来转换成[map]或[对象]存储*/
         List<TbUser> list5 = new ArrayList<>(10);
         List<TbUser> list4 = new ArrayList<>(10);
         List<Map<String, Object>> list3 = new ArrayList<>(10);
-        for (Map<String, Object> map : list1/**或者list2或者list3都行*/) {
+        for (Map<String, Object> map : list0/**或者list1或者list2都行*/) {
             JSONObject object = new JSONObject();
             Map<String, Object> temp = new HashMap<>();
             for (Map.Entry<String, Object> entry : map.entrySet()) {
@@ -348,62 +467,45 @@ public class ExcelPoiServiceImpl extends ServiceImpl<TbUserMapper, TbUser> imple
             list5.add(JSONObject.toJavaObject(object, TbUser.class));
         }
         for (Map<String, Object> map3 : list3) {
-            //System.out.println("导入Excel集合3：" + map3.toString());
+            //System.out.println("中文[cnTitles]标题切换英文[enFields]字段来转换成[map]存储03：" + map3.toString());
         }
         for (TbUser user : list4) {
-            //System.out.println("导入Excel对象4：" + user.toString());
+            //System.out.println("中文[cnTitles]标题切换英文[enFields]字段来转换成[对象]存储04：" + user.toString());
         }
         for (TbUser user : list5) {
-            //System.out.println("导入Excel对象5：" + user.toString());
+            //System.out.println("中文[cnTitles]标题切换英文[enFields]字段来转换成[对象]存储05：" + user.toString());
         }
 
-        /**Sheet表单获取完单元格后中文[cnTitles]切换英文[enFields]来转换成[对象]存储后再转换中文描述值到数据表数值*/
+        /**Sheet表单获取完单元格后中文[cnTitles]标题切换英文[enFields]字段来转换成[对象]存储后再转换中文描述值到数据表数值*/
         buildTitlesToFields(list5);
         for (TbUser user : list5) {
-            System.out.println("导入Excel对象6：" + user.toString());
+            System.out.println("Sheet表单获取完单元格后中文[cnTitles]标题切换英文[enFields]字段来转换成[对象]存储后再转换中文描述值到数据表数值06：" + user.toString());
         }
 
-        List<String> errors = new ArrayList<>();
         //检查导入数据，是否空集合，据类型是否正确，数据类型有错误。
-        List<Map<String, Object>> checks = checkData(list5/**或者list6都行*/);
+        List<Map<String, Object>> checks = checkData(list5);
         for (int i = 0; i < checks.size(); i++) {
             Map<String, Object> map = checks.get(i);
-            if (Objects.nonNull(map.get("error"))) {
-                errors.add("第" + (i + 2) + "行:" + map.get("error").toString());
+            if (Objects.nonNull(map.get("错误信息"))) {
+                System.out.println("第" + (i + 2) + "行:" + map.get("错误信息").toString());
             }
         }
 
         //检查导入数据，是否重复，分别添加错误列表，或者保存列表。
-        String[] uniqueIndexFields = new String[]{"username", "phone"};
-        Map<String, String> map = new HashMap<>();
-        for (int i = 0; i < list5.size(); i++) {
-            String dtoJson = JSONObject.toJSONString(list5.get(i));
-            Map<String, String> dtoMap = (Map<String, String>) JSONObject.parse(dtoJson);
-            if (dtoMap.size() > 0) {
-                String supplierMaterial = new String();
-                for (String fields : uniqueIndexFields) {
-                    supplierMaterial += dtoMap.get(fields);
-                }
-                Map<String, Object> errorMap = new HashMap<>();
-                if (null != map.get(supplierMaterial)) {
-                    errorMap.put("错误信息", "第" + (i + 1) + "行数据重复(可以添加到错误列表)");
-                    checks.add(errorMap);
-                    continue;
-                } else {
-                    map.put(supplierMaterial, "新数据添加进来，后面如果再有拿来判断其重复鸟");
-                    errorMap.put("正确信息", "第" + (i + 1) + "初始行数据(可以添加到保存列表)");
-                    checks.add(errorMap);
-                }
+        checks = repeatData(list5, checks);
+        for (int i = 0; i < checks.size(); i++) {
+            Map<String, Object> map = checks.get(i);
+            if (Objects.nonNull(map.get("错误信息"))) {
+                System.out.println("第" + (i + 2) + "行:" + map.get("错误信息").toString());
             }
         }
-        for (Map<String, Object> check : checks) {
-            System.out.println("错误数据: " + check.toString());
-        }
-        /**如果有错误数据则返回20x，否则才返回成功200*/
+
+        /**如果有错误数据则返回400+errors，否则才返回成功200*/
         if (CollectionUtils.isNotEmpty(checks)) {
             return ResultData.failure(checks.toString());
         }
-        return ResultData.success();
+        /**如果有错误数据则返回400，否则才返回成功200+data*/
+        return ResultData.success(list5.toArray());
     }
 
     /**
@@ -416,14 +518,18 @@ public class ExcelPoiServiceImpl extends ServiceImpl<TbUserMapper, TbUser> imple
      */
     private void buildTitlesToFields(List<TbUser> list5) {
         for (TbUser user : list5) {
-            for (Map.Entry<String, String> entry : ExcelUtils.roleMaps().entrySet()) {
-                if (entry.getValue().equalsIgnoreCase(user.getRole())) {
-                    user.setRole(entry.getKey());
+            if (StringUtils.isNotEmpty(user.getRole())) {
+                for (Map.Entry<String, String> entry : ExcelUtils.roleMaps().entrySet()) {
+                    if (entry.getValue().equalsIgnoreCase(user.getRole())) {
+                        user.setRole(entry.getKey());
+                    }
                 }
             }
-            for (Map.Entry<String, String> entry : ExcelUtils.statusMaps().entrySet()) {
-                if (user.getBan().equalsIgnoreCase(entry.getValue())) {
-                    user.setBan(entry.getKey());
+            if (StringUtils.isNotEmpty(user.getBan())) {
+                for (Map.Entry<String, String> entry : ExcelUtils.statusMaps().entrySet()) {
+                    if (user.getBan().equalsIgnoreCase(entry.getValue())) {
+                        user.setBan(entry.getKey());
+                    }
                 }
             }
         }
@@ -448,6 +554,7 @@ public class ExcelPoiServiceImpl extends ServiceImpl<TbUserMapper, TbUser> imple
         List<String> rest = new ArrayList<>();
         rest.add("admin");
         rest.add("guest");
+        rest.add("Jessica");
 
         List<Map<String, Object>> errors = new ArrayList<>();
         /**
@@ -468,42 +575,91 @@ public class ExcelPoiServiceImpl extends ServiceImpl<TbUserMapper, TbUser> imple
         while (iterator.hasNext()) {
             TbUser user = iterator.next();
             Map<String, Object> map = new HashMap<>();
-            /**字段非空判断*/
-            if (org.springframework.util.StringUtils.isEmpty(user.getUsername())) {
-                map.put("error", "用户名称不能为空");
-                errors.add(map);
-                iterator.remove();
-            }
-            if (org.springframework.util.StringUtils.isEmpty(user.getPassword())) {
-                map.put("error", "用户密码不能为空");
-                errors.add(map);
-                iterator.remove();
-            }
-            if (org.springframework.util.StringUtils.isEmpty(user.getRole())) {
-                map.put("error", "用户角色不能为空");
-                errors.add(map);
-                iterator.remove();
-            }
-            /**字段合法性判断*/
-            if (!database.containsKey(user.getUsername())) {
-                map.put("error", "集合用户字典表不存在此用户");
-                errors.add(map);
-                iterator.remove();
-            }
-            if (list.contains(user.getUsername())) {
-                map.put("error", "列表用户字典表不存在此用户");
-                errors.add(map);
-                iterator.remove();
-            }
             /**多个字段非空判断*/
-            if (ObjectUtils.allNull(user.getUsername(), user.getPassword(), user.getRole())) {
-                System.out.println("ObjectsUtils.allNull() -> " + user.toString());
-            }
+            //Checks if any value in the given array is {@code null}.判断条件有一个为空则满足。
             if (ObjectUtils.anyNull(user.getUsername(), user.getPassword(), user.getRole())) {
                 System.out.println("ObjectsUtils.anyNull() -> " + user.toString());
             }
+            //Checks if all values in the given array are {@code null}.判断条件全部为空则满足。
+            if (ObjectUtils.allNull(user.getUsername(), user.getPassword(), user.getRole())) {
+                System.out.println("ObjectsUtils.allNull() -> " + user.toString());
+            }
+            /**字段非空判断*/
+            //1.Break语句使用场景Switch语句循环结构。
+            //2.Continue语句使用场景For语句循环结构和While语句循环结构及doWhile语句循环结构。
+            //3.Return语句使用场景Method方法体。
+            if (org.springframework.util.StringUtils.isEmpty(user.getUsername())) {
+                map.put("错误信息", "用户名称不能为空");
+                errors.add(map);
+                iterator.remove();
+                continue;
+            }
+            if (org.springframework.util.StringUtils.isEmpty(user.getPassword())) {
+                map.put("错误信息", "用户密码不能为空");
+                errors.add(map);
+                iterator.remove();
+                continue;
+            }
+            if (org.springframework.util.StringUtils.isEmpty(user.getRole())) {
+                map.put("错误信息", "用户角色不能为空");
+                errors.add(map);
+                iterator.remove();
+                continue;
+            }
+            if (org.springframework.util.StringUtils.isEmpty(user.getPermission())) {
+                map.put("错误信息", "用户权限不能为空");
+                errors.add(map);
+                iterator.remove();
+                continue;
+            }
+            /**字段合法性判断*/
+            if (StringUtils.isNotEmpty(user.getUsername()) && !database.containsKey(user.getUsername())) {
+                map.put("错误信息", "集合用户字典表不存在此用户");
+                errors.add(map);
+                iterator.remove();
+                continue;
+            }
+            if (StringUtils.isNotEmpty(user.getUsername()) && list.contains(user.getUsername())) {
+                map.put("错误信息", "列表用户字典表不存在此用户");
+                errors.add(map);
+                iterator.remove();
+                continue;
+            }
         }
         return errors;
+    }
+
+    /**
+     * 检查重复数据
+     *
+     * @param list5
+     * @param checks
+     * @return
+     */
+    private List<Map<String, Object>> repeatData(List<TbUser> list5, List<Map<String, Object>> checks) {
+        String[] uniqueIndexFields = new String[]{"username", "phone"};
+        Map<String, String> map = new HashMap<>();
+        for (int i = 0; i < list5.size(); i++) {
+            String dtoJson = JSONObject.toJSONString(list5.get(i));
+            Map<String, String> dtoMap = (Map<String, String>) JSONObject.parse(dtoJson);
+            if (dtoMap.size() > 0) {
+                String supplierMaterial = new String();
+                for (String fields : uniqueIndexFields) {
+                    supplierMaterial += dtoMap.get(fields);
+                }
+                Map<String, Object> errorMap = new HashMap<>();
+                if (null != map.get(supplierMaterial)) {
+                    errorMap.put("错误信息", "第" + (i + 1) + "行数据重复(可以添加到错误列表)");
+                    checks.add(errorMap);
+                    continue;
+                } else {
+                    map.put(supplierMaterial, "新数据添加进来，后面如果再有拿来判断其重复鸟");
+                    errorMap.put("正确信息", "第" + (i + 1) + "初始行数据(可以添加到保存列表)");
+                    checks.add(errorMap);
+                }
+            }
+        }
+        return checks;
     }
 
     /**
