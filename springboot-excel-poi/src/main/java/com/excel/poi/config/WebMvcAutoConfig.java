@@ -1,26 +1,39 @@
-package com.liuweiwei.config;
+package com.excel.poi.config;
 
-import com.liuweiwei.api.Web01MvcInterceptor;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.excel.poi.api.Web01MvcInterceptor;
 import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.format.FormatterRegistry;
+import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.context.request.async.CallableProcessingInterceptor;
 import org.springframework.web.context.request.async.DeferredResult;
 import org.springframework.web.context.request.async.DeferredResultProcessingInterceptor;
+import org.springframework.web.method.support.HandlerMethodArgumentResolver;
+import org.springframework.web.method.support.HandlerMethodReturnValueHandler;
+import org.springframework.web.servlet.HandlerExceptionResolver;
 import org.springframework.web.servlet.config.annotation.*;
 
+import javax.annotation.Resource;
+import java.util.List;
 import java.util.concurrent.Callable;
 
 /**
  * @author liuweiwei
- * @since 2020-05-20
+ * @since 2021-02-28
  */
 @Configuration
 public class WebMvcAutoConfig extends WebMvcAutoConfiguration implements WebMvcConfigurer {
 
-    @Autowired
+    @Resource
     private Web01MvcInterceptor mvcInterceptor;
+
+    // --- ---
+
+    @Override
+    public void addArgumentResolvers(List<HandlerMethodArgumentResolver> resolvers) {
+
+    }
 
     /**
      * 1. 允许跨域访问的路径。
@@ -41,6 +54,11 @@ public class WebMvcAutoConfig extends WebMvcAutoConfiguration implements WebMvcC
                 .allowCredentials(true);
     }
 
+    @Override
+    public void addFormatters(FormatterRegistry registry) {
+
+    }
+
     /**
      * 同步请求拦截器：
      * org.springframework.web.servlet.config.annotation.InterceptorRegistry
@@ -53,8 +71,22 @@ public class WebMvcAutoConfig extends WebMvcAutoConfiguration implements WebMvcC
 
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
+        registry.addResourceHandler("/**").addResourceLocations("classpath:/static/");
+        registry.addResourceHandler("swagger-ui.html").addResourceLocations("classpath:/META-INF/resources/");
+        registry.addResourceHandler("/webjars/**").addResourceLocations("classpath:/META-INF/resources/webjars/");
+    }
+
+    @Override
+    public void addReturnValueHandlers(List<HandlerMethodReturnValueHandler> handlers) {
 
     }
+
+    @Override
+    public void addViewControllers(ViewControllerRegistry registry) {
+
+    }
+
+    // --- ---
 
     /**
      * 异步请求拦截器：
@@ -92,5 +124,35 @@ public class WebMvcAutoConfig extends WebMvcAutoConfiguration implements WebMvcC
 
             }
         });
+    }
+
+    @Override
+    public void configureContentNegotiation(ContentNegotiationConfigurer configurer) {
+
+    }
+
+    @Override
+    public void configureDefaultServletHandling(DefaultServletHandlerConfigurer configurer) {
+
+    }
+
+    @Override
+    public void configureHandlerExceptionResolvers(List<HandlerExceptionResolver> resolvers) {
+
+    }
+
+    @Override
+    public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
+
+    }
+
+    @Override
+    public void configurePathMatch(PathMatchConfigurer configurer) {
+
+    }
+
+    @Override
+    public void configureViewResolvers(ViewResolverRegistry registry) {
+
     }
 }

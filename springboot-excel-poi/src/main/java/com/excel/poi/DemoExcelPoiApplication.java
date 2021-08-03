@@ -12,6 +12,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.env.ConfigurableEnvironment;
+import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 /**
@@ -21,19 +22,18 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
  * @since 2021-07-04
  */
 @SpringBootApplication
-@Log4j2
 @EnableSwagger2
+@EnableWebMvc
 @MapperScan(basePackages = {"com.excel.poi.dao"})
+@Log4j2
 public class DemoExcelPoiApplication {
     /**
-     * 日志-实现层：logback<org.slf4j>
+     * 同步日志-实现层：logback<org.slf4j>
+     * private static final org.slf4j.Logger SLF4J = LoggerFactory.getLogger(DemoExcelPoiApplication.class);
+     *
+     * 异步日志-实现层：log4j<org.apache.log4j>
+     * private static final Logger LOG4J2 = LogManager.getLogger(DemoExcelPoiApplication.class);
      */
-    //private static final org.slf4j.Logger logger = LoggerFactory.getLogger(DemoExcelPoiApplication.class);
-    /**
-     * 日志-实现层：log4j<org.apache.log4j>
-     */
-    //private static final Logger LOGGER = LogManager.getLogger(DemoExcelPoiApplication.class);
-
     public static void main(String[] args) {
         ConfigurableApplicationContext context = SpringApplication.run(DemoExcelPoiApplication.class, args);
         ConfigurableEnvironment environment = context.getEnvironment();

@@ -4,6 +4,9 @@ import com.excel.poi.service.ExcelPoiService;
 import com.excel.poi.utils.ResultData;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import lombok.extern.log4j.Log4j;
+import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -20,6 +23,7 @@ import java.io.IOException;
  */
 @RestController
 @Api(value = "", tags = "Excel-Poi导入导出控制器")
+@Log4j2
 public class ExcelPoiController {
 
     @Autowired
