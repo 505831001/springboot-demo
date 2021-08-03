@@ -26,7 +26,7 @@ public class Web01MvcInterceptor implements HandlerInterceptor {
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-        log.info("02 - Interceptor 拦截器：preHandle(request, response, handler) 方法。");
+        log.info("01 - Interceptor 拦截器：preHandle(request, response, handler) 方法。");
         return true;
     }
 
