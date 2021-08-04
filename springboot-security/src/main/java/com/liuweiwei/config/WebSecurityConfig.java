@@ -3,12 +3,15 @@ package com.liuweiwei.config;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.liuweiwei.component.*;
 import com.liuweiwei.service.TbUserService;
+import lombok.extern.log4j.Log4j;
+import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -43,6 +46,7 @@ import org.springframework.util.Base64Utils;
 import org.springframework.util.DigestUtils;
 import org.springframework.util.StringUtils;
 
+import javax.annotation.Resource;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -55,73 +59,68 @@ import java.util.Map;
 import java.util.Objects;
 
 /**
- * 方法之一：configure(AuthenticationManagerBuilder auth) 方法。
- *     AuthenticationManager        接口。
- *     UserDetailsService           接口。
- *     AuthenticationProvider       接口。
- *     UsernamePasswordAuthenticationToken(principal, credentials, authorities) 实现类。
- * 方法之二：configure(WebSecurity web)                   方法。
- * 方法之三：configure(HttpSecurity http)                 方法。
- *     AuthenticationSuccessHandler 接口。
- *     AuthenticationFailureHandler 接口。
- *     PersistentTokenRepository    接口。
- *     LogoutSuccessHandler         接口。
- *     AccessDeniedHandler          接口。
+ * (01). Spring Security 安全框架配置类。
+ *   [01].configure(AuthenticationManagerBuilder auth);使用被默认实现由{authenticationManager()}，尝试获取{AuthenticationManager}。如果被重写，则应使用{AuthenticationManagerBuilder}指定{AuthenticationManager}。
+ *     {01}.auth.inMemoryAuthentication();     TODO->将【内存内身份】验证添加到{AuthenticationManagerBuilder}并返回{InMemoryUserDetailsManagerConfigurer}以允许自定义内存内身份验证。
+ *     {02}.auth.jdbcAuthentication();         TODO->将【JDBC身份】验证添加到{AuthenticationManagerBuilder}并返回{JdbcUserDetailsManagerConfigurer}以允许自定义JDBC身份验证。
+ *     {03}.auth.ldapAuthentication();         TODO->将【LDAP身份】验证添加到{AuthenticationManagerBuilder}并返回{LdapAuthenticationProviderConfigurer}以允许自定义LDAP身份验证。
+ *     {04}.auth.userDetailsService(null);     TODO->根据传入的【自定义身份】{UserDetailsService}添加验证。然后返回一个{DaoAuthenticationConfigurer}，以允许自定义身份验证。根据传入的自定义添加身份验证。
+ *     {05}.auth.authenticationProvider(null); TODO->根据传入的【自定义身份】{AuthenticationProvider}添加验证。由于{AuthenticationProvider}实现未知，因此必须在外部完成所有自定义，并立即返回{AuthenticationManagerBuilder}。
+ *   [02].configure(WebSecurity web);重写此方法以配置{WebSecurity}。例如，如果您希望忽略某些请求。
+ *   [03].configure(HttpSecurity http);重写此方法以配置{HttpSecurity}。通常，子类不应该通过调用super来调用此方法，因为它可能会覆盖它们的配置。默认配置为：
  *
  * @author liuweiwei
  * @since 2020-05-20
  */
 @Configuration
 @EnableGlobalMethodSecurity(prePostEnabled = true)
+@Log4j2
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     /**
-     * 日志-实现层：log4j
+     * 同步日志-实现层：logback<org.slf4j>
+     * private static final org.slf4j.Logger SLF4J = LoggerFactory.getLogger(WebSecurityConfig.class);
+     *
+     * 异步日志-实现层：log4j<org.apache.log4j>
+     * private static final Logger LOG4J2 = LogManager.getLogger(WebSecurityConfig.class);
      */
-    private final Logger logger = Logger.getLogger(this.getClass());
 
-    /**
-     * 日志-实现层：logback
-     */
-    private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(WebMvcAutoConfig.class);
-
-    @Autowired
+    @Resource
     private DataSource dataSource;
 
-    @Autowired
+    @Resource
     private TbUserService tbUserService;
 
-    @Autowired
+    @Resource
     private My00PasswordEncoderImpl my00PasswordEncoderImpl;
 
-    @Autowired
+    @Resource
     private My01UserDetailsServiceImpl my01UserDetailsServiceImpl;
 
-    @Autowired
+    @Resource
     private My02AuthenticationProviderImpl my02AuthenticationProviderImpl;
 
-    @Autowired
+    @Resource
     private My03AuthenticationSuccessHandler my03AuthenticationSuccessHandler;
 
-    @Autowired
+    @Resource
     private My04AuthenticationFailureHandler my04AuthenticationFailureHandler;
 
-    @Autowired
+    @Resource
     private My05InvalidSessionStrategy my05InvalidSessionStrategy;
 
-    @Autowired
+    @Resource
     private My06SessionInformationExpiredStrategy my06SessionInformationExpiredStrategy;
 
-    @Autowired
+    @Resource
     private My07LogoutSuccessHandler my07LogoutSuccessHandler;
 
-    @Autowired
+    @Resource
     private My08AccessDeniedHandler my08AccessDeniedHandler;
 
     /**
      * NoOpPasswordEncoder.getInstance();
      * new BCryptPasswordEncoder();
-     *
      * @return
      */
     @Bean
@@ -132,8 +131,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     /**
-     * The abstraction used by {PersistentTokenBasedRememberMeServices} to store the persistent login tokens for a user.
-     *
+     * 使用的抽象类{PersistentTokenBasedRememberMeServices}为用户存储持久登录令牌。
      * @return
      */
     @Bean
@@ -144,13 +142,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     /**
-     * 1. Used by the default implementation of {@link #authenticationManager()} to attempt to obtain an {AuthenticationManager}.
-     * 2. If overridden, the {AuthenticationManagerBuilder} should be used to specify the {AuthenticationManager}.
-     *
-     * new UserDetailsService() {};
-     * new UserDetails() {};
-     * new User();
-     *
+     * 被使用的默认实现{authenticationManager()}尝试获得{@link AuthenticationManager}。
+     * 如果被重写，则{AuthenticationManagerBuilder}应用于指定{@link AuthenticationManager}。
      * @param auth
      * @throws Exception
      */
@@ -168,11 +161,16 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         boolean matches4 = "123456".equals(encode2);
         log.info("验证密码编码获得存储匹配太编码后提交的原始密码。返回true。存储密码本身是没有解码。" + matches2);
         log.info("验证密码编码获得存储匹配太编码后提交的原始密码。返回true。存储密码本身是没有解码。" + matches4);
+        //1.将【内存内身份】验证添加到{AuthenticationManagerBuilder}并返回{InMemoryUserDetailsManagerConfigurer}以允许自定义内存内身份验证。
         //auth.inMemoryAuthentication().withUser("admin").password(encode2).roles("ADMIN");
         //auth.inMemoryAuthentication().withUser("guest").password(encode2).roles("GUEST");
+        //2.将【JDBC身份】验证添加到{AuthenticationManagerBuilder}并返回{JdbcUserDetailsManagerConfigurer}以允许自定义JDBC身份验证。
+        //auth.jdbcAuthentication();
+        //3.将【LDAP身份】验证添加到{AuthenticationManagerBuilder}并返回{LdapAuthenticationProviderConfigurer}以允许自定义LDAP身份验证。
+        //auth.ldapAuthentication();
 
         /**
-         * 方式二：添加身份验证基于自定义{UserDetailsService}传入。然后它返回一个{DaoAuthenticationConfigurer}允许定制的身份验证。
+         * 方式四：添加身份验证基于自定义{UserDetailsService}传入。然后它返回一个{DaoAuthenticationConfigurer}允许定制的身份验证。
          */
         UserDetailsService userDetailsService = new UserDetailsService() {
             @Override
@@ -188,10 +186,11 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 return null;
             }
         };
+        //4.根据传入的【自定义身份】{UserDetailsService}添加验证。然后返回一个{DaoAuthenticationConfigurer}，以允许自定义身份验证。
         //auth.userDetailsService(userDetailsService).passwordEncoder(NoOpPasswordEncoder.getInstance());
 
         /**
-         * 方式三：添加身份验证基于自定义{AuthenticationProvider}传入。自{AuthenticationProvider}实现未知,所有必须完成的定制外部和{AuthenticationManagerBuilder}立即返回。
+         * 方式五：添加身份验证基于自定义{AuthenticationProvider}传入。自{AuthenticationProvider}实现未知,所有必须完成的定制外部和{AuthenticationManagerBuilder}立即返回。
          */
         AuthenticationProvider authenticationProvider = new AuthenticationProvider() {
             @Override
@@ -228,12 +227,12 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 return true;
             }
         };
+        //5.根据传入的【自定义身份】{AuthenticationProvider}添加验证。由于{AuthenticationProvider}实现未知，因此必须在外部完成所有自定义，并立即返回{AuthenticationManagerBuilder}。
         auth.authenticationProvider(authenticationProvider);
     }
 
     /**
-     * Override this method to configure {@link WebSecurity}. For example, if you wish to ignore certain requests.
-     *
+     * 重写此方法以配置{@link WebSecurity}。例如，如果您希望忽略某些请求。
      * @param web
      * @throws Exception
      */
@@ -243,10 +242,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     /**
-     * Override this method to configure the {@link HttpSecurity}.
-     * Typically subclasses should not invoke this method by calling super as it may override their configuration.
-     * The default configuration is:
-     *
+     * 重写此方法以配置{@link HttpSecurity}。
+     * 通常，子类不应该通过调用super来调用此方法，因为它可能会覆盖它们的配置。
+     * 默认配置为：http.authorizeRequests().anyRequest().authenticated().and().formLogin().and().httpBasic();
      * @param http
      * @throws Exception
      */
