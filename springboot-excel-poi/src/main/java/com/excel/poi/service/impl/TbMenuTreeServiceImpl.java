@@ -6,10 +6,15 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.excel.poi.dao.TbMenuTreeMapper;
 import com.excel.poi.entity.TbMenuTree;
 import com.excel.poi.service.TbMenuTreeService;
+import com.excel.poi.utils.MenuTreeUtils;
+import com.excel.poi.vo.TbMenuTreeVO;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.io.Serializable;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -33,12 +38,25 @@ public class TbMenuTreeServiceImpl extends ServiceImpl<TbMenuTreeMapper, TbMenuT
     }
 
     @Override
-    public List<TbMenuTree> otherList() throws Exception {
+    public List<TbMenuTreeVO> otherList() throws Exception {
+        /**获取磁盘库数据*/
         List<TbMenuTree> list = this.list();
         list = this.list(null);
         list = this.getBaseMapper().selectList(null);
         list = tbMenuTreeMapper.selectList(null);
-        return list;
+        /**PO列表转VO列表*/
+        List<TbMenuTreeVO> voList = new ArrayList<>(10);
+        list.stream().forEach(source -> {
+            TbMenuTreeVO target = new TbMenuTreeVO();
+            BeanUtils.copyProperties(source, target);
+            target.setCreateTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(source.getCreateTime()));
+            target.setUpdateTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(source.getUpdateTime()));
+            voList.add(target);
+        });
+        /**获取数据表中数据添加到树*/
+        MenuTreeUtils menuTree = new MenuTreeUtils(voList);
+        List<TbMenuTreeVO> data = menuTree.buildMenuTree();
+        return data;
     }
 
     @Override

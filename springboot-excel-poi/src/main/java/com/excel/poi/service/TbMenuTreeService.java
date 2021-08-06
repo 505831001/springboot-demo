@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.excel.poi.entity.TbMenuTree;
+import com.excel.poi.vo.TbMenuTreeVO;
 
 import java.io.Serializable;
 import java.util.List;
@@ -35,7 +36,7 @@ public interface TbMenuTreeService extends IService<TbMenuTree> {
      * @return
      * @throws Exception
      */
-    List<TbMenuTree> otherList() throws Exception;
+    List<TbMenuTreeVO> otherList() throws Exception;
 
     /**
      * 查询（根据ID 批量查询）

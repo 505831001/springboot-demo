@@ -1,22 +1,19 @@
 package com.excel.poi.controller;
 
-import com.excel.poi.entity.TbMenuTree;
+import com.alibaba.fastjson.JSONObject;
 import com.excel.poi.service.TbMenuTreeService;
-import com.excel.poi.utils.MenuTreeUtils;
 import com.excel.poi.utils.ResultData;
 import com.excel.poi.vo.TbMenuTreeVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.beans.BeanUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
 import java.io.File;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -34,25 +31,13 @@ public class MenuTreeController {
     @RequestMapping(value = "/getMenuTree", method = RequestMethod.GET)
     @ApiOperation(value = "菜单树构建", notes = "菜单树构建", tags = "")
     public ResultData getMenuTree() {
-        /**获取数据表中数据*/
-        List<TbMenuTree>   dbList = new ArrayList<>(10);
-        List<TbMenuTreeVO> voList = new ArrayList<>(10);
         try {
-            dbList = menuTreeService.otherList();
-            List<TbMenuTreeVO> vos = voList;
-            dbList.stream().forEach(source -> {
-                TbMenuTreeVO target = new TbMenuTreeVO();
-                BeanUtils.copyProperties(source, target);
-                target.setCreateTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(source.getCreateTime()));
-                target.setUpdateTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(source.getUpdateTime()));
-                vos.add(target);
-            });
-            /**获取数据表中数据添加到树*/
-            MenuTreeUtils menuTree = new MenuTreeUtils(voList);
-            voList = menuTree.buildMenuTree();
+            List<TbMenuTreeVO> voList = menuTreeService.otherList();
             return ResultData.success(voList.toArray());
         } catch (Exception ex) {
-            ex.printStackTrace();
+            log.error("菜单树形结构查询异常, {}", ex.getMessage(), ex);
+            log.error("菜单树形结构查询异常, list:{}", JSONObject.toJSONString(null));
+            log.error("菜单树形结构查询异常, ids:{}", StringUtils.join(null));
             return ResultData.failure(ex.getMessage());
         }
     }
