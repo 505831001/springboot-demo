@@ -3,12 +3,13 @@ package com.excel.poi.entity;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 import java.io.Serializable;
-import java.util.List;
+import java.util.Date;
 
 /**
  * @author Liuweiwei
@@ -16,8 +17,9 @@ import java.util.List;
  */
 @Data
 @NoArgsConstructor
+@AllArgsConstructor
 @ToString
-public class TbMenu implements Serializable {
+public class TbMenuTree implements Serializable {
     private static final long serialVersionUID = 1342245960543905436L;
     /**主键ID(子节点ID)*/
     @TableId(value = "id", type = IdType.UUID)
@@ -34,15 +36,16 @@ public class TbMenu implements Serializable {
     /**权限*/
     @TableField(value = "permission")
     private String permission;
-    /**次级菜单*/
-    @TableField(value = "children")
-    private List<TbMenu> children;
-
-    public TbMenu(String id, String parentId, String menuName, String role, String permission) {
-        this.id = id;
-        this.parentId = parentId;
-        this.menuName = menuName;
-        this.role = role;
-        this.permission = permission;
-    }
+    /**创建时间*/
+    @TableField(value = "create_time")
+    private Date createTime;
+    /**创建人员*/
+    @TableField(value = "create_name")
+    private String createName;
+    /**更新时间*/
+    @TableField(value = "update_time")
+    private Date updateTime;
+    /**更新人员*/
+    @TableField(value = "update_name")
+    private String updateName;
 }

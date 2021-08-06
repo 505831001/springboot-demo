@@ -14,6 +14,7 @@ import java.io.Serializable;
 @Data
 @ApiModel(description = "用户表入参对象DTO（所有字段类型保持和PO一样），出参对象VO（所有字段转字符串类型响应）")
 public class TbUserVO implements Serializable {
+    private static final long serialVersionUID = 1703508736689892531L;
     /**主键ID*/
     @ApiModelProperty(value = "主键ID", required = false)
     private String id;
