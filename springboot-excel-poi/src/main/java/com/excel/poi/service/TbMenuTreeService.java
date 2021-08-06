@@ -8,6 +8,7 @@ import com.excel.poi.vo.TbMenuTreeVO;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author Liuweiwei
@@ -47,12 +48,22 @@ public interface TbMenuTreeService extends IService<TbMenuTree> {
     List<TbMenuTree> otherListByIds(List<Integer> ids);
 
     /**
-     * 无条件翻页查询
+     * 分页构造函数
      *
-     * @param page
+     * @param current 当前页
+     * @param size    每页显示条数
      * @return
      */
-    Page<TbMenuTree> otherPage(Page<TbMenuTree> page);
+    Page<TbMenuTree> otherPage(long current, long size);
+
+    /**
+     * 无条件翻页查询
+     *
+     * @param current 当前页
+     * @param size    每页显示条数
+     * @return
+     */
+    Page<Map<String, Object>> otherPageMaps(long current, long size);
 
     /**
      * 查询总记录数

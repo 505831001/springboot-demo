@@ -16,6 +16,7 @@ import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author Liuweiwei
@@ -65,8 +66,15 @@ public class TbMenuTreeServiceImpl extends ServiceImpl<TbMenuTreeMapper, TbMenuT
     }
 
     @Override
-    public Page<TbMenuTree> otherPage(Page<TbMenuTree> page) {
-        return null;
+    public Page<TbMenuTree> otherPage(long current, long size) {
+        Page<TbMenuTree> page = this.page(new Page<>(current, size));
+        return page;
+    }
+
+    @Override
+    public Page<Map<String, Object>> otherPageMaps(long current, long size) {
+        Page<Map<String, Object>> maps = this.pageMaps(new Page<>(current, size));
+        return maps;
     }
 
     @Override
