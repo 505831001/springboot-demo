@@ -302,21 +302,20 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         http.authorizeRequests().anyRequest().authenticated().and().formLogin()
             .loginPage("/loginPage")
             .loginProcessingUrl("/authentication/form")
-            .defaultSuccessUrl("/indexPage")
+            .defaultSuccessUrl("/successPage")
             .failureUrl("/failurePage").permitAll()
             .and().csrf().disable();
         */
 
         /*
         http.authorizeRequests()
-            .antMatchers("/403").permitAll()
-            .antMatchers("/404").permitAll()
-            .antMatchers("/500").permitAll()
+            .antMatchers("/200").permitAll()
+            .antMatchers("/400").permitAll()
             .antMatchers("/index").permitAll()
             .anyRequest().authenticated().and().formLogin()
             .loginPage("/loginPage")
             .loginProcessingUrl("/authentication/form")
-            .defaultSuccessUrl("/indexPage")
+            .defaultSuccessUrl("/successPage")
             .failureUrl("/failurePage").permitAll()
             .and().csrf().disable().headers().frameOptions().disable();
         */
