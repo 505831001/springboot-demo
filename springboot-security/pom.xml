@@ -94,11 +94,12 @@
             <artifactId>spring-cloud-commons</artifactId>
         </dependency>
 
-        <!-- alibaba cloud - rocketmq -->
+        <!-- alibaba cloud - rocketmq
         <dependency>
             <groupId>com.alibaba.cloud</groupId>
             <artifactId>spring-cloud-starter-stream-rocketmq</artifactId>
         </dependency>
+         -->
 
         <!-- swagger -->
         <dependency>

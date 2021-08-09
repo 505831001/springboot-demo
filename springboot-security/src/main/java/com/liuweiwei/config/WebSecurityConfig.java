@@ -3,6 +3,7 @@ package com.liuweiwei.config;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.liuweiwei.component.*;
 import com.liuweiwei.service.TbUserService;
+import com.liuweiwei.web.VerifyCodeFilter;
 import lombok.extern.log4j.Log4j;
 import lombok.extern.log4j.Log4j2;
 import lombok.extern.slf4j.Slf4j;
@@ -35,6 +36,7 @@ import org.springframework.security.web.DefaultRedirectStrategy;
 import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.logout.LogoutHandler;
 import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
 import org.springframework.security.web.authentication.rememberme.JdbcTokenRepositoryImpl;
@@ -83,44 +85,27 @@ import java.util.Objects;
 @Log4j2
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
-    /**
-     * 同步日志-实现层：logback<org.slf4j>
-     * private static final org.slf4j.Logger SLF4J = LoggerFactory.getLogger(WebSecurityConfig.class);
-     *
-     * 异步日志-实现层：log4j<org.apache.log4j>
-     * private static final Logger LOG4J2 = LogManager.getLogger(WebSecurityConfig.class);
-     */
-
     @Resource
     private DataSource dataSource;
-
     @Resource
     private TbUserService tbUserService;
 
     @Resource
     private My00PasswordEncoderImpl my00PasswordEncoderImpl;
-
     @Resource
     private My01UserDetailsServiceImpl my01UserDetailsServiceImpl;
-
     @Resource
     private My02AuthenticationProviderImpl my02AuthenticationProviderImpl;
-
     @Resource
     private My03AuthenticationSuccessHandler my03AuthenticationSuccessHandler;
-
     @Resource
     private My04AuthenticationFailureHandler my04AuthenticationFailureHandler;
-
     @Resource
     private My05InvalidSessionStrategy my05InvalidSessionStrategy;
-
     @Resource
     private My06SessionInformationExpiredStrategy my06SessionInformationExpiredStrategy;
-
     @Resource
     private My07LogoutSuccessHandler my07LogoutSuccessHandler;
-
     @Resource
     private My08AccessDeniedHandler my08AccessDeniedHandler;
 
@@ -155,29 +140,18 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
      */
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        /**
-         * 方式一：基于内存的认证。在内存中验证添加到{AuthenticationManagerBuilder}并返回一个{InMemoryUserDetailsManagerConfigurer}在内存中允许定制的身份验证。
-         */
-        String encode2 = this.passwordEncoder().encode("123456");
-        String encode4 = this.passwordEncoder().encode("438438");
-        log.info("Spring Security 安全框架加密后的密码2：" + encode2);
-        log.info("Spring Security 安全框架加密后的密码4：" + encode4);
-        boolean matches2 = this.passwordEncoder().matches("123456", encode2);
-        boolean matches4 = "123456".equals(encode2);
-        log.info("验证密码编码获得存储匹配太编码后提交的原始密码。返回true。存储密码本身是没有解码。" + matches2);
-        log.info("验证密码编码获得存储匹配太编码后提交的原始密码。返回true。存储密码本身是没有解码。" + matches4);
-        //1.将【内存内身份】验证添加到{AuthenticationManagerBuilder}并返回{InMemoryUserDetailsManagerConfigurer}以允许自定义内存内身份验证。
+        String username = "admin";
+        String password = new BCryptPasswordEncoder().encode("123456");
+        String roles    = "ADMIN";
+        auth.inMemoryAuthentication().passwordEncoder(new BCryptPasswordEncoder()).withUser(username).password(password).roles(roles);
+        log.info("用户名称:{}, 用户密码:{}", username, password);
+        //TODO->1.将【内存内身份】验证添加到{AuthenticationManagerBuilder}并返回{InMemoryUserDetailsManagerConfigurer}以允许自定义内存内身份验证。
         //auth.inMemoryAuthentication();
-        //auth.inMemoryAuthentication().withUser("admin").password(encode2).roles("ADMIN");
-        //auth.inMemoryAuthentication().withUser("guest").password(encode2).roles("GUEST");
-        //2.将【JDBC身份】验证添加到{AuthenticationManagerBuilder}并返回{JdbcUserDetailsManagerConfigurer}以允许自定义JDBC身份验证。
+        //TODO->2.将【JDBC身份】验证添加到{AuthenticationManagerBuilder}并返回{JdbcUserDetailsManagerConfigurer}以允许自定义JDBC身份验证。
         //auth.jdbcAuthentication();
-        //3.将【LDAP身份】验证添加到{AuthenticationManagerBuilder}并返回{LdapAuthenticationProviderConfigurer}以允许自定义LDAP身份验证。
+        //TODO->3.将【LDAP身份】验证添加到{AuthenticationManagerBuilder}并返回{LdapAuthenticationProviderConfigurer}以允许自定义LDAP身份验证。
         //auth.ldapAuthentication();
 
-        /**
-         * 方式四：添加身份验证基于自定义{UserDetailsService}传入。然后它返回一个{DaoAuthenticationConfigurer}允许定制的身份验证。
-         */
         UserDetailsService userDetailsService = new UserDetailsService() {
             @Override
             public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -192,12 +166,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 return null;
             }
         };
-        //4.根据传入的【自定义身份】{UserDetailsService}添加验证。然后返回一个{DaoAuthenticationConfigurer}，以允许自定义身份验证。
+        //TODO->4.根据传入的【自定义身份】{UserDetailsService}添加验证。然后返回一个{DaoAuthenticationConfigurer}，以允许自定义身份验证。
         //auth.userDetailsService(userDetailsService).passwordEncoder(NoOpPasswordEncoder.getInstance());
 
-        /**
-         * 方式五：添加身份验证基于自定义{AuthenticationProvider}传入。自{AuthenticationProvider}实现未知,所有必须完成的定制外部和{AuthenticationManagerBuilder}立即返回。
-         */
         AuthenticationProvider authenticationProvider = new AuthenticationProvider() {
             @Override
             public Authentication authenticate(Authentication authentication) throws AuthenticationException {
@@ -233,8 +204,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 return true;
             }
         };
-        //5.根据传入的【自定义身份】{AuthenticationProvider}添加验证。由于{AuthenticationProvider}实现未知，因此必须在外部完成所有自定义，并立即返回{AuthenticationManagerBuilder}。
-        auth.authenticationProvider(authenticationProvider);
+        //TODO->5.根据传入的【自定义身份】{AuthenticationProvider}添加验证。由于{AuthenticationProvider}实现未知，因此必须在外部完成所有自定义，并立即返回{AuthenticationManagerBuilder}。
+        //auth.authenticationProvider(authenticationProvider);
     }
 
     /**
@@ -244,60 +215,59 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
      */
     @Override
     public void configure(WebSecurity web) throws Exception {
-        super.configure(web);
+        web.ignoring().antMatchers("/css/**", "/js/**");
+        /**
+         * super.configure(web);
+         */
     }
 
     /**
      * 重写此方法以配置{@link HttpSecurity}。
      * 通常，子类不应该通过调用super来调用此方法，因为它可能会覆盖它们的配置。
      * 默认配置为：http.authorizeRequests().anyRequest().authenticated().and().formLogin().and().httpBasic();
+     * TODO -> 默认配置：指定支持基于表单的身份验证。如果未指定{loginPage(String)}，将生成默认登录页面。
+     * http.authorizeRequests().anyRequest().authenticated().and().formLogin();
+     * http.authorizeRequests().anyRequest().authenticated().and().httpBasic();
+     * http.authorizeRequests().anyRequest().authenticated().and().formLogin().and().httpBasic();
+     * http.authorizeRequests().anyRequest().authenticated().and().formLogin().and().httpBasic().and().csrf().disable();
+     * http.authorizeRequests().anyRequest().authenticated().and().formLogin().and().httpBasic().and().csrf().disable().headers().frameOptions().disable();
+     * TODO -> HttpSecurity.formLogin() 登录功能。
+     * .formLogin() - 指定支持基于表单的身份验证。如果没有指定{loginPage(String)}，将生成一个默认的登录页面。
+     *     .loginPage(String loginPage)                   - 指定用户需要登录时发送到的URL。
+     *     .loginProcessingUrl(String loginProcessingUrl) - 指定验证凭据的URL。
+     *     .defaultSuccessUrl(String defaultSuccessUrl)   - 指定用户在身份验证成功后将被重定向到何处，如果他们在身份验证之前没有访问一个安全页面。
+     *     .failureUrl(String failureUrl).permitAll()     - 如果身份验证失败，发送给用户的URL。
+     * TODO -> HttpSecurity.rememberMe() "记住我"功能。
+     * .rememberMe() - 允许配置"记住我"身份验证。
+     *      .rememberMeParameter("remember-me")           -
+     *      .userDetailsService(userDetailsService())     -
+     *      .tokenRepository(persistentTokenRepository()) -
+     *      .tokenValiditySeconds(60)                     -
+     * TODO -> HttpSecurity.sessionManagement() Session 功能。
+     * .sessionManagement() - 允许配置会话管理。
+     *      .invalidSessionStrategy()                     -
+     *      .maximumSessions(1)                           -
+     *      .maxSessionsPreventsLogin(false)              -
+     *      .expiredSessionStrategy()                     -
+     *      .sessionRegistry(new SessionRegistryImpl())   -
+     * TODO -> HttpSecurity.logout() 退出功能。
+     * .logout() - 提供注销支持。
+     *      .logoutUrl("/logout")                         -
+     *      .deleteCookies("JSESSIONID")                  -
+     *      .clearAuthentication(true)                    -
+     *      .invalidateHttpSession(true)                  -
+     *      .addLogoutHandler()                           -
+     *      .logoutSuccessHandler()                       -
+     * TODO -> HttpSecurity.exceptionHandling() 异常处理。
+     * .exceptionHandling() - 允许配置异常处理。
+     *      .accessDeniedHandler()                        -
+     * .csrf() - There was an unexpected error (type=forbidden,status=403).
+     * .csrf() - Invalid CSRF Token 'null' was found on the request parameter '_csrf' or header 'X-CSRF-TOKEN'.
      * @param http
      * @throws Exception
      */
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        //TODO -> 默认配置：指定支持基于表单的身份验证。如果未指定{@link loginPage(String)}，将生成默认登录页面。
-        //http.authorizeRequests().anyRequest().authenticated().and().formLogin();
-        //http.authorizeRequests().anyRequest().authenticated().and().httpBasic();
-        //http.authorizeRequests().anyRequest().authenticated().and().formLogin().and().httpBasic();
-        //http.authorizeRequests().anyRequest().authenticated().and().formLogin().and().httpBasic().and().csrf().disable();
-        //http.authorizeRequests().anyRequest().authenticated().and().formLogin().and().httpBasic().and().csrf().disable().headers().frameOptions().disable();
-
-        /**
-         * TODO -> HttpSecurity.formLogin() 登录功能。
-         * .formLogin() - 指定支持基于表单的身份验证。如果没有指定{loginPage(String)}，将生成一个默认的登录页面。
-         *     .loginPage(String loginPage)                   - 指定用户需要登录时发送到的URL。
-         *     .loginProcessingUrl(String loginProcessingUrl) - 指定验证凭据的URL。
-         *     .defaultSuccessUrl(String defaultSuccessUrl)   - 指定用户在身份验证成功后将被重定向到何处，如果他们在身份验证之前没有访问一个安全页面。
-         *     .failureUrl(String failureUrl).permitAll()     - 如果身份验证失败，发送给用户的URL。
-         * TODO -> HttpSecurity.rememberMe() "记住我"功能。
-         * .rememberMe() - 允许配置"记住我"身份验证。
-         *      .rememberMeParameter("remember-me")           -
-         *      .userDetailsService(userDetailsService())     -
-         *      .tokenRepository(persistentTokenRepository()) -
-         *      .tokenValiditySeconds(60)                     -
-         * TODO -> HttpSecurity.sessionManagement() Session 功能。
-         * .sessionManagement() - 允许配置会话管理。
-         *      .invalidSessionStrategy()                     -
-         *      .maximumSessions(1)                           -
-         *      .maxSessionsPreventsLogin(false)              -
-         *      .expiredSessionStrategy()                     -
-         *      .sessionRegistry(new SessionRegistryImpl())   -
-         * TODO -> HttpSecurity.logout() 退出功能。
-         * .logout() - 提供注销支持。
-         *      .logoutUrl("/logout")                         -
-         *      .deleteCookies("JSESSIONID")                  -
-         *      .clearAuthentication(true)                    -
-         *      .invalidateHttpSession(true)                  -
-         *      .addLogoutHandler()                           -
-         *      .logoutSuccessHandler()                       -
-         * TODO -> HttpSecurity.exceptionHandling() 异常处理。
-         * .exceptionHandling() - 允许配置异常处理。
-         *      .accessDeniedHandler()                        -
-         * .csrf() - There was an unexpected error (type=forbidden,status=403).
-         * .csrf() - Invalid CSRF Token 'null' was found on the request parameter '_csrf' or header 'X-CSRF-TOKEN'.
-         */
-
         /*
         http.authorizeRequests().anyRequest().authenticated().and().formLogin()
             .loginPage("/loginPage")
@@ -306,7 +276,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
             .failureUrl("/failurePage").permitAll()
             .and().csrf().disable();
         */
-
         /*
         http.authorizeRequests()
             .antMatchers("/200").permitAll()
@@ -319,7 +288,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
             .failureUrl("/failurePage").permitAll()
             .and().csrf().disable().headers().frameOptions().disable();
         */
-
         /*
         http.authorizeRequests()
             .antMatchers("/index").permitAll()
@@ -351,68 +319,17 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
             .and().csrf().disable().headers().frameOptions().disable();
         */
 
-        /*
         http.authorizeRequests()
-            .antMatchers("/index").permitAll()
-            .antMatchers("/admin/image").hasRole("ADMIN")
-            .antMatchers("/guest/css").hasAnyRole("ADMIN", "GUEST")
-            .anyRequest().authenticated()
-            //登录功能。
-            .and()
-            .formLogin()
-            .loginPage("/loginPage")
-            .loginProcessingUrl("/authentication/form")
-            .successHandler(new AuthenticationSuccessHandler() {
-                @Override
-                public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
-                    log.info("登录成功...");
-                    response.setStatus(HttpStatus.OK.value());
-                    response.setContentType("application/json;charset=utf-8");
-                    response.getWriter().write(new ObjectMapper().writeValueAsString(authentication));
-                    new DefaultRedirectStrategy().sendRedirect(request, response, "indexPage");
-                }
-            })
-            .failureHandler(new AuthenticationFailureHandler() {
-                @Override
-                public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException, ServletException {
-                    log.info("登录失败...");
-                    response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
-                    response.setContentType("application/json;charset=utf-8");
-                    response.getWriter().write(new ObjectMapper().writeValueAsString(exception.getMessage()));
-                    new DefaultRedirectStrategy().sendRedirect(request, response, "failurePage");
-                }
-            }).permitAll()
-            //登出功能。
-            .and()
-            .logout()
-            .logoutUrl("/logout")
-            .clearAuthentication(true)
-            .invalidateHttpSession(true)
-            .addLogoutHandler(new LogoutHandler() {
-                @Override
-                public void logout(HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
-                    response.setContentType("application/json;charset=UTF-8");
-                    log.info("登录退出a...");
-                }
-            })
-            .logoutSuccessHandler(new LogoutSuccessHandler() {
-                @Override
-                public void onLogoutSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
-                    response.setContentType("application/json;charset=UTF-8");
-                    log.info("登录退出b...");
-                }
-            })
-            .and().csrf().disable().headers().frameOptions().disable();
-        */
-
-        http.authorizeRequests()
+            //外挂验证码。{AntPathMatcher}蚂蚁路径请求匹配器。指定任何人都允许使用此URL。
             .antMatchers("/index").permitAll()
             .antMatchers("/login/invalid").permitAll()
+            .antMatchers("/getVerifyCode").permitAll()
             .antMatchers("/admin/image").hasRole("ADMIN")
             .antMatchers("/guest/css").hasAnyRole("ADMIN", "GUEST")
             .anyRequest().authenticated()
+            //外挂过滤器。
+            .and()/*.addFilterBefore(new VerifyCodeFilter(), UsernamePasswordAuthenticationFilter.class)*/
             //TODO -> 指定支持基于表单的身份验证。如果未指定{@link loginPage(String)}，将生成默认登录页面。
-            .and()
             .formLogin()
             .loginPage("/loginPage")
             .loginProcessingUrl("/authentication/form")
@@ -444,34 +361,11 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
             .rememberMeParameter("remember-me")
             .alwaysRemember(true)
             .userDetailsService(userDetailsService())
-            .tokenRepository(persistentTokenRepository())
+            //.tokenRepository(persistentTokenRepository())
             .tokenValiditySeconds(60)
-            //TODO -> 允许配置会话管理。超时。
-            /*
-            .and()
-            .sessionManagement()
-            .invalidSessionUrl("/index")
-            */
-            //TODO -> 允许配置会话管理。限制最大登录数。
-            /*
-            .and()
-            .sessionManagement()
-            .maximumSessions(1)
-            .expiredUrl("/index")
-            */
-            //TODO -> 允许配置会话管理。限制最大登录数。
-            /*
-            .and()
-            .sessionManagement()
-            .invalidSessionUrl("/index")
-            .maximumSessions(1)
-            .maxSessionsPreventsLogin(false)
-            .expiredUrl("/index")
-            */
-            //TODO -> 允许配置会话管理。
-            //TODO -> 下面的配置演示如何强制一次仅对用户的单个实例进行身份验证。
-            //TODO -> 如果用户在未注销的情况下使用用户名"user"进行身份验证，并且尝试使用"user"进行身份验证，
-            //TODO -> 则第一个会话将被强制终止并发送到"/login"expired URL。
+            //TODO -> 允许配置会话管理。面的配置演示如何强制一次仅对用户的单个实例进行身份验证。
+            //如果用户在未注销的情况下使用用户名"user"进行身份验证，并且尝试使用"user"进行身份验证，
+            //则第一个会话将被强制终止并发送到"/login"expired URL。
             .and()
             .sessionManagement()
             .invalidSessionStrategy(new InvalidSessionStrategy() {
@@ -506,10 +400,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 }
             })
             .sessionRegistry(new SessionRegistryImpl())
-            //TODO -> 提供注销支持。
-            //TODO -> 这在使用时自动应用{@link WebSecurityConfigurerAdapter}。默认情况下，访问URL"/logout"将通过使HTTP会话无效而注销用户，
-            //TODO -> 清理任何{@link rememberMe()}已配置的身份验证，
-            //TODO -> 清理任何{@link SecurityContextHolder}，然后重定向到"/login"登录页面。
+            //TODO -> 提供注销支持。这在使用时自动应用{@link WebSecurityConfigurerAdapter}。默认情况下，访问URL"/logout"将通过使HTTP会话无效而注销用户，
+            //清理任何{@link rememberMe()}已配置的身份验证，
+            //清理任何{@link SecurityContextHolder}，然后重定向到"/login"登录页面。
             .and()
             .and()
             .logout()
@@ -556,7 +449,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
             //TODO -> 关闭一些乱七八糟的东西。
             .and().csrf().disable().headers().frameOptions().disable();
 
-        /**Caused by: java.lang.IllegalStateException: Can't configure anyRequest after itself.*/
-        //super.configure(http);
+        /**
+         * Caused by: java.lang.IllegalStateException: Can't configure anyRequest after itself.
+         * super.configure(http);
+         */
     }
 }

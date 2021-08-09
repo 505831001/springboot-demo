@@ -23,7 +23,7 @@ import org.springframework.stereotype.Component;
 @Slf4j
 public class Web03MvcAspect {
 
-    @Around("execution(* com.liuweiwei.controller.LoginController.*(..))")
+    @Around("execution(* com.liuweiwei.controller.HtmlController.*(..))")
     public Object proceedingJoinPoint(ProceedingJoinPoint proceedingJoinPoint) throws Throwable {
         log.info("03 - Aspect 切片类：proceedingJoinPoint(proceedingJoinPoint) 方法。");
         Object object = proceedingJoinPoint.proceed();
