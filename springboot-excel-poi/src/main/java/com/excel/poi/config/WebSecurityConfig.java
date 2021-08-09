@@ -1,5 +1,6 @@
 package com.excel.poi.config;
 
+import com.excel.poi.web.VerifyCodeFilter;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -12,6 +13,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 /**
  * Spring Security 安全框架配置类。
@@ -62,8 +64,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
      */
     @Bean
     public PasswordEncoder passwordEncoder() {
-        PasswordEncoder encoder = new BCryptPasswordEncoder();
-        encoder = NoOpPasswordEncoder.getInstance();
+        PasswordEncoder encoder = NoOpPasswordEncoder.getInstance();
+        encoder = new BCryptPasswordEncoder();
         return encoder;
     }
 
@@ -75,17 +77,29 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
      */
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        //将【内存内身份】验证添加到{AuthenticationManagerBuilder}并返回{InMemoryUserDetailsManagerConfigurer}以允许自定义内存内身份验证。
-        auth.inMemoryAuthentication();
-        //将【JDBC身份】验证添加到{AuthenticationManagerBuilder}并返回{JdbcUserDetailsManagerConfigurer}以允许自定义JDBC身份验证。
-        auth.jdbcAuthentication();
-        //将【LDAP身份】验证添加到{AuthenticationManagerBuilder}并返回{LdapAuthenticationProviderConfigurer}以允许自定义LDAP身份验证。
-        auth.ldapAuthentication();
-        //根据传入的【自定义身份】{UserDetailsService}添加验证。然后返回一个{DaoAuthenticationConfigurer}，以允许自定义身份验证。
-        auth.userDetailsService(null);
-        //根据传入的【自定义身份】{AuthenticationProvider}添加验证。由于{AuthenticationProvider}实现未知，因此必须在外部完成所有自定义，并立即返回{AuthenticationManagerBuilder}。
-        auth.authenticationProvider(null);
-        super.configure(auth);
+        /**
+         * 1.将【内存内身份】验证添加到{AuthenticationManagerBuilder}并返回{InMemoryUserDetailsManagerConfigurer}以允许自定义内存内身份验证。
+         * auth.inMemoryAuthentication();
+         * 2.将【JDBC身份】验证添加到{AuthenticationManagerBuilder}并返回{JdbcUserDetailsManagerConfigurer}以允许自定义JDBC身份验证。
+         * auth.jdbcAuthentication();
+         * 3.将【LDAP身份】验证添加到{AuthenticationManagerBuilder}并返回{LdapAuthenticationProviderConfigurer}以允许自定义LDAP身份验证。
+         * auth.ldapAuthentication();
+         * 4.根据传入的【自定义身份】{UserDetailsService}添加验证。然后返回一个{DaoAuthenticationConfigurer}，以允许自定义身份验证。
+         * auth.userDetailsService(null);
+         * 5.根据传入的【自定义身份】{AuthenticationProvider}添加验证。由于{AuthenticationProvider}实现未知，因此必须在外部完成所有自定义，并立即返回{AuthenticationManagerBuilder}。
+         * auth.authenticationProvider(null);
+         */
+
+        String username = "admin";
+        String password = this.passwordEncoder().encode("123456");
+        String roles    = "ADMIN";
+        auth.inMemoryAuthentication().withUser(username).password(password).roles(roles);
+        log.info("username->{}, password->{}", username, password);
+
+        /**
+         * Using generated security password: 40c9e5c2-cf56-488d-bb57-cb73756d1100
+         * super.configure(auth);
+         */
     }
 
     /**
@@ -95,70 +109,51 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
      */
     @Override
     public void configure(WebSecurity web) throws Exception {
-        super.configure(web);
+        web.ignoring().antMatchers("/css/**", "/js/**");
+        /**
+         * super.configure(web);
+         */
     }
 
     /**
      * 重写此方法以配置{@link HttpSecurity}。
      * 通常，子类不应该通过调用super来调用此方法，因为它可能会覆盖它们的配置。
      * 默认配置为：http.authorizeRequests().anyRequest().authenticated().and().formLogin().and().httpBasic();
+     * TODO -> 默认配置：指定支持基于表单的身份验证。如果未指定{loginPage(String)}，将生成默认登录页面。
      * @param http
      * @throws Exception
      */
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         /**
-         * The default configuration is:
+         * http.authorizeRequests().anyRequest().authenticated().and().formLogin();
+         * http.authorizeRequests().anyRequest().authenticated().and().httpBasic();
          * http.authorizeRequests().anyRequest().authenticated().and().formLogin().and().httpBasic();
-         * TODO -> 默认配置：指定支持基于表单的身份验证。如果未指定{@link loginPage(String)}，将生成默认登录页面。
+         * http.authorizeRequests().anyRequest().authenticated().and().formLogin().and().httpBasic().and().csrf().disable();
+         * http.authorizeRequests().anyRequest().authenticated().and().formLogin().and().httpBasic().and().csrf().disable().headers().frameOptions().disable();
          */
 
-        //http.authorizeRequests().anyRequest().authenticated().and().formLogin();
-        //http.authorizeRequests().anyRequest().authenticated().and().httpBasic();
-        //http.authorizeRequests().anyRequest().authenticated().and().formLogin().and().httpBasic();
-        //http.authorizeRequests().anyRequest().authenticated().and().formLogin().and().httpBasic().and().csrf().disable();
-        //http.authorizeRequests().anyRequest().authenticated().and().formLogin().and().httpBasic().and().csrf().disable().headers().frameOptions().disable();
-
-        http.authorizeRequests().anyRequest().authenticated()
-            .and().formLogin()
-            .and().httpBasic()
-            .and().rememberMe()
-            .and().sessionManagement()
-            .and().logout()
-            .and().exceptionHandling()
-            .and().cors().disable().csrf().disable().headers().frameOptions().disable();
+        http.authorizeRequests()
+            //外挂验证码。
+            .antMatchers("/getVerifyCode").permitAll()
+            .anyRequest().authenticated()
+            //外挂过滤器。
+            .and().addFilterBefore(new VerifyCodeFilter(), UsernamePasswordAuthenticationFilter.class)
+            //TODO -> 登录功能。
+            .formLogin().loginPage("/loginPage").loginProcessingUrl("/authentication/form").defaultSuccessUrl("/successPage").failureUrl("/failurePage").permitAll()
+            //TODO -> 记住我功能。
+            .and().rememberMe().rememberMeParameter("remember-me").alwaysRemember(true).tokenValiditySeconds(60)
+            //TODO -> 会话功能。
+            .and().sessionManagement().maximumSessions(1).maxSessionsPreventsLogin(false).expiredUrl("/index").and()
+            //TODO -> 退出功能。
+            .and().logout().logoutUrl("/logout").deleteCookies("JSESSIONID").clearAuthentication(true).invalidateHttpSession(true).logoutSuccessUrl("/index")
+            //TODO -> 异常功能。
+            .and().exceptionHandling().accessDeniedPage("/errorPage")
+            .and().csrf().disable().headers().frameOptions().disable();
 
         /**
          * Can't configure anyRequest after itself.
          * super.configure(http);
          */
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 }
