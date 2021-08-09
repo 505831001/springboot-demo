@@ -1,5 +1,8 @@
 package com.liuweiwei.controller;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import lombok.extern.log4j.Log4j2;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.tomcat.util.http.fileupload.IOUtils;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,12 +25,14 @@ import java.util.Date;
  * @since 2021-03-23
  */
 @RestController
-@Slf4j
+@Api(value = "", tags = "文件控制器")
+@Log4j2
 public class FileController {
 
     private String folder = "C:\\Users\\Administrator\\Documents";
 
     @PostMapping(value = "/upload")
+    @ApiOperation(value = "文件上传", notes = "文件上传", tags = "")
     public String upload(MultipartFile file) throws IOException {
         log.info(file.getName());
         log.info(file.getOriginalFilename());
@@ -39,8 +44,8 @@ public class FileController {
         return path;
     }
 
-    /*
     @GetMapping(value = "/{id}")
+    @ApiOperation(value = "文件下载", notes = "文件下载", tags = "")
     public Integer download(@PathVariable(value = "id") String id, HttpServletRequest request, HttpServletResponse response) throws IOException {
         File file = new File(folder, id + ".txt");
         FileInputStream inputStream = new FileInputStream(file);
@@ -51,5 +56,4 @@ public class FileController {
         outputStream.flush();
         return copy;
     }
-    */
 }
