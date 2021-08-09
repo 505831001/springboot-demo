@@ -32,8 +32,10 @@ public class VerifyCodeFilter extends OncePerRequestFilter {
             } else {
                 //手动设置异常
                 request.getSession().setAttribute("SPRING_SECURITY_LAST_EXCEPTION", new DisabledException("验证码输入错误"));
-                //转发到错误Url
-                request.getRequestDispatcher("/errorPage").forward(request, response);
+                //请求转发到错误Url
+                request.getRequestDispatcher("/error").forward(request, response);
+                //请求重定向到错误Url
+                //response.sendRedirect("/error");
             }
         } else {
             filterChain.doFilter(request, response);
