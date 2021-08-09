@@ -1,4 +1,4 @@
-package com.excel.poi.utils;
+package com.excel.poi.web;
 
 import javax.imageio.ImageIO;
 import javax.servlet.ServletException;
@@ -12,10 +12,15 @@ import java.awt.image.BufferedImage;
 import java.util.Random;
 
 /**
+ * 如何才能实现验证码验证呢，思考一下，应该有以下几种实现方式：
+ *   1. 登录表单提交前发送 AJAX 验证验证码。使用 AJAX 方式验证和我们 Spring Security 框架就没有任何关系了，其实就是表单提交前先发个 HTTP 请求验证验证码，
+ *   2. 使用自定义过滤器(Filter)，在 Spring security 校验前验证验证码合法性。使用过滤器的思路是在 Spring Security 处理登录验证请求前，验证验证码，如果正确，放行；如果不正确，调到异常。
+ *   3. 和用户名、密码一起发送到后台，在 Spring security 中进行验证。
+ * 生成验证码存入Request.setSession("validateCode")中。不区分大小写。
  * @author Liuweiwei
  * @since 2021-08-06
  */
-public class VerifyCodeUtils extends HttpServlet {
+public class VerifyCodeServlet extends HttpServlet {
     //验证码图片的宽度。
     private int width = 100;
     //验证码图片的高度。

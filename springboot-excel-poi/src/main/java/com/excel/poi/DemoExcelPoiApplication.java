@@ -5,15 +5,9 @@ import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.PaginationInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.inner.PaginationInnerInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.pagination.optimize.JsqlParserCountOptimize;
-import com.excel.poi.utils.VerifyCodeUtils;
-import jdk.nashorn.internal.runtime.logging.Logger;
-import lombok.extern.java.Log;
-import lombok.extern.log4j.Log4j;
+import com.excel.poi.web.VerifyCodeServlet;
 import lombok.extern.log4j.Log4j2;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.logging.log4j.LogManager;
 import org.mybatis.spring.annotation.MapperScan;
-import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.web.servlet.ServletRegistrationBean;
@@ -52,9 +46,8 @@ public class DemoExcelPoiApplication {
         log.info(environment.getProperty("sun.java.command") + " started successfully.");
     }
 
-    /*
-    // MyBatis-Plus 核心功能-分页插件<https://mp.baomidou.com/guide/page.html>旧版
-    @Bean
+    /**MyBatis-Plus 核心功能-分页插件<https://mp.baomidou.com/guide/page.html>旧版*/
+    //@Bean
     public PaginationInterceptor paginationInterceptor() {
         PaginationInterceptor paginationInterceptor = new PaginationInterceptor();
         // 设置请求的页面大于最大页后操作， true调回到首页，false 继续请求  默认false
@@ -65,7 +58,6 @@ public class DemoExcelPoiApplication {
         paginationInterceptor.setCountSqlParser(new JsqlParserCountOptimize(true));
         return paginationInterceptor;
     }
-    */
 
     /**MyBatis-Plus 核心功能-分页插件<https://mp.baomidou.com/guide/page.html>最新版*/
     @Bean
@@ -75,10 +67,10 @@ public class DemoExcelPoiApplication {
         return interceptor;
     }
 
-    /**注入验证码servlet*/
+    /**注入验证码Servlet*/
     @Bean
     public ServletRegistrationBean indexServletRegistration() {
-        ServletRegistrationBean registration = new ServletRegistrationBean(new VerifyCodeUtils());
+        ServletRegistrationBean registration = new ServletRegistrationBean(new VerifyCodeServlet());
         registration.addUrlMappings("/getVerifyCode");
         return registration;
     }

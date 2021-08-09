@@ -1,5 +1,6 @@
 package com.excel.poi.web;
 
+import lombok.extern.log4j.Log4j2;
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.util.AntPathMatcher;
 import org.springframework.util.PathMatcher;
@@ -17,21 +18,22 @@ import java.io.IOException;
  * @author Liuweiwei
  * @since 2021-08-06
  */
+@Log4j2
 public class VerifyCodeFilter extends OncePerRequestFilter {
-
+    /**{AntPathMatcher}蚂蚁路径请求匹配器。*/
     private static final PathMatcher pathMatcher = new AntPathMatcher();
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         if (isProtectedUrl(request)) {
             String verifyCode = request.getParameter("verifyCode");
-            if (!validateVerify(verifyCode)) {
+            if (validateVerify(verifyCode)) {
+                filterChain.doFilter(request, response);
+            } else {
                 //手动设置异常
                 request.getSession().setAttribute("SPRING_SECURITY_LAST_EXCEPTION", new DisabledException("验证码输入错误"));
-                // 转发到错误Url
+                //转发到错误Url
                 request.getRequestDispatcher("/errorPage").forward(request, response);
-            } else {
-                filterChain.doFilter(request, response);
             }
         } else {
             filterChain.doFilter(request, response);
@@ -40,26 +42,27 @@ public class VerifyCodeFilter extends OncePerRequestFilter {
 
     /**
      * 拦截/login的POST请求
+     * 登录页面表单action="/login" - "POST".equals(request.getMethod()) && pathMatcher.match("/login", request.getServletPath())
      * @param request
      * @return
      */
     private boolean isProtectedUrl(HttpServletRequest request) {
-        return "POST".equals(request.getMethod()) && pathMatcher.match("/login", request.getServletPath());
+        return "POST".equals(request.getMethod()) && pathMatcher.match("/authentication/form", request.getServletPath());
     }
 
     /**
-     * 验证验证码
-     * @param inputVerify
+     * validateCode - 请求对象{VerifyCodeUtils}生成验证验证码
+     * @param verifyCode 表单输入框验证码
      * @return
      */
-    private boolean validateVerify(String inputVerify) {
-        //获取当前线程绑定的request对象
+    private boolean validateVerify(String verifyCode) {
+        //获取当前线程绑定的请求对象
         HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
-        // 不分区大小写
-        // 这个validateCode是在servlet中存入session的名字
+        //这个请求对象是在{VerifyCodeUtils继承Servlet}中存入Session的名字。不分区大小写。
         String validateCode = ((String) request.getSession().getAttribute("validateCode")).toLowerCase();
-        inputVerify = inputVerify.toLowerCase();
-        System.out.println("验证码：" + validateCode + "用户输入：" + inputVerify);
-        return validateCode.equals(inputVerify);
+        log.info("请求对象生成验证码:{}", validateCode);
+        verifyCode = verifyCode.toLowerCase();
+        log.info("请求表单输入验证码:{}", verifyCode);
+        return validateCode.equals(verifyCode);
     }
 }

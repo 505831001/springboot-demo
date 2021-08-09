@@ -72,24 +72,21 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     /**
      * 被使用的默认实现{authenticationManager()}尝试获得{@link AuthenticationManager}。
      * 如果被重写，则{AuthenticationManagerBuilder}应用于指定{@link AuthenticationManager}。
+     * 1.将【内存内身份】验证添加到{AuthenticationManagerBuilder}并返回{InMemoryUserDetailsManagerConfigurer}以允许自定义内存内身份验证。
+     * auth.inMemoryAuthentication();
+     * 2.将【JDBC身份】验证添加到{AuthenticationManagerBuilder}并返回{JdbcUserDetailsManagerConfigurer}以允许自定义JDBC身份验证。
+     * auth.jdbcAuthentication();
+     * 3.将【LDAP身份】验证添加到{AuthenticationManagerBuilder}并返回{LdapAuthenticationProviderConfigurer}以允许自定义LDAP身份验证。
+     * auth.ldapAuthentication();
+     * 4.根据传入的【自定义身份】{UserDetailsService}添加验证。然后返回一个{DaoAuthenticationConfigurer}，以允许自定义身份验证。
+     * auth.userDetailsService(null);
+     * 5.根据传入的【自定义身份】{AuthenticationProvider}添加验证。由于{AuthenticationProvider}实现未知，因此必须在外部完成所有自定义，并立即返回{AuthenticationManagerBuilder}。
+     * auth.authenticationProvider(null);
      * @param auth
      * @throws Exception
      */
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        /**
-         * 1.将【内存内身份】验证添加到{AuthenticationManagerBuilder}并返回{InMemoryUserDetailsManagerConfigurer}以允许自定义内存内身份验证。
-         * auth.inMemoryAuthentication();
-         * 2.将【JDBC身份】验证添加到{AuthenticationManagerBuilder}并返回{JdbcUserDetailsManagerConfigurer}以允许自定义JDBC身份验证。
-         * auth.jdbcAuthentication();
-         * 3.将【LDAP身份】验证添加到{AuthenticationManagerBuilder}并返回{LdapAuthenticationProviderConfigurer}以允许自定义LDAP身份验证。
-         * auth.ldapAuthentication();
-         * 4.根据传入的【自定义身份】{UserDetailsService}添加验证。然后返回一个{DaoAuthenticationConfigurer}，以允许自定义身份验证。
-         * auth.userDetailsService(null);
-         * 5.根据传入的【自定义身份】{AuthenticationProvider}添加验证。由于{AuthenticationProvider}实现未知，因此必须在外部完成所有自定义，并立即返回{AuthenticationManagerBuilder}。
-         * auth.authenticationProvider(null);
-         */
-
         String username = "admin";
         String password = this.passwordEncoder().encode("123456");
         String roles    = "ADMIN";
@@ -120,21 +117,18 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
      * 通常，子类不应该通过调用super来调用此方法，因为它可能会覆盖它们的配置。
      * 默认配置为：http.authorizeRequests().anyRequest().authenticated().and().formLogin().and().httpBasic();
      * TODO -> 默认配置：指定支持基于表单的身份验证。如果未指定{loginPage(String)}，将生成默认登录页面。
+     * http.authorizeRequests().anyRequest().authenticated().and().formLogin();
+     * http.authorizeRequests().anyRequest().authenticated().and().httpBasic();
+     * http.authorizeRequests().anyRequest().authenticated().and().formLogin().and().httpBasic();
+     * http.authorizeRequests().anyRequest().authenticated().and().formLogin().and().httpBasic().and().csrf().disable();
+     * http.authorizeRequests().anyRequest().authenticated().and().formLogin().and().httpBasic().and().csrf().disable().headers().frameOptions().disable();
      * @param http
      * @throws Exception
      */
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        /**
-         * http.authorizeRequests().anyRequest().authenticated().and().formLogin();
-         * http.authorizeRequests().anyRequest().authenticated().and().httpBasic();
-         * http.authorizeRequests().anyRequest().authenticated().and().formLogin().and().httpBasic();
-         * http.authorizeRequests().anyRequest().authenticated().and().formLogin().and().httpBasic().and().csrf().disable();
-         * http.authorizeRequests().anyRequest().authenticated().and().formLogin().and().httpBasic().and().csrf().disable().headers().frameOptions().disable();
-         */
-
         http.authorizeRequests()
-            //外挂验证码。
+            //外挂验证码。{AntPathMatcher}蚂蚁路径请求匹配器。指定任何人都允许使用此URL。
             .antMatchers("/getVerifyCode").permitAll()
             .anyRequest().authenticated()
             //外挂过滤器。
