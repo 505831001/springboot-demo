@@ -23,6 +23,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.authority.AuthorityUtils;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.session.SessionInformation;
 import org.springframework.security.core.session.SessionRegistryImpl;
 import org.springframework.security.core.userdetails.User;
@@ -140,11 +141,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
      */
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        String username = "admin";
-        String password = new BCryptPasswordEncoder().encode("123456");
-        String roles    = "ADMIN";
-        auth.inMemoryAuthentication().passwordEncoder(new BCryptPasswordEncoder()).withUser(username).password(password).roles(roles);
-        log.info("用户名称:{}, 用户密码:{}", username, password);
+        String dbUsername = "admin";
+        String dbPassword = passwordEncoder().encode("123456");
+        String dbRoles    = "ADMIN";
+        auth.inMemoryAuthentication().passwordEncoder(passwordEncoder()).withUser(dbUsername).password(dbPassword).roles(dbRoles);
         //TODO->1.将【内存内身份】验证添加到{AuthenticationManagerBuilder}并返回{InMemoryUserDetailsManagerConfigurer}以允许自定义内存内身份验证。
         //auth.inMemoryAuthentication();
         //TODO->2.将【JDBC身份】验证添加到{AuthenticationManagerBuilder}并返回{JdbcUserDetailsManagerConfigurer}以允许自定义JDBC身份验证。
@@ -156,45 +156,46 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
             @Override
             public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
                 log.info("【第三步】获取页面用户名称：" + username);
-                String md5Password = tbUserService.findPasswordByName(username);
-                log.info("【第四步】通过页面用户名称查询数据库用户密码：" + md5Password);
-                if (!StringUtils.isEmpty(username) && !StringUtils.isEmpty(md5Password)) {
-                    User user = new User(username, md5Password, AuthorityUtils.commaSeparatedStringToAuthorityList("ADMIN"));
-                    log.info("【第五步】把页面用户名称和数据库用户密码设到安全框架Usre对象：" + user.toString());
+                String password = dbPassword;/*tbUserService.findPasswordByName(username);*/
+                log.info("【第四步】通过页面用户名称查询数据库用户密码：" + password);
+                if (!StringUtils.isEmpty(username) && !StringUtils.isEmpty(password)) {
+                    User user = new User(username, password, AuthorityUtils.commaSeparatedStringToAuthorityList("ADMIN"));
+                    log.info("【第五步】把页面用户名称和数据库用户密码设到安全框架User对象：" + user.toString());
                     return user;
                 }
                 return null;
             }
         };
         //TODO->4.根据传入的【自定义身份】{UserDetailsService}添加验证。然后返回一个{DaoAuthenticationConfigurer}，以允许自定义身份验证。
-        //auth.userDetailsService(userDetailsService).passwordEncoder(NoOpPasswordEncoder.getInstance());
+        auth.userDetailsService(userDetailsService).passwordEncoder(NoOpPasswordEncoder.getInstance());
 
         AuthenticationProvider authenticationProvider = new AuthenticationProvider() {
             @Override
             public Authentication authenticate(Authentication authentication) throws AuthenticationException {
                 UserDetails details = null;
                 UsernamePasswordAuthenticationToken token = null;
-                String username = (String) authentication.getPrincipal();
-                log.info("【第一步】获取页面用户名称：" + username);
-                String password = (String) authentication.getCredentials();
-                log.info("【第二步】获取页面用户密码String：" + password);
-                String md5Password = DigestUtils.md5DigestAsHex(password.getBytes());
+                String httpUsername = (String) authentication.getPrincipal();
+                log.info("【第一步】获取页面用户名称：" + httpUsername);
+                String httpPassword = (String) authentication.getCredentials();
+                log.info("【第二步】获取页面用户密码String：" + httpPassword);
+                String md5Password = DigestUtils.md5DigestAsHex(httpPassword.getBytes());
                 log.info("【第二步】获取页面用户密码MD5：" + md5Password);
-                String base64Password = Base64Utils.encodeToString(password.getBytes());
+                String base64Password = Base64Utils.encodeToString(httpPassword.getBytes());
                 log.info("【第二步】获取页面用户密码Base64：" + base64Password);
-                details = userDetailsService.loadUserByUsername(username);
+                details = userDetailsService.loadUserByUsername(httpUsername);
                 if (Objects.nonNull(details)) {
                     log.info("【第六步】获取安全框架User对象用户：" + details.getUsername());
                     log.info("【第六步】获取安全框架User对象密码：" + details.getPassword());
                     log.info("【第六步】获取安全框架User对象权限：" + details.getAuthorities());
-                    boolean matches = new BCryptPasswordEncoder().matches(md5Password, details.getPassword());
+                    boolean matches = passwordEncoder().matches(dbPassword, details.getPassword());
                     log.info("【第七步】比较页面用户密码和安全框架密码a：" + matches);
-                    boolean equals = md5Password.equals(details.getPassword());
+                    boolean equals = dbPassword.equals(details.getPassword());
                     log.info("【第七步】比较页面用户密码和安全框架密码b：" + equals);
                     token = new UsernamePasswordAuthenticationToken(null, null, null);
-                    token = new UsernamePasswordAuthenticationToken(details, md5Password, details.getAuthorities());
+                    token = new UsernamePasswordAuthenticationToken(details, dbPassword, details.getAuthorities());
                     log.info("【第八步】设置安全框架User对象到Token账号：" + token.getPrincipal());
                     log.info("【第八步】设置安全框架User对象到Token密码：" + token.getCredentials());
+                    SecurityContextHolder.getContext().setAuthentication(token);
                     return token;
                 }
                 return null;
@@ -205,7 +206,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
             }
         };
         //TODO->5.根据传入的【自定义身份】{AuthenticationProvider}添加验证。由于{AuthenticationProvider}实现未知，因此必须在外部完成所有自定义，并立即返回{AuthenticationManagerBuilder}。
-        //auth.authenticationProvider(authenticationProvider);
+        auth.authenticationProvider(authenticationProvider);
     }
 
     /**

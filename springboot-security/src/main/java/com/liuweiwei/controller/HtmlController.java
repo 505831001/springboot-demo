@@ -30,6 +30,7 @@ public class HtmlController {
     @ApiOperation(value = "上下文对象", notes = "上下文对象", tags = "")
     @ResponseBody
     public String string() {
+        log.info("来自于：SecurityContextHolder.getContext().setAuthentication(token)");
         return SecurityContextHolder.getContext().getAuthentication().toString();
     }
 
@@ -37,6 +38,7 @@ public class HtmlController {
     @ApiOperation(value = "上下文信息", notes = "上下文信息", tags = "")
     @ResponseBody
     public Object principal() {
+        log.info("来自于：SecurityContextHolder.getContext().setAuthentication(token)");
         return SecurityContextHolder.getContext().getAuthentication().getPrincipal();
     }
 
