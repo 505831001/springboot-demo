@@ -1,19 +1,34 @@
 package com.excel.poi.config;
 
-import com.excel.poi.web.VerifyCodeFilter;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.AuthorityUtils;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.util.Base64Utils;
+import org.springframework.util.DigestUtils;
+import org.springframework.util.StringUtils;
+
+import java.util.Collection;
+import java.util.Objects;
 
 /**
  * Spring Security 安全框架配置类。
@@ -54,7 +69,6 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 @Log4j2
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
-
     /**
      * 使用BCrypt强哈希函数的PasswordEncoder的实现。
      * 客户可以选择提供一个"版本"($2a, $2b, $2y)和一个"强度"(也称为BCrypt中的日志轮次)以及一个SecureRandom实例。
@@ -87,11 +101,57 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
      */
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        String username = "admin";
-        String password = this.passwordEncoder().encode("123456");
-        String roles    = "ADMIN";
-        auth.inMemoryAuthentication().withUser(username).password(password).roles(roles);
-        log.info("username->{}, password->{}", username, password);
+        auth.inMemoryAuthentication().withUser("admin").password(new BCryptPasswordEncoder().encode("123456")).roles("ADMIN");
+
+        UserDetailsService userDetailsService = new UserDetailsService() {
+            @Override
+            public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+                log.info("Http request username - {}", username);
+                String bCryptPassword = new BCryptPasswordEncoder().encode("123456");
+                log.info("Http request password convert BCrypt - {}", bCryptPassword);
+                if (!org.springframework.util.StringUtils.isEmpty(username) && !StringUtils.isEmpty(bCryptPassword)) {
+                    User user = new User(username, bCryptPassword, AuthorityUtils.commaSeparatedStringToAuthorityList("ADMIN"));
+                    log.info("Spring security convert username - {}", user.getUsername());
+                    log.info("Spring security convert password - {}", user.getPassword());
+                    log.info("Spring security convert authorities - {}", user.getAuthorities());
+                    return user;
+                }
+                return null;
+            }
+        };
+        auth.userDetailsService(userDetailsService);
+
+        AuthenticationProvider authenticationProvider = new AuthenticationProvider() {
+            @Override
+            public Authentication authenticate(Authentication authentication) throws AuthenticationException {
+                UsernamePasswordAuthenticationToken token = null;
+                String httpUsername = (String) authentication.getPrincipal();
+                log.info("Http request username - {}", httpUsername);
+                String httpPassword = (String) authentication.getCredentials();
+                log.info("Http request password - {}", httpPassword);
+                String md5Password = DigestUtils.md5DigestAsHex(httpPassword.getBytes());
+                log.info("Http request password convert MD5 - {}", md5Password);
+                String base64Password = Base64Utils.encodeToString(httpPassword.getBytes());
+                log.info("Http request password convert BASE64 - {}", base64Password);
+                UserDetails userDetails = userDetailsService.loadUserByUsername(httpUsername);
+                if (Objects.nonNull(userDetails)) {
+                    String bCryptUsername = userDetails.getUsername();
+                    log.info("Http request username convert BCrypt - {}", bCryptUsername);
+                    String bCryptPassword = userDetails.getPassword();
+                    log.info("Http request password convert BCrypt - {}", bCryptPassword);
+                    token = new UsernamePasswordAuthenticationToken(null, null, null);
+                    token = new UsernamePasswordAuthenticationToken(bCryptUsername, bCryptPassword, userDetails.getAuthorities());
+                    SecurityContextHolder.getContext().setAuthentication(token);
+                    return token;
+                }
+                return null;
+            }
+            @Override
+            public boolean supports(Class<?> authentication) {
+                return true;
+            }
+        };
+        auth.authenticationProvider(authenticationProvider);
 
         /**
          * Using generated security password: 40c9e5c2-cf56-488d-bb57-cb73756d1100
@@ -106,7 +166,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
      */
     @Override
     public void configure(WebSecurity web) throws Exception {
-        web.ignoring().antMatchers("/css/**", "/js/**");
+        web.ignoring().antMatchers("/css/**", "/js/**", "/image/**", "/fonts/**", "/favicon.ico");
         /**
          * super.configure(web);
          */
@@ -130,16 +190,17 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         http.authorizeRequests()
             //外挂验证码。{AntPathMatcher}蚂蚁路径请求匹配器。指定任何人都允许使用此URL。
             .antMatchers("/getVerifyCode").permitAll()
+            .antMatchers("/login/invalid").permitAll()
             .anyRequest().authenticated()
             //外挂过滤器。
-            .and().addFilterBefore(new VerifyCodeFilter(), UsernamePasswordAuthenticationFilter.class)
+            .and()/*.addFilterBefore(new VerifyCodeFilter(), UsernamePasswordAuthenticationFilter.class)*/
             //TODO -> 登录功能。
             .formLogin().loginPage("/loginPage").loginProcessingUrl("/authentication/form").defaultSuccessUrl("/successPage").failureUrl("/failurePage").permitAll()
-            //TODO -> 记住我功能。
+            //TODO -> 记住我功能。记住我参数。始终记得。令牌有效期秒数。持久令牌存储数据库。
             .and().rememberMe().rememberMeParameter("remember-me").alwaysRemember(true).tokenValiditySeconds(60)
-            //TODO -> 会话功能。
-            .and().sessionManagement().maximumSessions(1).maxSessionsPreventsLogin(false).expiredUrl("/index").and()
-            //TODO -> 退出功能。
+            //TODO -> 会话功能。会话过期跳转Url。会话最大值(1)。会话最大值是否保留登录(否)。会话已过期重定向到Url。
+            .and().sessionManagement().invalidSessionUrl("/login/invalid").maximumSessions(1).maxSessionsPreventsLogin(false).expiredUrl("/index").and()
+            //TODO -> 退出功能。登出后跳转Url。删除饼干(JSESSIONID)。清除身份验证。失效Http会话。登出成功跳转Url。
             .and().logout().logoutUrl("/logout").deleteCookies("JSESSIONID").clearAuthentication(true).invalidateHttpSession(true).logoutSuccessUrl("/index")
             //TODO -> 异常功能。
             .and().exceptionHandling().accessDeniedPage("/errorPage")

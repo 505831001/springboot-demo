@@ -27,13 +27,17 @@ public class VerifyCodeFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         if (isProtectedUrl(request)) {
             String verifyCode = request.getParameter("verifyCode");
+            String validateCode = (String) request.getSession().getAttribute("validateCode");
             if (validateVerify(verifyCode)) {
                 filterChain.doFilter(request, response);
             } else {
+                log.error("生成验证码:{},输入验证码:{}", validateCode.toLowerCase(), verifyCode.toLowerCase());
                 //手动设置异常
                 request.getSession().setAttribute("SPRING_SECURITY_LAST_EXCEPTION", new DisabledException("验证码输入错误"));
-                //转发到错误Url
-                request.getRequestDispatcher("/errorPage").forward(request, response);
+                //请求转发
+                request.getRequestDispatcher("/index").forward(request, response);
+                //请求重定向
+                //response.sendRedirect("/index");
             }
         } else {
             filterChain.doFilter(request, response);
