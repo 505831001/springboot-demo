@@ -320,134 +320,139 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         */
 
         http.authorizeRequests()
-            //外挂验证码。{AntPathMatcher}蚂蚁路径请求匹配器。指定任何人都允许使用此URL。
-            .antMatchers("/index").permitAll()
-            .antMatchers("/login/invalid").permitAll()
-            .antMatchers("/getVerifyCode").permitAll()
-            .antMatchers("/admin/image").hasRole("ADMIN")
-            .antMatchers("/guest/css").hasAnyRole("ADMIN", "GUEST")
-            .anyRequest().authenticated()
-            //外挂过滤器。
-            .and()/*.addFilterBefore(new VerifyCodeFilter(), UsernamePasswordAuthenticationFilter.class)*/
-            //TODO -> 指定支持基于表单的身份验证。如果未指定{@link loginPage(String)}，将生成默认登录页面。
-            .formLogin()
-            .loginPage("/loginPage")
-            .loginProcessingUrl("/authentication/form")
-            .successHandler(new AuthenticationSuccessHandler() {
-                @Override
-                public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
-                    log.info("登录成功...");
-                    response.setStatus(HttpStatus.OK.value());
-                    response.setStatus(HttpServletResponse.SC_OK);
-                    response.setContentType("application/json;charset=utf-8");
-                    response.getWriter().write(new ObjectMapper().writeValueAsString(authentication));
-                    new DefaultRedirectStrategy().sendRedirect(request, response, "/successPage");
-                }
-            })
-            .failureHandler(new AuthenticationFailureHandler() {
-                @Override
-                public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException, ServletException {
-                    log.info("登录失败...");
-                    response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
-                    response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-                    response.setContentType("application/json;charset=utf-8");
-                    response.getWriter().write(new ObjectMapper().writeValueAsString(exception.getMessage()));
-                    new DefaultRedirectStrategy().sendRedirect(request, response, "/failurePage");
-                }
-            }).permitAll()
-            //TODO -> 允许配置"记住我"身份验证。
-            .and()
-            .rememberMe()
-            .rememberMeParameter("remember-me")
-            .alwaysRemember(true)
-            .userDetailsService(userDetailsService())
-            //.tokenRepository(persistentTokenRepository())
-            .tokenValiditySeconds(60)
-            //TODO -> 允许配置会话管理。面的配置演示如何强制一次仅对用户的单个实例进行身份验证。
-            //如果用户在未注销的情况下使用用户名"user"进行身份验证，并且尝试使用"user"进行身份验证，
-            //则第一个会话将被强制终止并发送到"/login"expired URL。
-            .and()
-            .sessionManagement()
-            .invalidSessionStrategy(new InvalidSessionStrategy() {
-                @Override
-                public void onInvalidSessionDetected(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
-                    log.info("失效的会话策略...");
-                    RequestDispatcher dispatcher = request.getRequestDispatcher(request.getServletPath());
-                    dispatcher.forward(request, response);
-                }
-            })
-            .maximumSessions(1)
-            .maxSessionsPreventsLogin(false)
-            .expiredSessionStrategy(new SessionInformationExpiredStrategy() {
-                @Override
-                public void onExpiredSessionDetected(SessionInformationExpiredEvent event) throws IOException, ServletException {
-                    log.info("过期的会话策略...");
-                    HttpServletRequest     request = event.getRequest();
-                    HttpServletResponse   response = event.getResponse();
-                    SessionInformation information = event.getSessionInformation();
-                    Map<String, Object> map = new HashMap<>();
-                    map.put("code", 500);
-                    map.put("message", "此账号在另一台设备上已登录，您被迫下线。");
-                    map.put("x", information.isExpired());
-                    map.put("a", information.getLastRequest());
-                    map.put("b", information.getPrincipal());
-                    map.put("c", information.getSessionId());
-                    String json = new ObjectMapper().writeValueAsString(map);
-                    response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
-                    response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-                    response.setContentType("application/json;charset=utf-8");
-                    response.getWriter().write(json);
-                }
-            })
-            .sessionRegistry(new SessionRegistryImpl())
-            //TODO -> 提供注销支持。这在使用时自动应用{@link WebSecurityConfigurerAdapter}。默认情况下，访问URL"/logout"将通过使HTTP会话无效而注销用户，
-            //清理任何{@link rememberMe()}已配置的身份验证，
-            //清理任何{@link SecurityContextHolder}，然后重定向到"/login"登录页面。
-            .and()
-            .and()
-            .logout()
-            .logoutUrl("/logout")
-            .deleteCookies("JSESSIONID")
-            .clearAuthentication(true)
-            .invalidateHttpSession(true)
-            .addLogoutHandler(new LogoutHandler() {
-                @Override
-                public void logout(HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
-                    response.setContentType("application/json;charset=UTF-8");
-                    log.info("登录退出a...");
-                }
-            })
-            .logoutSuccessHandler(new LogoutSuccessHandler() {
-                @Override
-                public void onLogoutSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
-                    String username = ((User) authentication.getPrincipal()).getUsername();
-                    log.info(username + "登录退出b...");
-                    response.setStatus(HttpStatus.OK.value());
-                    response.setStatus(HttpServletResponse.SC_OK);
-                    response.setContentType("application/json;charset=utf-8");
-                    PrintWriter out = response.getWriter();
-                    out.write(new ObjectMapper().writeValueAsString(authentication));
-                    out.flush();
-                    out.close();
-                    response.sendRedirect("/index");
-                }
-            })
-            //TODO -> 允许配置异常处理。这在使用{@link WebSecurityConfigurerAdapter}时自动应用。
-            .and()
-            .exceptionHandling()
-            .accessDeniedHandler(new AccessDeniedHandler() {
-                @Override
-                public void handle(HttpServletRequest request, HttpServletResponse response, AccessDeniedException accessDeniedException) throws IOException, ServletException {
-                    response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-                    response.setContentType("application/json;charset=utf-8");
-                    PrintWriter out = response.getWriter();
-                    out.write(new ObjectMapper().writeValueAsString("权限不足，请联系管理员。"));
-                    out.flush();
-                    out.close();
-                }
-            })
-            //TODO -> 关闭一些乱七八糟的东西。
-            .and().csrf().disable().headers().frameOptions().disable();
+                //外挂验证码。{AntPathMatcher}蚂蚁路径请求匹配器。指定任何人都允许使用此URL。
+                .antMatchers("/index").permitAll()
+                .antMatchers("/login/invalid").permitAll()
+                .antMatchers("/getVerifyCode").permitAll()
+                .antMatchers("/admin/image").hasRole("ADMIN")
+                .antMatchers("/guest/css").hasAnyRole("ADMIN", "GUEST")
+                .anyRequest().authenticated()
+                //外挂过滤器。
+                .and()/*.addFilterBefore(new VerifyCodeFilter(), UsernamePasswordAuthenticationFilter.class)*/
+                //TODO -> 指定支持基于表单的身份验证。如果未指定{@link loginPage(String)}，将生成默认登录页面。
+                .formLogin()
+                .loginPage("/loginPage")
+                .loginProcessingUrl("/authentication/form")
+                //.defaultSuccessUrl("/successPage")
+                .successHandler(new AuthenticationSuccessHandler() {
+                    @Override
+                    public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
+                        log.info("登录成功...");
+                        response.setStatus(HttpStatus.OK.value());
+                        response.setStatus(HttpServletResponse.SC_OK);
+                        response.setContentType("application/json;charset=utf-8");
+                        response.getWriter().write(new ObjectMapper().writeValueAsString(authentication));
+                        new DefaultRedirectStrategy().sendRedirect(request, response, "/successPage");
+                    }
+                })
+                //.failureUrl("/failurePage")
+                .failureHandler(new AuthenticationFailureHandler() {
+                    @Override
+                    public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException, ServletException {
+                        log.info("登录失败...");
+                        response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+                        response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                        response.setContentType("application/json;charset=utf-8");
+                        response.getWriter().write(new ObjectMapper().writeValueAsString(exception.getMessage()));
+                        new DefaultRedirectStrategy().sendRedirect(request, response, "/failurePage");
+                    }
+                }).permitAll()
+                //TODO -> 允许配置"记住我"身份验证。
+                .and()
+                .rememberMe()
+                .rememberMeParameter("remember-me")
+                .alwaysRemember(true)
+                .userDetailsService(userDetailsService())
+                //.tokenRepository(persistentTokenRepository())
+                .tokenValiditySeconds(60)
+                //TODO -> 允许配置会话管理。面的配置演示如何强制一次仅对用户的单个实例进行身份验证。
+                //如果用户在未注销的情况下使用用户名"user"进行身份验证，并且尝试使用"user"进行身份验证，
+                //则第一个会话将被强制终止并发送到"/login"expired URL。
+                .and()
+                .sessionManagement()
+                //.invalidSessionUrl("/login/invalid")
+                .invalidSessionStrategy(new InvalidSessionStrategy() {
+                    @Override
+                    public void onInvalidSessionDetected(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+                        log.info("失效的会话策略...");
+                        RequestDispatcher dispatcher = request.getRequestDispatcher(request.getServletPath());
+                        dispatcher.forward(request, response);
+                    }
+                })
+                .maximumSessions(1)
+                .maxSessionsPreventsLogin(false)
+                //.expiredUrl("/indexPage")
+                .expiredSessionStrategy(new SessionInformationExpiredStrategy() {
+                    @Override
+                    public void onExpiredSessionDetected(SessionInformationExpiredEvent event) throws IOException, ServletException {
+                        log.info("过期的会话策略...");
+                        HttpServletRequest     request = event.getRequest();
+                        HttpServletResponse   response = event.getResponse();
+                        SessionInformation information = event.getSessionInformation();
+                        Map<String, Object> map = new HashMap<>();
+                        map.put("code", 500);
+                        map.put("message", "此账号在另一台设备上已登录，您被迫下线。");
+                        map.put("x", information.isExpired());
+                        map.put("a", information.getLastRequest());
+                        map.put("b", information.getPrincipal());
+                        map.put("c", information.getSessionId());
+                        String json = new ObjectMapper().writeValueAsString(map);
+                        response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+                        response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                        response.setContentType("application/json;charset=utf-8");
+                        response.getWriter().write(json);
+                    }
+                })
+                .sessionRegistry(new SessionRegistryImpl())
+                //TODO -> 提供注销支持。这在使用时自动应用{@link WebSecurityConfigurerAdapter}。默认情况下，访问URL"/logout"将通过使HTTP会话无效而注销用户，
+                //清理任何{@link rememberMe()}已配置的身份验证，
+                //清理任何{@link SecurityContextHolder}，然后重定向到"/login"登录页面。
+                .and()
+                .and()
+                .logout()
+                .logoutUrl("/logout")
+                .deleteCookies("JSESSIONID")
+                .clearAuthentication(true)
+                .invalidateHttpSession(true)
+                //.logoutSuccessUrl("/indexPage")
+                .addLogoutHandler(new LogoutHandler() {
+                    @Override
+                    public void logout(HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
+                        response.setContentType("application/json;charset=UTF-8");
+                        log.info("登录退出a...");
+                    }
+                })
+                .logoutSuccessHandler(new LogoutSuccessHandler() {
+                    @Override
+                    public void onLogoutSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
+                        String username = ((User) authentication.getPrincipal()).getUsername();
+                        log.info(username + "登录退出b...");
+                        response.setStatus(HttpStatus.OK.value());
+                        response.setStatus(HttpServletResponse.SC_OK);
+                        response.setContentType("application/json;charset=utf-8");
+                        PrintWriter out = response.getWriter();
+                        out.write(new ObjectMapper().writeValueAsString(authentication));
+                        out.flush();
+                        out.close();
+                        response.sendRedirect("/index");
+                    }
+                })
+                //TODO -> 允许配置异常处理。这在使用{@link WebSecurityConfigurerAdapter}时自动应用。
+                .and()
+                .exceptionHandling()
+                .accessDeniedHandler(new AccessDeniedHandler() {
+                    @Override
+                    public void handle(HttpServletRequest request, HttpServletResponse response, AccessDeniedException accessDeniedException) throws IOException, ServletException {
+                        response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+                        response.setContentType("application/json;charset=utf-8");
+                        PrintWriter out = response.getWriter();
+                        out.write(new ObjectMapper().writeValueAsString("权限不足，请联系管理员。"));
+                        out.flush();
+                        out.close();
+                    }
+                })
+                //TODO -> 关闭一些乱七八糟的东西。
+                .and().csrf().disable().headers().frameOptions().disable();
 
         /**
          * Caused by: java.lang.IllegalStateException: Can't configure anyRequest after itself.
