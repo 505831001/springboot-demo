@@ -43,7 +43,7 @@ public class HtmlController {
         return "failure_page";
     }
 
-    @GetMapping(value = "/errorPage")
+    @GetMapping(value = "/error")
     @ApiOperation(value = "异常页面", notes = "异常页面", tags = "")
     public String error() {
         log.info("请求Url.errorHandler(String errorPage)");
