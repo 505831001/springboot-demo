@@ -86,17 +86,18 @@
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-commons</artifactId>
         </dependency>
-        <!-- spring cloud - client -->
+        <!-- spring cloud - client
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
         </dependency>
-
-        <!-- alibaba cloud - rocketmq -->
+         -->
+        <!-- alibaba cloud - rocketmq
         <dependency>
             <groupId>com.alibaba.cloud</groupId>
             <artifactId>spring-cloud-starter-stream-rocketmq</artifactId>
         </dependency>
+         -->
 
         <!-- swagger -->
         <dependency>

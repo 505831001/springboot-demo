@@ -8,6 +8,7 @@ import org.liuweiwei.dao.TbItemMapper;
 import org.liuweiwei.model.TbItem;
 import org.liuweiwei.service.TbItemService;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
@@ -51,5 +52,14 @@ public class TbItemServiceImpl implements TbItemService {
         /**包装Page对象*/
         PageInfo<TbItem> pageInfo = new PageInfo<>(itemMapper.selectAll());
         return pageInfo;
+    }
+
+    @Resource
+    private JdbcTemplate jdbcTemplate;
+
+    @Override
+    public Integer jdbcUpdate(TbItem item) {
+        int index = jdbcTemplate.update("update tb_item set username = ? where id = ?", "李四B", 14);
+        return index;
     }
 }

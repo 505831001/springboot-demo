@@ -17,6 +17,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 
 import javax.sql.DataSource;
@@ -31,8 +32,10 @@ public class MyBatisDbConfig {
 
     @Value(value = "${aesEncryptKey}")
     private String aesEncryptKey;
-    @Value(value = "${datasource.password}")
+    @Value(value = "${spring.datasource.password}")
     private String password;
+
+    // --- 数据源1-Spring数据源+MyBatis框架 ---
 
     /**
      * 主数据源配置-MySQL数据源
@@ -40,7 +43,7 @@ public class MyBatisDbConfig {
      */
     @Primary
     @Bean(name = "dataSourceProperties")
-    @ConfigurationProperties(prefix = "datasource")
+    @ConfigurationProperties(prefix = "spring.datasource")
     public DataSourceProperties dataSourceProperties() {
         return new DataSourceProperties();
     }
@@ -111,5 +114,42 @@ public class MyBatisDbConfig {
     @Bean(name = "sqlSessionTemplate")
     public SqlSessionTemplate sqlSessionTemplate(SqlSessionFactory sqlSessionFactory) {
         return new SqlSessionTemplate(sqlSessionFactory);
+    }
+
+    // --- 数据源2-DataSource+JdbcTemplate ---
+
+    /**
+     * 次数据源配置-Spring数据源＋JDBC模板
+     * @return
+     */
+    @Bean(name = "jdbcDataSource")
+    @ConfigurationProperties(prefix = "spring.datasource.jdbc")
+    public DataSource jdbcDataSource() {
+        DataSource dataSource = DataSourceBuilder.create().build();
+        String decrypt = AESUtils.decrypt(aesEncryptKey, password);
+        log.info("解密后密码：{}", decrypt);
+        String encrypt = AESUtils.encrypt(decrypt);
+        log.info("加密后密码：{}", encrypt);
+        return dataSource;
+    }
+
+    /**
+     * 次事务管理器-Spring数据源＋JDBC模板
+     * @param jdbcDataSource
+     * @return
+     */
+    @Bean(name = "jdbcTransactionManager")
+    public DataSourceTransactionManager jdbcTransactionManager(@Qualifier("jdbcDataSource") DataSource jdbcDataSource) {
+        return new DataSourceTransactionManager(jdbcDataSource);
+    }
+
+    /**
+     * 创建会话模板-Spring数据源＋JDBC模板
+     * @param jdbcDataSource
+     * @return
+     */
+    @Bean(name = "jdbcTemplate")
+    public JdbcTemplate jdbcTemplate(@Qualifier("jdbcDataSource") DataSource jdbcDataSource) {
+        return new JdbcTemplate(jdbcDataSource);
     }
 }

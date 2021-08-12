@@ -5,11 +5,10 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.liuweiwei.model.TbItem;
 import org.liuweiwei.service.TbItemService;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import javax.validation.Valid;
 import java.util.List;
 
 /**
@@ -40,5 +39,11 @@ public class TbItemController {
     @ApiOperation(value = "GitHub分页插件查询", notes = "GitHub分页插件查询", tags = "")
     public PageInfo<TbItem> githubPage(@RequestParam int currentNum, @RequestParam int pageSize) {
         return itemService.githubPage(currentNum, pageSize);
+    }
+
+    @PostMapping(value = "/jdbcUpdate")
+    @ApiOperation(value = "Spring数据源＋JDBC模板", notes = "Spring数据源＋JDBC模板", tags = "")
+    public Integer jdbcUpdate(@Valid @RequestBody TbItem item) {
+        return itemService.jdbcUpdate(item);
     }
 }

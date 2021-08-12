@@ -24,4 +24,11 @@ public interface TbItemService {
      * @return
      */
     PageInfo<TbItem> githubPage(int currentNum, int pageSize);
+
+    /**
+     * Spring数据源+JDBC模板
+     * @param item
+     * @return
+     */
+    Integer jdbcUpdate(TbItem item);
 }
