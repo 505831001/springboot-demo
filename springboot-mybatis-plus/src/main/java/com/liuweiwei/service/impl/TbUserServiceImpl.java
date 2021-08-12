@@ -527,15 +527,11 @@ public class TbUserServiceImpl extends ServiceImpl<TbUserMapper, TbUser> impleme
     }
 
     @Resource
-    private JdbcTemplate primaryJdbcTemplate;
-    @Resource
-    private JdbcTemplate secondaryJdbcTemplate;
+    private JdbcTemplate atomikosJdbcTemplate;
 
     @Override
     public Integer jdbcUpdate(TbUser user) {
-        int index = 0;
-        index += primaryJdbcTemplate.update("update tb_user set username = ? where id = ?", "李四A", 14);
-        index += secondaryJdbcTemplate.update("update tb_user set username = ? where id = ?", "李四B", 14);
+        int index = atomikosJdbcTemplate.update("update tb_user set username = ? where id = ?", "李四B", 14);
         return index;
     }
 

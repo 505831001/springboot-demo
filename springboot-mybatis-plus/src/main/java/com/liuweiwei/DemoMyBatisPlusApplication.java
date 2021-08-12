@@ -12,15 +12,15 @@ import lombok.extern.log4j.Log4j2;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.rocketmq.client.exception.MQClientException;
-import org.apache.rocketmq.client.producer.DefaultMQProducer;
+//import org.apache.rocketmq.client.exception.MQClientException;
+//import org.apache.rocketmq.client.producer.DefaultMQProducer;
 import org.mybatis.spring.annotation.MapperScan;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.Banner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.loadbalancer.LoadBalanced;
-import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
+//import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.env.ConfigurableEnvironment;
@@ -102,7 +102,7 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
  * @since 2021-01-08
  */
 @SpringBootApplication
-@EnableEurekaClient
+//@EnableEurekaClient
 @EnableSwagger2
 @EnableWebMvc
 @MapperScan(basePackages = "com.liuweiwei.dao")
@@ -156,6 +156,7 @@ public class DemoMyBatisPlusApplication {
         return template;
     }
 
+    /*
     @Bean
     public DefaultMQProducer defaultMQProducer() throws MQClientException {
         DefaultMQProducer producer = new DefaultMQProducer("wei_producer_group");
@@ -164,6 +165,7 @@ public class DemoMyBatisPlusApplication {
         producer.start();
         return producer;
     }
+    */
 
     /**
      * TODO -> 4. 分页插件：分布插件注入之前
@@ -199,7 +201,7 @@ public class DemoMyBatisPlusApplication {
     @Bean
     public MybatisPlusInterceptor mybatisPlusInterceptor() {
         MybatisPlusInterceptor interceptor = new MybatisPlusInterceptor();
-        interceptor.addInnerInterceptor(new PaginationInnerInterceptor(DbType.H2));
+        interceptor.addInnerInterceptor(new PaginationInnerInterceptor(DbType.MYSQL));
         return interceptor;
     }
 
