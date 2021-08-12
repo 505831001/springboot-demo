@@ -1,5 +1,7 @@
 package org.liuweiwei.service.impl;
 
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.liuweiwei.dao.TbItemMapper;
@@ -40,5 +42,14 @@ public class TbItemServiceImpl implements TbItemService {
             logger.info("查询NoSQL数据库信息");
         }
         return list;
+    }
+
+    @Override
+    public PageInfo<TbItem> githubPage(int currentNum, int pageSize) {
+        /**开始分页*/
+        PageHelper.startPage(currentNum, pageSize);
+        /**包装Page对象*/
+        PageInfo<TbItem> pageInfo = new PageInfo<>(itemMapper.selectAll());
+        return pageInfo;
     }
 }

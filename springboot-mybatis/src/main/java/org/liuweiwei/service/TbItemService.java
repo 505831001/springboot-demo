@@ -1,5 +1,6 @@
 package org.liuweiwei.service;
 
+import com.github.pagehelper.PageInfo;
 import org.liuweiwei.model.TbItem;
 
 import java.util.List;
@@ -15,4 +16,12 @@ public interface TbItemService {
      * @return
      */
     List<TbItem> findAll();
+
+    /**
+     * GitHub分页插件
+     * @param currentNum
+     * @param pageSize
+     * @return
+     */
+    PageInfo<TbItem> githubPage(int currentNum, int pageSize);
 }
