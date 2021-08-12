@@ -2,7 +2,6 @@ package com.liuweiwei.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.github.pagehelper.PageInfo;
 import com.liuweiwei.components.ValidationGroup;
 import com.liuweiwei.dto.TbUserDTO;
 import com.liuweiwei.model.TbUser;
@@ -106,14 +105,9 @@ public class TbUserController {
     }
 
     @PostMapping(value = "/jdbcUpdate")
+    @ApiOperation(value = "Spring-jta-Atomikos数据源+JDBC模板", notes = "Spring-jta-Atomikos数据源+JDBC模板", tags = "")
     @ResponseBody
     public Integer jdbcUpdate(@Valid @RequestBody TbUser user) {
         return userService.jdbcUpdate(user);
-    }
-
-    @GetMapping(value = "/githubPage")
-    @ResponseBody
-    public PageInfo<TbUser> githubPage(@RequestParam int currentNum, @RequestParam int pageSize) {
-        return userService.githubPage(currentNum, pageSize);
     }
 }

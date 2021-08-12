@@ -38,7 +38,7 @@ public class MyBatisPlusDbConfig {
     @Value(value = "${spring.datasource.password}")
     private String password;
 
-    // --- 数据源1-DataSource ---
+    // --- 数据源1-Spring数据源+MyBatisPlus框架 ---
 
     /**
      * 主数据源配置-MySQL数据源
@@ -109,7 +109,7 @@ public class MyBatisPlusDbConfig {
         return new SqlSessionTemplate(sqlSessionFactory);
     }
 
-    // --- 数据源2-jta-Atomikos ---
+    // --- 数据源2-Spring-jta-Atomikos数据源+JDBC模板 ---
 
     /**
      * 次数据源配置-Atomikos数据源

@@ -4,7 +4,6 @@ import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.toolkit.GlobalConfigUtils;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.conditions.query.LambdaQueryChainWrapper;
 import com.baomidou.mybatisplus.extension.conditions.query.QueryChainWrapper;
@@ -12,8 +11,6 @@ import com.baomidou.mybatisplus.extension.conditions.update.LambdaUpdateChainWra
 import com.baomidou.mybatisplus.extension.conditions.update.UpdateChainWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.github.pagehelper.PageHelper;
-import com.github.pagehelper.PageInfo;
 import com.google.common.collect.Lists;
 import com.liuweiwei.dao.TbUserMapper;
 import com.liuweiwei.dto.TbUserDTO;
@@ -529,18 +526,14 @@ public class TbUserServiceImpl extends ServiceImpl<TbUserMapper, TbUser> impleme
     @Resource
     private JdbcTemplate atomikosJdbcTemplate;
 
+    /**
+     * Spring-jta-Atomikos数据源+JDBC模板
+     * @param user
+     * @return
+     */
     @Override
     public Integer jdbcUpdate(TbUser user) {
         int index = atomikosJdbcTemplate.update("update tb_user set username = ? where id = ?", "李四B", 14);
         return index;
-    }
-
-    @Override
-    public PageInfo<TbUser> githubPage(int currentNum, int pageSize) {
-        /**开始分页*/
-        PageHelper.startPage(currentNum, pageSize);
-        /**包装Page对象*/
-        PageInfo<TbUser> pageInfo = new PageInfo<>(this.list());
-        return pageInfo;
     }
 }

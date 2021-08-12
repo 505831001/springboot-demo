@@ -4,7 +4,6 @@ package com.liuweiwei.service;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.github.pagehelper.PageInfo;
 import com.liuweiwei.dto.TbUserDTO;
 import com.liuweiwei.model.TbUser;
 import com.liuweiwei.vo.TbUserVO;
@@ -162,7 +161,10 @@ public interface TbUserService extends IService<TbUser> {
      */
     Boolean otherSave(TbUserDTO dto) throws ParseException;
 
+    /**
+     * Spring-jta-Atomikos数据源+JDBC模板
+     * @param user
+     * @return
+     */
     Integer jdbcUpdate(TbUser user);
-
-    PageInfo<TbUser> githubPage(int currentNum, int pageSize);
 }
