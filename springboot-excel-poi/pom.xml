@@ -121,12 +121,6 @@
             <artifactId>mybatis-plus-generator</artifactId>
             <version>3.4.0</version>
         </dependency>
-        <!-- github - pageHelper -->
-        <dependency>
-            <groupId>com.github.pagehelper</groupId>
-            <artifactId>pagehelper-spring-boot-starter</artifactId>
-            <version>1.2.12</version>
-        </dependency>
 
         <!-- mysql -->
         <dependency>
