@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.annotation.DbType;
 import com.baomidou.mybatisplus.extension.plugins.PaginationInterceptor;
 import com.baomidou.mybatisplus.extension.spring.MybatisSqlSessionFactoryBean;
 import com.liuweiwei.utils.AESUtils;
+import com.mysql.jdbc.jdbc2.optional.MysqlXADataSource;
 import lombok.extern.log4j.Log4j;
 import lombok.extern.log4j.Log4j2;
 import lombok.extern.slf4j.Slf4j;
@@ -64,17 +65,13 @@ public class MyBatisPlusDbConfig {
     @Primary
     @Bean(name = "dataSource")
     public DataSource dataSource(@Qualifier("dataSourceProperties") DataSourceProperties dataSourceProperties) {
-        DataSource dataSource = DataSourceBuilder.create().build();
-        dataSource = dataSourceProperties.initializeDataSourceBuilder().build();
-        String decrypt = AESUtils.decrypt(encrypt, password);
-        log.info("解密后密码：{}", decrypt);
-        String encrypt = AESUtils.encrypt(decrypt);
-        log.info("加密后密码：{}", encrypt);
-        DruidXADataSource druidXADataSource = new DruidXADataSource();
-        druidXADataSource.setPassword(AESUtils.decrypt(encrypt, password));
-        druidXADataSource.setDbType(DbType.MYSQL.getDb());
-        AtomikosDataSourceBean xaDataSource = new AtomikosDataSourceBean();
-        xaDataSource.setXaDataSource(druidXADataSource);
+        MysqlXADataSource xaDataSource = new MysqlXADataSource();
+        xaDataSource.setUrl(dataSourceProperties.getUrl());
+        xaDataSource.setPinGlobalTxToPhysicalConnection(true);
+        xaDataSource.setUser(dataSourceProperties.getUsername());
+        xaDataSource.setPassword(AESUtils.decrypt(encrypt, password));
+        xaDataSource.setAutoReconnectForPools(true);
+        xaDataSource.setAutoReconnect(true);
         return xaDataSource;
     }
 
