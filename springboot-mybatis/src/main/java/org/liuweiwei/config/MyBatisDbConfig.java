@@ -31,12 +31,6 @@ import javax.sql.DataSource;
 @Log4j2
 public class MyBatisDbConfig {
 
-    @Value(value = "${spring.datasource.url}")
-    private String url;
-    @Value(value = "${spring.datasource.username}")
-    private String username;
-    @Value(value = "${spring.datasource.password}")
-    private String password;
     @Value(value = "${spring.datasource.encrypt}")
     private String encrypt;
 
@@ -61,12 +55,14 @@ public class MyBatisDbConfig {
     @Primary
     @Bean(name = "dataSource")
     public DataSource dataSource(@Qualifier("dataSourceProperties") DataSourceProperties dataSourceProperties) {
-        MysqlXADataSource dataSource = new MysqlXADataSource();
-        dataSource.setURL(url);
-        dataSource.setPinGlobalTxToPhysicalConnection(true);
-        dataSource.setUser(username);
-        dataSource.setPassword(AESUtils.decrypt(encrypt, dataSourceProperties.getPassword()));
-        return dataSource;
+        MysqlXADataSource xaDataSource = new MysqlXADataSource();
+        xaDataSource.setUrl(dataSourceProperties.getUrl());
+        xaDataSource.setPinGlobalTxToPhysicalConnection(true);
+        xaDataSource.setUser(dataSourceProperties.getUsername());
+        xaDataSource.setPassword(AESUtils.decrypt(encrypt, dataSourceProperties.getPassword()));
+        xaDataSource.setAutoReconnectForPools(true);
+        xaDataSource.setAutoReconnect(true);
+        return xaDataSource;
     }
 
     /**
@@ -130,10 +126,6 @@ public class MyBatisDbConfig {
     @ConfigurationProperties(prefix = "spring.datasource.jdbc")
     public DataSource jdbcDataSource() {
         DataSource dataSource = DataSourceBuilder.create().build();
-        String decrypt = AESUtils.decrypt(encrypt, password);
-        log.info("解密后密码：{}", decrypt);
-        String encrypt = AESUtils.encrypt(decrypt);
-        log.info("加密后密码：{}", encrypt);
         return dataSource;
     }
 
