@@ -1,5 +1,6 @@
 package org.liuweiwei.config;
 
+import com.mysql.jdbc.jdbc2.optional.MysqlXADataSource;
 import lombok.extern.log4j.Log4j;
 import lombok.extern.log4j.Log4j2;
 import lombok.extern.slf4j.Slf4j;
@@ -30,10 +31,14 @@ import javax.sql.DataSource;
 @Log4j2
 public class MyBatisDbConfig {
 
-    @Value(value = "${aesEncryptKey}")
-    private String aesEncryptKey;
+    @Value(value = "${spring.datasource.url}")
+    private String url;
+    @Value(value = "${spring.datasource.username}")
+    private String username;
     @Value(value = "${spring.datasource.password}")
     private String password;
+    @Value(value = "${spring.datasource.encrypt}")
+    private String encrypt;
 
     // --- 数据源1-Spring数据源+MyBatis框架 ---
 
@@ -56,12 +61,11 @@ public class MyBatisDbConfig {
     @Primary
     @Bean(name = "dataSource")
     public DataSource dataSource(@Qualifier("dataSourceProperties") DataSourceProperties dataSourceProperties) {
-        DataSource dataSource = DataSourceBuilder.create().build();
-        dataSource = dataSourceProperties.initializeDataSourceBuilder().build();
-        String decrypt = AESUtils.decrypt(aesEncryptKey, password);
-        log.info("解密后密码：{}", decrypt);
-        String encrypt = AESUtils.encrypt(decrypt);
-        log.info("加密后密码：{}", encrypt);
+        MysqlXADataSource dataSource = new MysqlXADataSource();
+        dataSource.setURL(url);
+        dataSource.setPinGlobalTxToPhysicalConnection(true);
+        dataSource.setUser(username);
+        dataSource.setPassword(AESUtils.decrypt(encrypt, dataSourceProperties.getPassword()));
         return dataSource;
     }
 
@@ -79,7 +83,7 @@ public class MyBatisDbConfig {
      */
     @Primary
     @Bean(name = "sqlSessionFactory")
-    public SqlSessionFactory sqlSessionFactory(DataSource dataSource) throws Exception {
+    public SqlSessionFactory sqlSessionFactory(@Qualifier("dataSource") DataSource dataSource) throws Exception {
         SqlSessionFactoryBean sqlSessionFactoryBean = new SqlSessionFactoryBean();
         sqlSessionFactoryBean.setDataSource(dataSource);
         sqlSessionFactoryBean.setTypeAliasesPackage("org.liuweiwei.model");
@@ -101,7 +105,7 @@ public class MyBatisDbConfig {
      */
     @Primary
     @Bean(name = "transactionManager")
-    public DataSourceTransactionManager transactionManager(DataSource dataSource) {
+    public DataSourceTransactionManager transactionManager(@Qualifier("dataSource") DataSource dataSource) {
         return new DataSourceTransactionManager(dataSource);
     }
 
@@ -112,7 +116,7 @@ public class MyBatisDbConfig {
      */
     @Primary
     @Bean(name = "sqlSessionTemplate")
-    public SqlSessionTemplate sqlSessionTemplate(SqlSessionFactory sqlSessionFactory) {
+    public SqlSessionTemplate sqlSessionTemplate(@Qualifier("sqlSessionFactory") SqlSessionFactory sqlSessionFactory) {
         return new SqlSessionTemplate(sqlSessionFactory);
     }
 
@@ -126,7 +130,7 @@ public class MyBatisDbConfig {
     @ConfigurationProperties(prefix = "spring.datasource.jdbc")
     public DataSource jdbcDataSource() {
         DataSource dataSource = DataSourceBuilder.create().build();
-        String decrypt = AESUtils.decrypt(aesEncryptKey, password);
+        String decrypt = AESUtils.decrypt(encrypt, password);
         log.info("解密后密码：{}", decrypt);
         String encrypt = AESUtils.encrypt(decrypt);
         log.info("加密后密码：{}", encrypt);

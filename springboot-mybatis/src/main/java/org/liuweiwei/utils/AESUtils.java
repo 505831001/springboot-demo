@@ -1,8 +1,6 @@
 package org.liuweiwei.utils;
 
-import lombok.extern.log4j.Log4j;
 import lombok.extern.log4j.Log4j2;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.binary.Base64;
 
 import javax.crypto.Cipher;
@@ -35,7 +33,9 @@ public class AESUtils {
             cipher.init(Cipher.ENCRYPT_MODE, keySpec, iv);
             byte[] encrypted = cipher.doFinal(content.getBytes());
             /**此处使用BASE64做转码功能，同时能起到2次加密的作用。*/
-            return new Base64().encodeAsString(encrypted);
+            String password = new Base64().encodeAsString(encrypted);
+            log.info("Encrypted password: {}", password);
+            return password;
         } catch (Exception e) {
             log.error(e.getMessage());
             return "";
@@ -58,7 +58,9 @@ public class AESUtils {
             cipher.init(Cipher.ENCRYPT_MODE, keySpec, iv);
             byte[] encrypted = cipher.doFinal(content.getBytes());
             /**此处使用BASE64做转码功能，同时能起到2次加密的作用。*/
-            return new Base64().encodeAsString(encrypted);
+            String password = new Base64().encodeAsString(encrypted);
+            log.info("Encrypted password: {}", password);
+            return password;
         } catch (Exception e) {
             log.error(e.getMessage());
             return "";
@@ -79,7 +81,9 @@ public class AESUtils {
             /**先用bAES64解密*/
             byte[] encrypted = Base64.decodeBase64(content);
             byte[] original = cipher.doFinal(encrypted);
-            return new String(original);
+            String password = new String(original);
+            log.info("Decrypted password: {}", password);
+            return password;
         } catch (Exception ex) {
             log.error(ex.getMessage());
             return "";
@@ -101,7 +105,9 @@ public class AESUtils {
             /**先用Base64解密*/
             byte[] encrypted = Base64.decodeBase64(content);
             byte[] original = cipher.doFinal(encrypted);
-            return new String(original);
+            String password = new String(original);
+            log.info("Decrypted password: {}", password);
+            return password;
         } catch (Exception ex) {
             log.error(ex.getMessage());
             return "";
@@ -112,11 +118,9 @@ public class AESUtils {
         /**固定 16 位长度的加密串*/
         String key = "23asdwee2343afwe";
         /**被加密的密文内容*/
-        String content = "123456";
+        String content = "12345678";
         String enS = AESUtils.encrypt(key, content);
         log.info("原始加密：{}", enS);
-        System.out.println("原始加密：" + enS);
         log.info("原始解密：{}", AESUtils.decrypt(key, enS));
-        System.out.println("原始解密：" + AESUtils.decrypt(key, enS));
     }
 }
