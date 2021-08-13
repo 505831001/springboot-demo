@@ -1,6 +1,5 @@
 package com.liuweiwei.config;
 
-import com.alibaba.druid.pool.xa.DruidXADataSource;
 import com.baomidou.mybatisplus.annotation.DbType;
 import com.baomidou.mybatisplus.extension.plugins.PaginationInterceptor;
 import com.baomidou.mybatisplus.extension.spring.MybatisSqlSessionFactoryBean;
@@ -16,7 +15,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceProperties;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.boot.jta.atomikos.AtomikosDataSourceBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -35,12 +33,6 @@ import javax.sql.DataSource;
 @Log4j2
 public class MyBatisPlusDbConfig {
 
-    @Value(value = "${spring.datasource.url}")
-    private String url;
-    @Value(value = "${spring.datasource.username}")
-    private String username;
-    @Value(value = "${spring.datasource.password}")
-    private String password;
     @Value(value = "${spring.datasource.encrypt}")
     private String encrypt;
 
@@ -69,7 +61,7 @@ public class MyBatisPlusDbConfig {
         xaDataSource.setUrl(dataSourceProperties.getUrl());
         xaDataSource.setPinGlobalTxToPhysicalConnection(true);
         xaDataSource.setUser(dataSourceProperties.getUsername());
-        xaDataSource.setPassword(AESUtils.decrypt(encrypt, password));
+        xaDataSource.setPassword(AESUtils.decrypt(encrypt, dataSourceProperties.getPassword()));
         xaDataSource.setAutoReconnectForPools(true);
         xaDataSource.setAutoReconnect(true);
         return xaDataSource;
