@@ -33,10 +33,14 @@ import javax.sql.DataSource;
 @Log4j2
 public class MyBatisPlusDbConfig {
 
-    @Value(value = "${aesEncryptKey}")
-    private String aesEncryptKey;
+    @Value(value = "${spring.datasource.url}")
+    private String url;
+    @Value(value = "${spring.datasource.username}")
+    private String username;
     @Value(value = "${spring.datasource.password}")
     private String password;
+    @Value(value = "${spring.datasource.encrypt}")
+    private String encrypt;
 
     // --- 数据源1-Spring数据源+MyBatisPlus框架 ---
 
@@ -61,7 +65,7 @@ public class MyBatisPlusDbConfig {
     public DataSource dataSource(@Qualifier("dataSourceProperties") DataSourceProperties dataSourceProperties) {
         DataSource dataSource = DataSourceBuilder.create().build();
         dataSource = dataSourceProperties.initializeDataSourceBuilder().build();
-        String decrypt = AESUtils.decrypt(aesEncryptKey, password);
+        String decrypt = AESUtils.decrypt(encrypt, password);
         log.info("解密后密码：{}", decrypt);
         String encrypt = AESUtils.encrypt(decrypt);
         log.info("加密后密码：{}", encrypt);
