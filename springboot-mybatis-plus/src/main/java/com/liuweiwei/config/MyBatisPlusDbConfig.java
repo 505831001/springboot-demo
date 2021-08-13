@@ -1,5 +1,6 @@
 package com.liuweiwei.config;
 
+import com.alibaba.druid.pool.xa.DruidXADataSource;
 import com.baomidou.mybatisplus.annotation.DbType;
 import com.baomidou.mybatisplus.extension.plugins.PaginationInterceptor;
 import com.baomidou.mybatisplus.extension.spring.MybatisSqlSessionFactoryBean;
@@ -69,7 +70,12 @@ public class MyBatisPlusDbConfig {
         log.info("解密后密码：{}", decrypt);
         String encrypt = AESUtils.encrypt(decrypt);
         log.info("加密后密码：{}", encrypt);
-        return dataSource;
+        DruidXADataSource druidXADataSource = new DruidXADataSource();
+        druidXADataSource.setPassword(AESUtils.decrypt(encrypt, password));
+        druidXADataSource.setDbType(DbType.MYSQL.getDb());
+        AtomikosDataSourceBean xaDataSource = new AtomikosDataSourceBean();
+        xaDataSource.setXaDataSource(druidXADataSource);
+        return xaDataSource;
     }
 
     /**
@@ -120,7 +126,7 @@ public class MyBatisPlusDbConfig {
      * @return
      */
     @Bean(name = "atomikosDataSource")
-    @ConfigurationProperties(prefix = "spring.jta.atomikos.datasource.atomikos")
+    @ConfigurationProperties(prefix = "spring.jta.atomikos.datasource")
     public DataSource atomikosDataSource() {
         AtomikosDataSourceBean atomikos = new AtomikosDataSourceBean();
         return atomikos;
