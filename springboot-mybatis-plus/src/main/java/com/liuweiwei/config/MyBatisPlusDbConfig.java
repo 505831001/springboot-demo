@@ -1,7 +1,9 @@
 package com.liuweiwei.config;
 
 import com.baomidou.mybatisplus.annotation.DbType;
+import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.PaginationInterceptor;
+import com.baomidou.mybatisplus.extension.plugins.inner.PaginationInnerInterceptor;
 import com.baomidou.mybatisplus.extension.spring.MybatisSqlSessionFactoryBean;
 import com.liuweiwei.utils.AESUtils;
 import com.mysql.jdbc.jdbc2.optional.MysqlXADataSource;
@@ -78,9 +80,12 @@ public class MyBatisPlusDbConfig {
     public SqlSessionFactory sqlSessionFactory(DataSource dataSource) throws Exception {
         MybatisSqlSessionFactoryBean sqlSessionFactoryBean = new MybatisSqlSessionFactoryBean();
         sqlSessionFactoryBean.setDataSource(dataSource);
-        PaginationInterceptor interceptor = new PaginationInterceptor();
-        interceptor.setDialectType(DbType.MYSQL.getDb());
-        interceptor.setLimit(-1);
+        //MyBatisPlus分页插件旧版
+        //PaginationInterceptor interceptor = new PaginationInterceptor();
+        //interceptor.setDialectType(DbType.MYSQL.getDb());
+        //interceptor.setLimit(-1);
+        MybatisPlusInterceptor interceptor = new MybatisPlusInterceptor();
+        interceptor.addInnerInterceptor(new PaginationInnerInterceptor(DbType.MYSQL));
         sqlSessionFactoryBean.setPlugins(new Interceptor[]{interceptor});
         sqlSessionFactoryBean.setMapperLocations(new PathMatchingResourcePatternResolver().getResources("classpath*:mapper/**/*.xml"));
         return sqlSessionFactoryBean.getObject();
