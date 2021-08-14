@@ -12,7 +12,7 @@ import java.util.List;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
-public class DemoDruidApplicationTest {
+public class DemoDruidAppTest {
 
     @Autowired
     private TbUserMapper userMapper;

@@ -1,15 +1,14 @@
-package com.excel.poi.config;
+package org.liuweiwei.config;
 
 import com.baomidou.mybatisplus.annotation.DbType;
 import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;
-import com.baomidou.mybatisplus.extension.plugins.PaginationInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.inner.PaginationInnerInterceptor;
 import com.baomidou.mybatisplus.extension.spring.MybatisSqlSessionFactoryBean;
-import com.excel.poi.utils.AESUtils;
 import com.mysql.jdbc.jdbc2.optional.MysqlXADataSource;
 import lombok.extern.log4j.Log4j2;
 import org.apache.ibatis.plugin.Interceptor;
 import org.apache.ibatis.session.SqlSessionFactory;
+import org.liuweiwei.utils.AESUtils;
 import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -75,10 +74,6 @@ public class MyBatisPlusDbConfig {
     public SqlSessionFactory sqlSessionFactory(@Qualifier("dataSource") DataSource dataSource) throws Exception {
         MybatisSqlSessionFactoryBean sqlSessionFactoryBean = new MybatisSqlSessionFactoryBean();
         sqlSessionFactoryBean.setDataSource(dataSource);
-        //MyBatisPlus分页插件旧版
-        //PaginationInterceptor interceptor = new PaginationInterceptor();
-        //interceptor.setDialectType(DbType.MYSQL.getDb());
-        //interceptor.setLimit(-1);
         MybatisPlusInterceptor interceptor = new MybatisPlusInterceptor();
         interceptor.addInnerInterceptor(new PaginationInnerInterceptor(DbType.MYSQL));
         sqlSessionFactoryBean.setPlugins(new Interceptor[]{interceptor});
