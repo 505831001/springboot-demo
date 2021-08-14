@@ -1,6 +1,8 @@
 package com.liuweiwei.component;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.extern.log4j.Log4j;
+import lombok.extern.log4j.Log4j2;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.session.SessionInformation;
@@ -20,7 +22,7 @@ import java.util.Map;
  * @since 2021-04-12
  */
 @Component(value = "my06SessionInformationExpiredStrategy")
-@Slf4j
+@Log4j2
 public class My06SessionInformationExpiredStrategy implements SessionInformationExpiredStrategy {
 
     @Override

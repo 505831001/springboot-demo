@@ -1,5 +1,7 @@
 package com.liuweiwei.component;
 
+import lombok.extern.log4j.Log4j;
+import lombok.extern.log4j.Log4j2;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.web.session.InvalidSessionStrategy;
 import org.springframework.stereotype.Component;
@@ -15,7 +17,7 @@ import java.io.IOException;
  * @since 2021-04-12
  */
 @Component(value = "my05InvalidSessionStrategy")
-@Slf4j
+@Log4j2
 public class My05InvalidSessionStrategy implements InvalidSessionStrategy {
 
     @Override

@@ -1,5 +1,7 @@
 package com.liuweiwei.component;
 
+import lombok.extern.log4j.Log4j;
+import lombok.extern.log4j.Log4j2;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.web.authentication.rememberme.PersistentRememberMeToken;
 import org.springframework.security.web.authentication.rememberme.PersistentTokenRepository;
@@ -11,7 +13,7 @@ import java.util.Date;
  * @author Liuweiwei
  * @since 2021-04-06
  */
-@Slf4j
+@Log4j2
 public class My99PersistentTokenRepository implements PersistentTokenRepository {
 
     @Override

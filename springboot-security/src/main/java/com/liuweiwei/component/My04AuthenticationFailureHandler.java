@@ -1,6 +1,8 @@
 package com.liuweiwei.component;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.extern.log4j.Log4j;
+import lombok.extern.log4j.Log4j2;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.AuthenticationException;
@@ -18,7 +20,7 @@ import java.io.IOException;
  * @since 2020-05-20
  */
 @Component
-@Slf4j
+@Log4j2
 public class My04AuthenticationFailureHandler implements AuthenticationFailureHandler {
 
     @Override

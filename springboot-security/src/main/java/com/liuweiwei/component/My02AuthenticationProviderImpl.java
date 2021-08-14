@@ -1,8 +1,9 @@
 package com.liuweiwei.component;
 
 import com.liuweiwei.config.WebMvcAutoConfig;
+import lombok.extern.log4j.Log4j;
+import lombok.extern.log4j.Log4j2;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -26,7 +27,7 @@ import java.util.Objects;
  * @since 2020-05-20
  */
 @Component(value = "my02AuthenticationProviderImpl")
-@Slf4j
+@Log4j2
 public class My02AuthenticationProviderImpl implements AuthenticationProvider {
 
     @Qualifier("my01UserDetailsServiceImpl")

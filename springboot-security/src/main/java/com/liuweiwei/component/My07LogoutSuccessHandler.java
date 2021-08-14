@@ -1,5 +1,7 @@
 package com.liuweiwei.component;
 
+import lombok.extern.log4j.Log4j;
+import lombok.extern.log4j.Log4j2;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
@@ -15,7 +17,7 @@ import java.io.IOException;
  * @since 2021-03-23
  */
 @Component(value = "my07LogoutSuccessHandler")
-@Slf4j
+@Log4j2
 public class My07LogoutSuccessHandler implements LogoutSuccessHandler {
 
     @Override

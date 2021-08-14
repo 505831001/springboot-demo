@@ -1,6 +1,8 @@
 package com.liuweiwei.component;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.extern.log4j.Log4j;
+import lombok.extern.log4j.Log4j2;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.web.access.AccessDeniedHandler;
@@ -17,7 +19,7 @@ import java.io.PrintWriter;
  * @since 2021-04-06
  */
 @Component(value = "my08AccessDeniedHandler")
-@Slf4j
+@Log4j2
 public class My08AccessDeniedHandler implements AccessDeniedHandler {
 
     @Override

@@ -3,8 +3,9 @@ package com.liuweiwei.component;
 import com.liuweiwei.config.WebMvcAutoConfig;
 import com.liuweiwei.model.TbUser;
 import com.liuweiwei.service.TbUserService;
+import lombok.extern.log4j.Log4j;
+import lombok.extern.log4j.Log4j2;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.AuthorityUtils;
@@ -24,7 +25,7 @@ import java.util.List;
  * @since 2020-05-20
  */
 @Component(value = "my01UserDetailsServiceImpl")
-@Slf4j
+@Log4j2
 public class My01UserDetailsServiceImpl implements UserDetailsService {
 
     @Autowired
