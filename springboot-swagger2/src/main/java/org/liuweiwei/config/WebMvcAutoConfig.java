@@ -1,12 +1,13 @@
 package org.liuweiwei.config;
 
 import org.liuweiwei.component.Web01MvcInterceptor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+
+import javax.annotation.Resource;
 
 /**
  * @author Liuweiwei
@@ -14,7 +15,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
  */
 public class WebMvcAutoConfig extends WebMvcAutoConfiguration implements WebMvcConfigurer {
 
-    @Autowired
+    @Resource
     private Web01MvcInterceptor web01MvcInterceptor;
 
     @Override

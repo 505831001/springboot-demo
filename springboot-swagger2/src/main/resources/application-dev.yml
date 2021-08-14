@@ -10,10 +10,11 @@ spring:
     url: jdbc:mysql://localhost:3306/springboot?useUnicode=true&zeroDateTimeBehavior=convertToNull&autoReconnect=true&characterEncoding=utf-8
     username: root
     password: 123456
+    encrypt: x1x2o3o4k6k7b890
+    decrypt:
 
-## Action: ##
-## Consider defining a bean of type 'org.**.dao.TbUserMapper' in your configuration. ##
-## resources/mapper 非<配置在pom.xml中>：java/mapper ##
+#Action: Consider defining a bean of type 'org.**.dao.TbUserMapper' in your configuration.
+#resources/mapper Non config in <pom.xml> java/mapper
 mybatis:
   mapper-locations: classpath*:mapper/*.xml
   type-aliases-package: org.liuweiwei.model
