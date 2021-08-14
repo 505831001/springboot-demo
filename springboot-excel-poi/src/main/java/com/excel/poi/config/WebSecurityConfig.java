@@ -195,12 +195,19 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()
+            //外挂丝袜哥。{AntPathMatcher}蚂蚁路径请求匹配器。指定任何人都允许使用此URL。
+            .antMatchers("/swagger-ui.html").permitAll()
+            .antMatchers("/webjars/**").permitAll()
+            .antMatchers("/swagger-resources/**").permitAll()
+            .antMatchers("/v2/*").permitAll()
+            .antMatchers("/csrf").permitAll()
+            .antMatchers("/").permitAll()
             //外挂验证码。{AntPathMatcher}蚂蚁路径请求匹配器。指定任何人都允许使用此URL。
             .antMatchers("/getVerifyCode").permitAll()
             .antMatchers("/login/invalid").permitAll()
             .anyRequest().authenticated()
             //外挂过滤器。
-            .and()/*.addFilterBefore(new VerifyCodeFilter(), UsernamePasswordAuthenticationFilter.class)*/
+            .and().addFilterBefore(new VerifyCodeFilter(), UsernamePasswordAuthenticationFilter.class)
             //TODO -> 登录功能。
             .formLogin().loginPage("/loginPage").loginProcessingUrl("/authentication/form").defaultSuccessUrl("/successPage").failureUrl("/failurePage").permitAll()
             //TODO -> 记住我功能。记住我参数。始终记得。令牌有效期秒数。持久令牌存储数据库。记住我功能整合{Authentication}身份验证功能必须加载用户详细信息服务。提示：会再次调用UserDetailsService。

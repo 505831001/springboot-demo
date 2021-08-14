@@ -1,6 +1,7 @@
 package com.excel.poi.web;
 
 import lombok.extern.log4j.Log4j2;
+import org.apache.http.HttpStatus;
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.util.AntPathMatcher;
 import org.springframework.util.PathMatcher;
@@ -37,6 +38,8 @@ public class VerifyCodeFilter extends OncePerRequestFilter {
                 //请求转发
                 request.getRequestDispatcher("/index").forward(request, response);
                 //请求重定向
+                //response.setStatus(HttpStatus.SC_INTERNAL_SERVER_ERROR);
+                //response.setContentType("application/json;charset=utf-8");
                 //response.sendRedirect("/index");
             }
         } else {
@@ -64,9 +67,9 @@ public class VerifyCodeFilter extends OncePerRequestFilter {
         HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
         //这个请求对象是在{VerifyCodeUtils继承Servlet}中存入Session的名字。不分区大小写。
         String validateCode = ((String) request.getSession().getAttribute("validateCode")).toLowerCase();
-        log.info("请求对象生成验证码:{}", validateCode);
+        log.info("Http servlet 生成验证码: {}", validateCode);
         verifyCode = verifyCode.toLowerCase();
-        log.info("请求表单输入验证码:{}", verifyCode);
+        log.info("Http request 表单验证码: {}", verifyCode);
         return validateCode.equals(verifyCode);
     }
 }
