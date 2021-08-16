@@ -1,6 +1,6 @@
 package org.liuweiwei.service;
 
-import org.liuweiwei.model.TbUser;
+import org.liuweiwei.entity.TbUser;
 
 import java.util.Set;
 

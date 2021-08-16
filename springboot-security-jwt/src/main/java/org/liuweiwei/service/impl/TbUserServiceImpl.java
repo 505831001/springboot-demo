@@ -1,6 +1,6 @@
 package org.liuweiwei.service.impl;
 
-import org.liuweiwei.model.TbUser;
+import org.liuweiwei.entity.TbUser;
 import org.liuweiwei.service.TbUserService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
