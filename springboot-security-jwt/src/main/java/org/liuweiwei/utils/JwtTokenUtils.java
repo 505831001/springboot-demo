@@ -8,36 +8,31 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Component;
+import org.springframework.util.Base64Utils;
 
 import java.io.Serializable;
 import java.util.*;
 import java.util.stream.Collectors;
 
 /**
- * @author Administrator
+ * @author Liuweiwei
+ * @since 2021-08-18
  */
 @Component
 @Log4j2
 public class JwtTokenUtils implements Serializable {
-    /**
-     * Request Headers ： Authorization
-     */
-    private String header = "Authorization";
-    /**
-     * 令牌前缀，最后留个空格 Bearer
-     */
-    private String tokenStartWith = "Bearer ";
-    /**
-     * Base64对该令牌进行编码
-     */
-    private String base64Secret = "x1x2o3o4k6k7b890";
-    /**
-     * 令牌过期时间 此处单位/毫秒
-     */
-    private Long tokenValidityInSeconds = 14400000L;
 
-    private static final String AUTHORITIES_KEY = "auth";
-    private String key = "secret";
+    private static final String  dbUsername = "admin";
+    private static final String     subject = dbUsername;
+    private static final String  dbPassword = Base64Utils.encodeToString("123456".getBytes());
+    private static final String      secret = dbPassword;
+    private static final String         key = secret;
+
+    private static final String               header = "Authorization";
+    private static final String       tokenStartWith = "Bearer ";
+    private static final String         base64Secret = "x1x2o3o4k6k7b890";
+    private static final Long tokenValidityInSeconds = 14400000L;
+    private static final String      AUTHORITIES_KEY = "auth";
 
     public String createToken(Map<String, Object> claims) {
         return Jwts.builder()

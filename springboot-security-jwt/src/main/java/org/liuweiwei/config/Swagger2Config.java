@@ -30,7 +30,7 @@ public class Swagger2Config {
         ParameterBuilder parameterBuilder = new ParameterBuilder();
         List<Parameter> parameters = new ArrayList<Parameter>();
         parameterBuilder.name("Authorization")
-                .description("令牌")
+                .description("Token")
                 .modelRef(new ModelRef("string"))
                 .parameterType("header")
                 .required(false)

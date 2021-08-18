@@ -40,7 +40,7 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
  *         nbf - 定义在什么时间之前，该jwt都是不可用的。
  *         iat - jwt的签发时间。
  *         jti - jwt的唯一身份标识，主要用来作为一次性token,从而回避重放攻击。
- * 3. Signature - 签名，签证。jwt的第三部分是一个签证信息："secret".Base64Utils("Header").Base64Utils("Payload")
+ * 3. Signature - 签名，签证。jwt的第三部分是一个签证信息：TODO->token=base64(header)+"."+base64(payload)+"."+签名(secret)
  *     1.base64 加密后的 "Header"。
  *     2.base64 加密后的 "Payload"。连接组成的字符串。
  *     3.然后通过 header 中声明的加密方式进行加盐 "secret" 组合加密，然后就构成了jwt的第三部分。

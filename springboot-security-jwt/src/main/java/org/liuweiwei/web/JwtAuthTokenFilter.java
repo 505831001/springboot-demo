@@ -10,7 +10,6 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Base64Utils;
 import org.springframework.util.StringUtils;
@@ -36,18 +35,21 @@ public class JwtAuthTokenFilter extends OncePerRequestFilter {
     protected JwtTokenUtils jwtTokenUtils;
     protected JwtTokenUtil  jwtTokenUtil;
 
-    private static final long EXPIRE_TIME = 12 * 60 * 60 * 1000L;
-    private String base64EncodedSecretKey = Base64Utils.encodeToString("secret".getBytes());
-    private String dbUserId   = "13412345678";
-    private String dbUsername = "admin";
-    private String dbPassword = new BCryptPasswordEncoder().encode("123456");
-    private String dbRoles    = "ADMIN,GUEST";
+    private static final Long  EXPIRE_TIME = 12 * 60 * 60 * 1000L;
+    private static final String dbUserId   = "13412345678";
+    private static final String dbUsername = "admin";
+    private static final String    subject = dbUsername;
+    private static final String dbPassword = Base64Utils.encodeToString("123456".getBytes());
+    private static final String     secret = dbPassword;
+    private static final String        key = secret;
+    private static final String dbRoles    = "ADMIN,GUEST";
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         //第一步从请求头中获取token
         String requestHeader = request.getHeader("Authentication");
         String generateToken = request.getHeader("Authorization");
+        String httpUserToken = request.getHeader("userToken");
 
         Map<String, Object> claims2 = new HashMap<>(10);
         claims2.put("auth", dbRoles);
@@ -58,18 +60,25 @@ public class JwtAuthTokenFilter extends OncePerRequestFilter {
                 .setSubject(dbUsername)
                 .setIssuedAt(DefaultClock.INSTANCE.now())
                 .setExpiration(new Date(DefaultClock.INSTANCE.now().getTime() + 7200000L))
-                .signWith(SignatureAlgorithm.HS512, base64EncodedSecretKey)
+                .signWith(SignatureAlgorithm.HS512, key)
                 .compact();
-        log.info("[step 01] Using jjwt generate a token:" + generateToken);
+        //log.info("Using jjwt 生成签证: {}", generateToken);
         requestHeader = Jwts.builder()
                 .claim("auth", claims2)
                 .setId(UUID.randomUUID().toString())
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(DefaultClock.INSTANCE.now().getTime() + 7200000L))
                 .compressWith(CompressionCodecs.DEFLATE)
-                .signWith(SignatureAlgorithm.HS512, base64EncodedSecretKey)
+                .signWith(SignatureAlgorithm.HS512, key)
                 .compact();
-        log.info("[step 01] Using http generate a token:" + requestHeader);
+        //log.info("Using http 生成签证: {}", requestHeader);
+        httpUserToken = Jwts.builder()
+                .setHeaderParam("typ", "JWT")
+                .setClaims(claims2)
+                .setExpiration(new Date(System.currentTimeMillis() + 1800L * 1000))
+                .signWith(SignatureAlgorithm.HS512, "zxyTestSecret")
+                .compact();
+        //log.info("Using user 生成签证: {}", httpUserToken);
 
         String tokenStartsWith = "Bearer" + " " + generateToken;
         String      startsWith = "Bearer" + " ";
@@ -78,8 +87,8 @@ public class JwtAuthTokenFilter extends OncePerRequestFilter {
             String authToken = tokenStartsWith.substring(startsWith.length());
             if (StringUtils.hasText(authToken)) {
                 //JWT签名与本地计算的签名不匹配。无法断言JWT有效性，不应信任JWT有效性。
-                String secretKey = base64EncodedSecretKey;
-                Jws<Claims>  jws = Jwts.parser().setSigningKey(secretKey).parseClaimsJws(authToken);
+                String    secret = dbPassword;
+                Jws<Claims>  jws = Jwts.parser().setSigningKey(secret).parseClaimsJws(authToken);
                 Claims    claims = jws.getBody();
                 Date  expiration = claims.getExpiration();
                 boolean flag = expiration.before(DefaultClock.INSTANCE.now());
@@ -103,8 +112,8 @@ public class JwtAuthTokenFilter extends OncePerRequestFilter {
             String authToken = tokenStartsWith.substring(7);
             if (StringUtils.hasText(authToken)) {
                 //JWT签名与本地计算的签名不匹配。无法断言JWT有效性，不应信任JWT有效性。
-                String secretKey = base64EncodedSecretKey;
-                Jws<Claims> jws  = Jwts.parser().setSigningKey(secretKey).parseClaimsJws(authToken);
+                String    secret = dbPassword;
+                Jws<Claims> jws  = Jwts.parser().setSigningKey(secret).parseClaimsJws(authToken);
                 Claims   claims  = jws.getBody();
                 String  subject  = claims.getSubject();
                 Date expiration  = claims.getExpiration();

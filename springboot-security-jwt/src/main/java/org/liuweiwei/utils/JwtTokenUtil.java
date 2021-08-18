@@ -5,11 +5,11 @@ import io.jsonwebtoken.Clock;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.impl.DefaultClock;
-import org.liuweiwei.service.TbUserService;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
+import org.springframework.util.Base64Utils;
 
-import javax.annotation.Resource;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.HashMap;
@@ -17,20 +17,22 @@ import java.util.Map;
 import java.util.function.Function;
 
 /**
- * @author Administrator
+ * @author Liuweiwei
+ * @since 2021-08-18
  */
 @Component
+@Log4j2
 public class JwtTokenUtil implements Serializable {
     private static final long serialVersionUID = 8722931311615368710L;
 
-    private String secret = "secret";
-    private Long expiration = 7200000L;
-    private String tokenHeader = "Authorization";
-
-    @Resource
-    private TbUserService tbUserService;
-
-    private Clock clock = DefaultClock.INSTANCE;
+    private static final String  dbUsername = "admin";
+    private static final String     subject = dbUsername;
+    private static final String  dbPassword = Base64Utils.encodeToString("123456".getBytes());
+    private static final String      secret = dbPassword;
+    private static final String         key = secret;
+    private static final Long    expiration = 7200000L;
+    private static final String tokenHeader = "Authorization";
+    private static final Clock        clock = DefaultClock.INSTANCE;
 
     public String generateToken(UserDetails userDetails) {
         Map<String, Object> claims = new HashMap<>();
