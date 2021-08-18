@@ -28,7 +28,7 @@ public class JwtTokenUtils implements Serializable {
     private static final String      secret = dbPassword;
     private static final String         key = secret;
 
-    private static final String               header = "Authorization";
+    private static final String               header = "response.setHeader('Authorization', token)";
     private static final String       tokenStartWith = "Bearer ";
     private static final String         base64Secret = "x1x2o3o4k6k7b890";
     private static final Long tokenValidityInSeconds = 14400000L;

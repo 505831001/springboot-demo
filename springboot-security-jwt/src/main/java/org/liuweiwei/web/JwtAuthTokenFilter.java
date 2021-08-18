@@ -32,6 +32,7 @@ import java.util.stream.Collectors;
 @Log4j2
 public class JwtAuthTokenFilter extends OncePerRequestFilter {
 
+    private static final String Authorization = "response.setHeader('Authorization', startsWith + token)";
     protected JwtTokenUtils jwtTokenUtils;
     protected JwtTokenUtil  jwtTokenUtil;
 
@@ -47,7 +48,7 @@ public class JwtAuthTokenFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         //第一步从请求头中获取token
-        String requestHeader = request.getHeader("Authentication");
+        String requestHeader = request.getHeader("Authorization");
         String generateToken = request.getHeader("Authorization");
         String httpUserToken = request.getHeader("userToken");
 

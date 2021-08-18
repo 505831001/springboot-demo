@@ -31,7 +31,7 @@ public class JwtTokenUtil implements Serializable {
     private static final String      secret = dbPassword;
     private static final String         key = secret;
     private static final Long    expiration = 7200000L;
-    private static final String tokenHeader = "Authorization";
+    private static final String tokenHeader = "response.setHeader('Authorization', token)";
     private static final Clock        clock = DefaultClock.INSTANCE;
 
     public String generateToken(UserDetails userDetails) {

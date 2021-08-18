@@ -6,6 +6,11 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import lombok.extern.slf4j.Slf4j;
 import org.liuweiwei.annotation.PassToken;
 import org.liuweiwei.annotation.UserLoginToken;
+import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Base64Utils;
 import org.springframework.util.StringUtils;
@@ -63,9 +68,9 @@ public class Web01MvcInterceptor implements HandlerInterceptor {
             log.info("签证已失效，请重新登录: {}", HttpServletResponse.SC_UNAUTHORIZED);
             return false;
         }
-        //校验通过后设置用户到请求里后在控制器中从请求域中获取用户信息
-        request.setAttribute("Authorization", claims);
-        request.getSession().setAttribute("Authorization", claims);
+        //校验通过后设置Token到响应头后再在控制器中从请求域中获取Token
+        String startsWith = "Bearer" + " ";
+        response.setHeader("Authorization", startsWith + token);
 
         // --- 注解方式签证校验 ---
 
