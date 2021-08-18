@@ -12,6 +12,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
+import org.springframework.util.Base64Utils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -24,6 +25,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 /**
+ *
  * @author Liuweiwei
  * @since 2021-08-06
  */
@@ -34,8 +36,9 @@ public class JwtAuthTokenFilter extends OncePerRequestFilter {
     protected JwtTokenUtils jwtTokenUtils;
     protected JwtTokenUtil  jwtTokenUtil;
 
-    private String base64EncodedSecretKey = "secret";
-
+    private static final long EXPIRE_TIME = 12 * 60 * 60 * 1000L;
+    private String base64EncodedSecretKey = Base64Utils.encodeToString("secret".getBytes());
+    private String dbUserId   = "13412345678";
     private String dbUsername = "admin";
     private String dbPassword = new BCryptPasswordEncoder().encode("123456");
     private String dbRoles    = "ADMIN,GUEST";
@@ -74,7 +77,9 @@ public class JwtAuthTokenFilter extends OncePerRequestFilter {
         if (StringUtils.hasText(tokenStartsWith) && tokenStartsWith.startsWith(startsWith)) {
             String authToken = tokenStartsWith.substring(startsWith.length());
             if (StringUtils.hasText(authToken)) {
-                Jws<Claims>  jws = Jwts.parser().setSigningKey("secret").parseClaimsJws(authToken);
+                //JWT签名与本地计算的签名不匹配。无法断言JWT有效性，不应信任JWT有效性。
+                String secretKey = base64EncodedSecretKey;
+                Jws<Claims>  jws = Jwts.parser().setSigningKey(secretKey).parseClaimsJws(authToken);
                 Claims    claims = jws.getBody();
                 Date  expiration = claims.getExpiration();
                 boolean flag = expiration.before(DefaultClock.INSTANCE.now());
@@ -97,10 +102,12 @@ public class JwtAuthTokenFilter extends OncePerRequestFilter {
         if (StringUtils.hasText(tokenStartsWith) && tokenStartsWith.startsWith(startsWith)) {
             String authToken = tokenStartsWith.substring(7);
             if (StringUtils.hasText(authToken)) {
-                Jws<Claims> jws = Jwts.parser().setSigningKey("secret").parseClaimsJws(authToken);
-                Claims   claims = jws.getBody();
-                String  subject = claims.getSubject();
-                Date expiration = claims.getExpiration();
+                //JWT签名与本地计算的签名不匹配。无法断言JWT有效性，不应信任JWT有效性。
+                String secretKey = base64EncodedSecretKey;
+                Jws<Claims> jws  = Jwts.parser().setSigningKey(secretKey).parseClaimsJws(authToken);
+                Claims   claims  = jws.getBody();
+                String  subject  = claims.getSubject();
+                Date expiration  = claims.getExpiration();
                 boolean flag = expiration.before(DefaultClock.INSTANCE.now());
                 //第三步验证Token是否有效
                 if (flag == false) {

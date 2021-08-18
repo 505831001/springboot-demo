@@ -1,12 +1,22 @@
 package org.liuweiwei.controller;
 
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.log4j.Log4j2;
+import org.liuweiwei.entity.TbUser;
+import org.liuweiwei.service.TbUserService;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+
+import javax.annotation.Resource;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author Liuweiwei
@@ -16,6 +26,15 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @Api(value = "", tags = "Html页面跳转控制器")
 @Log4j2
 public class HtmlController {
+
+    private static final String    USERNAME = Claims.SUBJECT;
+    private static final String     CREATED = "created";
+    private static final String AUTHORITIES = "authorities";
+    private static final String      SECRET = "secret";
+    private static final long   EXPIRE_TIME = 12 * 60 * 60 * 1000;
+
+    @Resource
+    private TbUserService userService;
 
     @GetMapping(value = "/auth")
     @ApiOperation(value = "上下文信息", notes = "上下文信息", tags = "")
@@ -36,6 +55,8 @@ public class HtmlController {
     @ApiOperation(value = "登录页面", notes = "登录页面", tags = "")
     public String login() {
         log.info("请求Url.loginPage(String loginPage)");
+        getToken(userService.findByUsername("liuweiwei"));
+        generateToken(new HashMap<>(10));
         return "login_page";
     }
 
@@ -58,5 +79,38 @@ public class HtmlController {
     public String error() {
         log.info("请求Url.errorHandler(String errorPage)");
         return "error_page";
+    }
+
+    // --- 关联方法 ---
+
+    /**
+     * TODO->java-jwt依赖包创建方式：JWT.create().withAudience(user.getId()).sign(Algorithm.HMAC256(user.getPassword()));
+     *
+     * @param user
+     * @return
+     */
+    private String getToken(TbUser user) {
+        String token = Jwts
+                .builder().claim("auth", new HashMap<>())
+                .setId(String.valueOf(user.getId()))
+                .signWith(SignatureAlgorithm.HS512, user.getPassword())
+                .compact();
+        return token;
+    }
+
+    /**
+     * TODO->jjwt依赖包构建方式
+     *
+     * @param claims
+     * @return
+     */
+    private String generateToken(Map<String, Object> claims) {
+        String token = Jwts
+                .builder()
+                .setClaims(claims)
+                .setExpiration(new Date(System.currentTimeMillis() + EXPIRE_TIME))
+                .signWith(SignatureAlgorithm.HS512, SECRET)
+                .compact();
+        return token;
     }
 }

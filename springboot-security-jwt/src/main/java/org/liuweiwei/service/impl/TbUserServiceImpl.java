@@ -1,10 +1,13 @@
 package org.liuweiwei.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import lombok.extern.log4j.Log4j2;
+import org.liuweiwei.dao.TbUserMapper;
 import org.liuweiwei.entity.TbUser;
 import org.liuweiwei.service.TbUserService;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -13,15 +16,18 @@ import java.util.Set;
  * @since 2020-12-31
  */
 @Service
+@Log4j2
 public class TbUserServiceImpl implements TbUserService {
+
+    @Resource
+    private TbUserMapper userMapper;
 
     @Override
     public TbUser findByUsername(String username) {
-        TbUser user = new TbUser();
-        user.setId(1L);
-        user.setUsername(username);
-        String password = new BCryptPasswordEncoder().encode("123");
-        user.setPassword(password);
+        LambdaQueryWrapper<TbUser> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(TbUser::getUsername, username);
+        TbUser user = userMapper.selectOne(wrapper);
+        log.info("Query database data -> {}", user.toString());
         return user;
     }
 

@@ -132,7 +132,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
             //外挂过滤器。
             .addFilterBefore(new JwtAuthTokenFilter(), UsernamePasswordAuthenticationFilter.class)
             //外挂过滤器。
-            //.addFilterBefore(new VerifyCodeFilter(), UsernamePasswordAuthenticationFilter.class)
+            .addFilterBefore(new VerifyCodeFilter(), UsernamePasswordAuthenticationFilter.class)
             //登录功能。
             .formLogin().loginPage("/loginPage").loginProcessingUrl("/authentication/form").defaultSuccessUrl("/successPage").failureUrl("/failurePage").permitAll()
             //记住我功能。
