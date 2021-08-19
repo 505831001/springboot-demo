@@ -15,7 +15,4 @@
     <packaging>war</packaging>
     <name>spring-oauth-client</name>
 
-    <dependencies>
-
-    </dependencies>
 </project>
