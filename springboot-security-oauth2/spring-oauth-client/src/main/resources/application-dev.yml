@@ -1,24 +1,24 @@
-auth-server: http://localhost:8881/auth
-
-server:
-  servlet:
-    context-path: /
-  session:
-    cookie:
-      name: SESSION1
-
 spring:
   thymeleaf:
-    cache: false
+    prefix: classpath:/templates/
+    suffix: .html
+    servlet:
+      content-type: text/html
+    mode: HTML
+  security:
+    oauth2:
+      client:
+        client-id: client
+        client-secret: secret
+        scope: all
+        access-token-uri: ${auth-server}/oauth/token
+        user-authorization-uri: ${auth-server}/oauth/authorize
+      resource:
+        token-info-uri: ${auth-server}/oauth/check_token
 
-security:
-  basic:
-    enabled: false
-  oauth2:
-    client:
-      clientId: SampleClientId
-      clientSecret: secret
-      accessTokenUri: ${auth-server}/oauth/token
-      userAuthorizationUri: ${auth-server}/oauth/authorize
-    resource:
-      userInfoUri: ${auth-server}/user
+auth-server: http://localhost:8881/auth #认证服务器地址
+
+logging:
+  level:
+    org:
+      liuweiwei: debug
