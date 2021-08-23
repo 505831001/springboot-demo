@@ -8,9 +8,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  * @since 2021-01-06
  */
 @SpringBootApplication
-public class DemoSpringDataJpaApplication {
-
+public class DemoDataJpaApplication {
     public static void main(String[] args) {
-        SpringApplication.run(DemoSpringDataJpaApplication.class, args);
+        SpringApplication.run(DemoDataJpaApplication.class, args);
     }
 }

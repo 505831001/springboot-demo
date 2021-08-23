@@ -3,9 +3,9 @@ package org.liuweiwei.service.impl;
 import org.liuweiwei.dao.TbUserDao;
 import org.liuweiwei.model.TbUser;
 import org.liuweiwei.service.TbUserService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
 import java.util.List;
 
 /**
@@ -15,7 +15,7 @@ import java.util.List;
 @Service
 public class TbUserServiceImpl implements TbUserService {
 
-    @Autowired
+    @Resource
     private TbUserDao userDao;
 
     @Override
