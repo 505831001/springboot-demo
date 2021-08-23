@@ -1,9 +1,11 @@
 package com.excel.poi.config;
 
 import com.excel.poi.web.VerifyCodeFilter;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -24,11 +26,19 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.DefaultRedirectStrategy;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.util.Base64Utils;
 import org.springframework.util.DigestUtils;
 import org.springframework.util.StringUtils;
 
+import javax.servlet.ServletException;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+import java.io.IOException;
 import java.util.Collection;
 import java.util.Objects;
 
@@ -209,7 +219,31 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
             //外挂过滤器。
             .and().addFilterBefore(new VerifyCodeFilter(), UsernamePasswordAuthenticationFilter.class)
             //TODO -> 登录功能。
-            .formLogin().loginPage("/loginPage").loginProcessingUrl("/authentication/form").defaultSuccessUrl("/successPage").failureUrl("/failurePage").permitAll()
+            .formLogin().loginPage("/loginPage").loginProcessingUrl("/authentication/form")
+            //.defaultSuccessUrl("/successPage")
+            .successHandler(new AuthenticationSuccessHandler() {
+                @Override
+                public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
+                    //校验通过后设置OAuth到请求头中
+                    String      oauth = "712238f4321ea0ea5bfa3db0ca73a25e";
+                    request.setAttribute("AuthorizationA", oauth);
+                    request.getSession().setAttribute("AuthorizationB", oauth);
+                    //校验通过后设置Token到响应头后再在控制器中从请求域中获取Token
+                    String      token = "712238f4321ea0ea5bfa3db0ca73a25e";
+                    String startsWith = "Bearer" + " ";
+                    response.setHeader("AuthorizationX", startsWith + token);
+                    response.addHeader("AuthorizationY", token);
+                    //校验通过后设置Token到饼干中后再在控制器中从请求域中获取Token
+                    response.addCookie(new Cookie("AuthorizationZ", token));
+                    log.info("登录成功...");
+                    response.setStatus(HttpStatus.OK.value());
+                    response.setStatus(HttpServletResponse.SC_OK);
+                    response.setContentType("application/json;charset=utf-8");
+                    response.getWriter().write(new ObjectMapper().writeValueAsString(authentication));
+                    new DefaultRedirectStrategy().sendRedirect(request, response, "/successPage");
+                }
+            })
+            .failureUrl("/failurePage").permitAll()
             //TODO -> 记住我功能。记住我参数。始终记得。令牌有效期秒数。持久令牌存储数据库。记住我功能整合{Authentication}身份验证功能必须加载用户详细信息服务。提示：会再次调用UserDetailsService。
             .and().rememberMe().rememberMeParameter("remember-me").alwaysRemember(true).tokenValiditySeconds(60).userDetailsService(userDetailsService())
             //TODO -> 会话功能。会话过期跳转Url。会话最大值(1)。会话最大值是否保留登录(否)。会话已过期重定向到Url。

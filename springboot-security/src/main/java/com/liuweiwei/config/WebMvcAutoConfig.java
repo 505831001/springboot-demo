@@ -1,7 +1,6 @@
 package com.liuweiwei.config;
 
 import com.liuweiwei.api.Web01MvcInterceptor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.context.request.NativeWebRequest;
@@ -10,6 +9,7 @@ import org.springframework.web.context.request.async.DeferredResult;
 import org.springframework.web.context.request.async.DeferredResultProcessingInterceptor;
 import org.springframework.web.servlet.config.annotation.*;
 
+import javax.annotation.Resource;
 import java.util.concurrent.Callable;
 
 /**
@@ -19,7 +19,7 @@ import java.util.concurrent.Callable;
 @Configuration
 public class WebMvcAutoConfig extends WebMvcAutoConfiguration implements WebMvcConfigurer {
 
-    @Autowired
+    @Resource
     private Web01MvcInterceptor mvcInterceptor;
 
     /**

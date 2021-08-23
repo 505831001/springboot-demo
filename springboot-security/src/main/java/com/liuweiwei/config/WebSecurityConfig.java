@@ -51,6 +51,7 @@ import org.springframework.util.StringUtils;
 import javax.annotation.Resource;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.sql.DataSource;
@@ -72,11 +73,11 @@ import java.util.Objects;
  *     {01}.
  *     {02}.
  *   [03].configure(HttpSecurity http);重写此方法以配置{HttpSecurity}。通常，子类不应该通过调用super来调用此方法，因为它可能会覆盖它们的配置。默认配置为：
- *     {01}.http.formLogin()         TODO->登录功能。指定支持基于表单的身份验证。如果没有指定{loginPage(String)}，将生成一个默认的登录页面。
- *     {02}.http.rememberMe()        TODO->记住我功能。允许配置"记住我"身份验证。
- *     {03}.http.sessionManagement() TODO->Session功能。允许配置会话管理。
- *     {04}.http.logout()            TODO->退出功能。提供注销支持。
- *     {05}.http.exceptionHandling() TODO->异常处理。允许配置异常处理。
+ *     {01}.http.formLogin()                   TODO->登录功能。指定支持基于表单的身份验证。如果没有指定{loginPage(String)}，将生成一个默认的登录页面。
+ *     {02}.http.rememberMe()                  TODO->记住我功能。允许配置"记住我"身份验证。
+ *     {03}.http.sessionManagement()           TODO->Session功能。允许配置会话管理。
+ *     {04}.http.logout()                      TODO->退出功能。提供注销支持。
+ *     {05}.http.exceptionHandling()           TODO->异常处理。允许配置异常处理。
  * @author liuweiwei
  * @since 2020-05-20
  */
@@ -337,6 +338,17 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .successHandler(new AuthenticationSuccessHandler() {
                     @Override
                     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
+                        //校验通过后设置OAuth到请求头中
+                        String      oauth = "712238f4321ea0ea5bfa3db0ca73a25e";
+                        request.setAttribute("AuthorizationA", oauth);
+                        request.getSession().setAttribute("AuthorizationB", oauth);
+                        //校验通过后设置Token到响应头后再在控制器中从请求域中获取Token
+                        String      token = "712238f4321ea0ea5bfa3db0ca73a25e";
+                        String startsWith = "Bearer" + " ";
+                        response.setHeader("AuthorizationX", startsWith + token);
+                        response.addHeader("AuthorizationY", token);
+                        //校验通过后设置Token到饼干中后再在控制器中从请求域中获取Token
+                        response.addCookie(new Cookie("AuthorizationZ", token));
                         log.info("登录成功...");
                         response.setStatus(HttpStatus.OK.value());
                         response.setStatus(HttpServletResponse.SC_OK);
