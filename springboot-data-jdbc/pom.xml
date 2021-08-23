@@ -18,10 +18,10 @@
     </parent> <!-- lookup parent from repository -->
 
     <groupId>com.example</groupId>
-    <artifactId>springboot-jdbc</artifactId>
+    <artifactId>springboot-data-jdbc</artifactId>
     <version>0.0.1-SNAPSHOT</version>
 
-    <name>springboot-jdbc</name>
+    <name>springboot-data-jdbc</name>
     <description>jdbc project for Spring Boot</description>
 
     <properties>

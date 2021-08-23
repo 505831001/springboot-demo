@@ -2,9 +2,6 @@ package com.example;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.rocketmq.client.exception.MQClientException;
-import org.apache.rocketmq.client.producer.DefaultMQProducer;
-import org.mybatis.spring.annotation.MapperScan;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.Banner;
 import org.springframework.boot.SpringApplication;
@@ -31,18 +28,16 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
  */
 @SpringBootApplication
 @EnableSwagger2
-@MapperScan(basePackages = {"com.example.dao"})
-public class DemoJdbcApplication extends SpringBootServletInitializer {
-
+public class DemoDataJdbcApplication extends SpringBootServletInitializer {
     /**
      * 日志-实现层：logback<org.slf4j>
      */
-    private static final org.slf4j.Logger log = LoggerFactory.getLogger(DemoJdbcApplication.class);
+    private static final org.slf4j.Logger log = LoggerFactory.getLogger(DemoDataJdbcApplication.class);
 
     /**
      * 日志-实现层：log4j<org.apache.log4j>
      */
-    private static final Logger logger = LogManager.getLogger(DemoJdbcApplication.class);
+    private static final Logger logger = LogManager.getLogger(DemoDataJdbcApplication.class);
 
     /**
      * 类，可以用来从Java主方法引导和启动Spring应用程序。
@@ -64,7 +59,7 @@ public class DemoJdbcApplication extends SpringBootServletInitializer {
     private static ConfigurableEnvironment applicationContextEnvironment;
 
     public static void main(String[] args) {
-        application = new SpringApplication(DemoJdbcApplication.class);
+        application = new SpringApplication(DemoDataJdbcApplication.class);
         application.setBannerMode(Banner.Mode.CONSOLE);
         applicationContext = application.run(args);
         applicationContextEnvironment = applicationContext.getEnvironment();
@@ -90,14 +85,5 @@ public class DemoJdbcApplication extends SpringBootServletInitializer {
         template.setConnectionFactory(redisConnectionFactory);
         template.setDefaultSerializer(new GenericJackson2JsonRedisSerializer());
         return template;
-    }
-
-    @Bean
-    public DefaultMQProducer defaultMQProducer() throws MQClientException {
-        DefaultMQProducer producer = new DefaultMQProducer("wei_producer_group");
-        producer.setVipChannelEnabled(false);
-        producer.setNamesrvAddr("127.0.0.1:9876");
-        producer.start();
-        return producer;
     }
 }

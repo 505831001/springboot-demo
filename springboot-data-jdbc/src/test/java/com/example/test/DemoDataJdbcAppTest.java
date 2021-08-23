@@ -15,7 +15,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
-public class DemoJdbcAppTest {
+public class DemoDataJdbcAppTest {
 
     private MockMvc mvc;
 
