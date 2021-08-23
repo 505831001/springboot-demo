@@ -3,8 +3,12 @@ package org.liuweiwei.controller;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -17,9 +21,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 @Log4j2
 public class HtmlController {
 
-    @GetMapping(value = "/product")
-    public String echo() {
-        return "授权成功后打印";
+    @GetMapping(value = "/product/{id}")
+    public ResponseEntity echo(@PathVariable String id) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        log.info("SecurityContextHolder.getContext().getAuthentication() ->{}", authentication);
+        return ResponseEntity.ok("Product id:" + id);
     }
 
     @GetMapping(value = "/login")

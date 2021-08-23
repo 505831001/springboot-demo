@@ -1,18 +1,23 @@
 package org.liuweiwei.config;
 
+import lombok.extern.log4j.Log4j2;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableResourceServer;
 import org.springframework.security.oauth2.config.annotation.web.configuration.ResourceServerConfigurerAdapter;
 import org.springframework.security.oauth2.config.annotation.web.configurers.ResourceServerSecurityConfigurer;
 
 /**
+ * OAuth2 资源服务器配置
+ *
  * @author Liuweiwei
  * @since 2020-12-30
  */
 @EnableResourceServer
 @Configuration
+@Log4j2
 public class WebOauth2ResourceConfig extends ResourceServerConfigurerAdapter {
 
     /**
@@ -20,11 +25,11 @@ public class WebOauth2ResourceConfig extends ResourceServerConfigurerAdapter {
      * 底层代码：org.springframework.security.oauth2.config.annotation.web.configurers.ResourceServerSecurityConfigurer
      * 属性默认值：String resourceId = "oauth2-resource"
      */
-    private static final String resourceId = "oauth2-resource";
+    private static final String RESOURCE_ID = "oauth2-resource";
 
     @Override
     public void configure(ResourceServerSecurityConfigurer resources) throws Exception {
-        resources.resourceId(resourceId).stateless(true);
+        resources.resourceId(RESOURCE_ID).stateless(true);
     }
 
     @Override
@@ -36,6 +41,7 @@ public class WebOauth2ResourceConfig extends ResourceServerConfigurerAdapter {
             .antMatchers(HttpMethod.PUT, "/**").access("#oauth2.hasScope('write')")
             .antMatchers(HttpMethod.DELETE, "/**").access("#oauth2.hasScope('write')")
             .antMatchers("/product/**").access("#oauth2.hasScope('read') and hasRole('ADMIN')")
+            .and().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
             .and()
             .headers()
             .addHeaderWriter((request, response) -> {

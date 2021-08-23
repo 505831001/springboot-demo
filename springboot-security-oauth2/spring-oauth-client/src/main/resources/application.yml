@@ -6,9 +6,3 @@ server:
 spring:
   profiles:
     active: dev
-  thymeleaf:
-    cache: false
-  application:
-    name: baidu
-  main:
-    allow-bean-definition-overriding: true

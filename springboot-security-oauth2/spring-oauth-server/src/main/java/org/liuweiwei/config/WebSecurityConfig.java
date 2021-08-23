@@ -44,6 +44,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         encoder = new BCryptPasswordEncoder();
         return encoder;
     }
+
     /**
      * AuthenticationManager对象在OAuth2认证服务中要使用，提取放入IOC容器中
      */
@@ -63,13 +64,13 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     public void configure(WebSecurity web) throws Exception {
-        super.configure(web);
+        web.ignoring().antMatchers("/assets/**");
     }
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()
-            .antMatchers("/oauth/*").permitAll()
+            .antMatchers("/oauth/*", "/login/**", "/logout").permitAll()
             .anyRequest().authenticated()
             .and().formLogin().loginProcessingUrl("/login").permitAll()
             .and().csrf().disable();
