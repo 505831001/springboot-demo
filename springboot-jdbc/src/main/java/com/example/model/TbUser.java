@@ -1,8 +1,5 @@
 package com.example.model;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
 import lombok.Data;
 import lombok.ToString;
 
@@ -22,33 +19,23 @@ import java.util.Date;
 public class TbUser implements Serializable {
     private static final long serialVersionUID = 1L;
     /**主键ID*/
-    @TableId(value = "id", type = IdType.AUTO)
     private Long id;
     /**用户名*/
-    @TableField
     private String username;
     /**密码，加密存储*/
-    @TableField
     private String password;
     /**角色*/
-    @TableField
     private String role;
     /**权限*/
-    @TableField
     private String permission;
     /**账号状态*/
-    @TableField
     private String ban;
     /**注册手机号*/
-    @TableField
     private String phone;
     /**注册邮箱*/
-    @TableField
     private String email;
     /**创建时间*/
-    @TableField
     private Date created;
     /**更新时间*/
-    @TableField
     private Date updated;
 }

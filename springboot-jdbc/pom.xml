@@ -92,12 +92,12 @@
             <artifactId>spring-cloud-commons</artifactId>
         </dependency>
 
-        <!-- alibaba cloud - rocketmq -->
+        <!-- alibaba cloud - rocketmq
         <dependency>
             <groupId>com.alibaba.cloud</groupId>
             <artifactId>spring-cloud-starter-stream-rocketmq</artifactId>
         </dependency>
-
+         -->
         <!-- nacos config
         <dependency>
             <groupId>com.alibaba.cloud</groupId>
@@ -121,27 +121,6 @@
         <dependency>
             <groupId>org.aspectj</groupId>
             <artifactId>aspectjweaver</artifactId>
-        </dependency>
-
-        <!-- mybatis plus - core<基础BaseMapper> + extension<顶级IService> -->
-        <!-- mybatis-plus.mapper-locations=classpath*:mapper/*.xml -->
-        <!-- mybatis-plus.type-aliases-package=com.example.model -->
-        <dependency>
-            <groupId>com.baomidou</groupId>
-            <artifactId>mybatis-plus-boot-starter</artifactId>
-            <version>3.4.0</version>
-        </dependency>
-        <!-- mybatis plus - generator -->
-        <dependency>
-            <groupId>com.baomidou</groupId>
-            <artifactId>mybatis-plus-generator</artifactId>
-            <version>3.4.0</version>
-        </dependency>
-        <!-- github - pageHelper -->
-        <dependency>
-            <groupId>com.github.pagehelper</groupId>
-            <artifactId>pagehelper-spring-boot-starter</artifactId>
-            <version>1.2.12</version>
         </dependency>
 
         <!-- mysql -->

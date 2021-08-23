@@ -1,6 +1,5 @@
 package com.example.service;
 
-import com.baomidou.mybatisplus.extension.service.IService;
 import com.example.model.TbUser;
 
 import java.io.Serializable;
@@ -10,8 +9,7 @@ import java.util.List;
  * @author Liuweiwei
  * @since 2021-01-06
  */
-public interface TbUserService extends IService<TbUser> {
-
+public interface TbUserService {
     /**
      * 根据用户ID查询用户信息
      *
