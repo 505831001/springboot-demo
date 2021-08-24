@@ -10,10 +10,9 @@
         <version>0.0.1-SNAPSHOT</version>
     </parent>
 
-    <artifactId>spring-oauth-client</artifactId>
-
-    <packaging>war</packaging>
-    <name>spring-oauth-client</name>
+    <artifactId>springboot-security-oauth2-client</artifactId>
+    <groupId>org.liuweiwei</groupId>
+    <version>0.0.1-SNAPSHOT</version>
 
     <dependencies>
         <!-- web -->
@@ -34,13 +33,6 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-log4j2</artifactId>
         </dependency>
-        <!-- oauth2
-        <dependency>
-            <groupId>org.springframework.security.oauth</groupId>
-            <artifactId>spring-security-oauth2</artifactId>
-            <version>2.3.4.RELEASE</version>
-        </dependency>
-         -->
         <!-- thymeleaf -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -58,12 +50,6 @@
             <artifactId>spring-boot-starter-actuator</artifactId>
         </dependency>
 
-        <!-- cloud oauth2 -->
-        <dependency>
-            <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-starter-oauth2</artifactId>
-        </dependency>
-
         <!-- swagger -->
         <dependency>
             <groupId>io.springfox</groupId>
@@ -74,6 +60,13 @@
             <groupId>io.springfox</groupId>
             <artifactId>springfox-swagger-ui</artifactId>
             <version>2.9.2</version>
+        </dependency>
+
+        <!-- oauth2 -->
+        <dependency>
+            <groupId>org.springframework.security.oauth</groupId>
+            <artifactId>spring-security-oauth2</artifactId>
+            <version>2.3.4.RELEASE</version>
         </dependency>
     </dependencies>
 </project>

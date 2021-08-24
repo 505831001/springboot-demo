@@ -5,7 +5,7 @@ import org.apache.http.HttpStatus;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.liuweiwei.Oauth2ClientApplication;
+import org.liuweiwei.DemoOauth2ClientApplication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -22,7 +22,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = Oauth2ClientApplication.class)
+@SpringBootTest(classes = DemoOauth2ClientApplication.class)
 @AutoConfigureMockMvc
 @Slf4j
 public class Oauth2ClientTest {

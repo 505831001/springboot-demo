@@ -111,7 +111,7 @@
     </dependencies>
 
     <modules>
-        <module>spring-oauth-server</module>
-        <module>spring-oauth-client</module>
+        <module>springboot-security-oauth2-server</module>
+        <module>springboot-security-oauth2-client</module>
     </modules>
 </project>
