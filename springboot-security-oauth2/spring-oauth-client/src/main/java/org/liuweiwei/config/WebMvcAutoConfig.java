@@ -30,6 +30,6 @@ public class WebMvcAutoConfig extends WebMvcAutoConfiguration implements WebMvcC
                 .allowedMethods("POST", "DELETE", "PUT", "GET", "OPTIONS")
                 .maxAge(60 * 60 * 24 * 7)
                 .allowedHeaders("*")
-                .allowCredentials(true);
+                .allowCredentials(false);
     }
 }

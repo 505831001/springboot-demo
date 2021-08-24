@@ -65,6 +65,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     public void configure(WebSecurity web) throws Exception {
         web.ignoring().antMatchers("/assets/**");
+        web.ignoring().antMatchers("/assets/**", "/css/**", "/images/**");
     }
 
     @Override
@@ -72,7 +73,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         http.authorizeRequests()
             .antMatchers("/oauth/*", "/login/**", "/logout").permitAll()
             .anyRequest().authenticated()
-            .and().formLogin().loginProcessingUrl("/login").permitAll()
+            //.and().formLogin().loginProcessingUrl("/login").permitAll()
             .and().csrf().disable();
     }
 }
