@@ -8,8 +8,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  * @since 2021-01-30
  */
 @SpringBootApplication
-public class DemoBootNacosProducerApplication {
+public class DemoNacosProducerApplication {
     public static void main(String[] args) {
-        SpringApplication.run(DemoBootNacosProducerApplication.class, args);
+        SpringApplication.run(DemoNacosProducerApplication.class, args);
     }
 }
