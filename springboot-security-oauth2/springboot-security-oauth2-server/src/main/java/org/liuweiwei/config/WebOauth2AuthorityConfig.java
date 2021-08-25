@@ -1,6 +1,8 @@
 package org.liuweiwei.config;
 
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.config.annotation.configurers.ClientDetailsServiceConfigurer;
@@ -8,6 +10,8 @@ import org.springframework.security.oauth2.config.annotation.web.configuration.A
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableAuthorizationServer;
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerEndpointsConfigurer;
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerSecurityConfigurer;
+import org.springframework.security.oauth2.provider.token.TokenStore;
+import org.springframework.security.oauth2.provider.token.store.redis.RedisTokenStore;
 
 import javax.annotation.Resource;
 
@@ -57,10 +61,13 @@ import javax.annotation.Resource;
  *         "scope": "read write"
  *     }
  * 4.利用Token获取资源
+ *     浏览器访问，已登录Spring Security。
  *     {
- *         http://localhost:9201/echo?access_token=e1eb928f-646b-47f5-b9c4-0901543b597b
+ *         http://localhost:9201/echo
+ *         http://localhost:9201/admin/echo?access_token=e2b86af3-827a-4a62-aab0-c41c634937be
+ *         http://localhost:9201/guest/echo?access_token=e2b86af3-827a-4a62-aab0-c41c634937be
  *     }
- *     TODO->待处理：Access Denied 拒绝访问。握草。
+ *     TODO->Postman请求需登录Spring Security，否则 Access Denied 拒绝访问。握草。
  *     {
  *         "timestamp": "2021-08-24 08:30:10",
  *         "status": 403,
@@ -103,7 +110,7 @@ public class WebOauth2AuthorityConfig extends AuthorizationServerConfigurerAdapt
      * redirect_uri  表示重定向URI，可选项。
      * scope         表示申请的权限范围，可选项。
      * state         表示客户端的当前状态，可以指定任意值，认证服务器会原封不动地返回这个值。
-     * 跳转到Spring Security安全框架登录页面。http://localhost:8881/login
+     * 跳转到Spring Security安全框架登录页面。http://localhost:9201/login
      * 然后使用安全框架.configure(AuthenticationManagerBuilder auth)登录。
      * 跳转到Oauth2授权页面。http://localhost:8881/oauth/authorize?response_type=code&client_id=baidu
      * {
@@ -115,7 +122,7 @@ public class WebOauth2AuthorityConfig extends AuthorizationServerConfigurerAdapt
      * }
      * 勾选同意Approve，点击授权Approve。跳转到已授权.redirectUris("https://www.baidu.com")
      * 响应地址：https://www.baidu.com/?code=M8MDDv
-     * TODO->[POST请求][Body=form-data]
+     * TODO->[POST请求][表单-Body(form-data or x-www-form-urlencoded]
      * TODO->http://localhost:9201/oauth/token
      * 1.授权码模式：grant_type=authorization_code,密码模式：grant_type=password,客户端模式：client_credentials(客户端模式),implicit(简化模式)
      *     grant_type:authorization_code //授权模式
@@ -135,6 +142,13 @@ public class WebOauth2AuthorityConfig extends AuthorizationServerConfigurerAdapt
      *     client_id:baidu               //客户端账号
      *     client_secret:123456          //客户端密钥
      * 4.简化模式：implicit(简化模式)
+     * TODO->[POST请求][请求头-Headers]
+     * TODO->http://localhost:9201/oauth/token
+     * 提示：使用Postman请求，需要登录(Spring Security)。否则需要登录Spring Security。
+     * {
+     *     Content-Type:application/x-www-form-urlencoded
+     *     Authorization:Basic bXktY2xpZW50LTE6MTIzNDU2Nzg=
+     * }
      * 响应结果：
      * {
      *     "access_token": "e1eb928f-646b-47f5-b9c4-0901543b597b",
@@ -144,8 +158,10 @@ public class WebOauth2AuthorityConfig extends AuthorizationServerConfigurerAdapt
      *     "scope": "read write"
      * }
      * TODO->[GET请求]
-     * TODO->http://localhost:9201/echo?access_token=e1eb928f-646b-47f5-b9c4-0901543b597b
-     * 提示：总感觉此处少带了某些验证权限的东西。
+     * TODO->http://localhost:9201/echo 未配置 OAuth2 资源服务器http.requestMatchers().antMatchers("")。因此只被Spring Security拦截登录即可。
+     * TODO->http://localhost:9201/admin/echo?access_token=e2b86af3-827a-4a62-aab0-c41c634937be 未经授权：访问此资源需要完全身份验证。
+     * TODO->http://localhost:9201/guest/echo?access_token=e2b86af3-827a-4a62-aab0-c41c634937be unauthorized: Full authentication is required to access this resource.
+     * 提示：使用Postman请求，需要登录(Spring Security)。否则拒绝访问。
      * {
      *     "timestamp": "2021-08-24 08:30:10",
      *     "status": 403,
@@ -153,7 +169,6 @@ public class WebOauth2AuthorityConfig extends AuthorizationServerConfigurerAdapt
      *     "message": "Access Denied",
      *     "path": "/echo"
      * }
-     * TODO->待处理：Access Denied 拒绝访问。握草。
      * 1.从数据库取数据
      *     clients.withClientDetails(new ClientDetailsService());
      * 2.从内存中取数据
@@ -183,8 +198,27 @@ public class WebOauth2AuthorityConfig extends AuthorizationServerConfigurerAdapt
                .refreshTokenValiditySeconds(60 * 60 * 24);
     }
 
+    /**
+     * TODO->增加了TokenStore，将Token存储到Redis中。否则默认放在内存中的话每次重启的话token都丢了。
+     * localhost:0>keys *
+     * 1) "client_id_to_access:baidu"
+     * 2) "auth_to_access:21894fe3228de3033cc3fdb734e29ab0"
+     * 3) "auth:fe77c6bd-f25d-4ba3-843c-7b5f27d56b39"
+     * 4) "uname_to_access:baidu:admin"
+     * 5) "access_to_refresh:fe77c6bd-f25d-4ba3-843c-7b5f27d56b39"
+     * 6) "refresh_auth:0ce707cc-bdb4-4944-af24-6b360c131584"
+     * 7) "refresh_to_access:0ce707cc-bdb4-4944-af24-6b360c131584"
+     * 8) "refresh:0ce707cc-bdb4-4944-af24-6b360c131584"
+     * 9) "access:fe77c6bd-f25d-4ba3-843c-7b5f27d56b39"
+     */
+    @Resource
+    private RedisConnectionFactory redisConnectionFactory;
+    @Bean
+    public TokenStore tokenStore() {
+        return new RedisTokenStore(redisConnectionFactory);
+    }
     @Override
     public void configure(AuthorizationServerEndpointsConfigurer endpoints) throws Exception {
-        endpoints.authenticationManager(authenticationManager);
+        endpoints.authenticationManager(authenticationManager).tokenStore(tokenStore());
     }
 }

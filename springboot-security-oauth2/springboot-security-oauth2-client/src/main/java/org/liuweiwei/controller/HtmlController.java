@@ -1,16 +1,10 @@
 package org.liuweiwei.controller;
 
 import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 /**
  * @author Liuweiwei
@@ -21,24 +15,36 @@ import org.springframework.web.bind.annotation.RequestParam;
 @Log4j2
 public class HtmlController {
 
-    @GetMapping(value = "/product/{id}")
-    public ResponseEntity echo(@PathVariable String id) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        log.info("SecurityContextHolder.getContext().getAuthentication() ->{}", authentication);
-        return ResponseEntity.ok("Product id:" + id);
+    /**
+     * TODO->http://localhost:9201/echo 未配置 OAuth2 资源服务器http.requestMatchers().antMatchers("")。因此只被Spring Security拦截登录即可。
+     * @return
+     */
+    @GetMapping(value = "/echo")
+    @ResponseBody
+    public String echo() {
+        log.info("请求Url.echo()");
+        return "Hello World";
     }
 
-    @GetMapping(value = "/login")
-    @ApiOperation(value = "登录页面", notes = "登录页面", tags = "")
-    public String login(@RequestParam(value = "code") String code) {
-        log.info("请求Url.login() -> 授权码:{}", code);
-        return "login_page";
+    /**
+     * TODO->http://localhost:9201/admin/echo?access_token=e2b86af3-827a-4a62-aab0-c41c634937be 未经授权：访问此资源需要完全身份验证。
+     * @return
+     */
+    @GetMapping(value = "/admin/echo")
+    @ResponseBody
+    public String echo2() {
+        log.info("请求Url.echo2012()");
+        return "Hello World 2212";
     }
 
-    @PostMapping(value = "/oauth")
-    @ApiOperation(value = "授权页面", notes = "授权页面", tags = "")
-    public String oauth() {
-        log.info("请求Url.oauth()");
-        return "oauth_page";
+    /**
+     * TODO->http://localhost:9201/guest/echo?access_token=e2b86af3-827a-4a62-aab0-c41c634937be unauthorized: Full authentication is required to access this resource.
+     * @return
+     */
+    @GetMapping(value = "/guest/echo")
+    @ResponseBody
+    public String echo4() {
+        log.info("请求Url.echo2014()");
+        return "Hello World 2214";
     }
 }
