@@ -3,7 +3,9 @@ package org.liuweiwei.config;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.config.annotation.configurers.ClientDetailsServiceConfigurer;
 import org.springframework.security.oauth2.config.annotation.web.configuration.AuthorizationServerConfigurerAdapter;
@@ -18,7 +20,7 @@ import javax.annotation.Resource;
 /**
  * OAuth2.0 授权服务器配置
  * 1.接口参数
- *     1.http://localhost:9201/ 这里是我服务的地址以及端口。
+ *     1.http://localhost:9200/ 这里是我服务的地址以及端口。
  *     2.oauth/authorize?       这个是Spring Security OAuth2默认提供的接口。
  *     3.response_type=code     表示授权类型，必选项，此处的值固定为”code”。
  *     4.client_id=baidu        表示客户端的ID，必选项。这里使用的是项目启动时，控制台输出的security.oauth2.client.clientId可自定义。
@@ -26,7 +28,7 @@ import javax.annotation.Resource;
  *     6.scope=read,write       表示申请的权限范围，可选项。这一项用于服务提供商区分提供哪些服务数据。
  *     7.state=?                表示客户端的当前状态，可以指定任意值，认证服务器会原封不动地返回这个值。这里没有使用到该值。
  *     {
- *         http://localhost:9201/oauth/authorize?response_type=code&client_id=baidu
+ *         http://localhost:9200/oauth/authorize?response_type=code&client_id=baidu
  *     }
  * 2.请求Header参数，获取Token
  *     1.grant_type=authorization_code(授权码模式), 表示使用的授权模式，必选项。
@@ -63,9 +65,9 @@ import javax.annotation.Resource;
  * 4.利用Token获取资源
  *     浏览器访问，已登录Spring Security。
  *     {
- *         http://localhost:9201/echo
- *         http://localhost:9201/admin/echo?access_token=e2b86af3-827a-4a62-aab0-c41c634937be
- *         http://localhost:9201/guest/echo?access_token=e2b86af3-827a-4a62-aab0-c41c634937be
+ *         http://localhost:9200/echo
+ *         http://localhost:9200/admin/echo?access_token=e2b86af3-827a-4a62-aab0-c41c634937be
+ *         http://localhost:9200/guest/echo?access_token=e2b86af3-827a-4a62-aab0-c41c634937be
  *     }
  *     TODO->Postman请求需登录Spring Security，否则 Access Denied 拒绝访问。握草。
  *     {
@@ -93,8 +95,6 @@ public class WebOauth2AuthorityConfig extends AuthorizationServerConfigurerAdapt
 
     @Resource
     private PasswordEncoder passwordEncoder;
-    @Resource
-    private AuthenticationManager authenticationManager;
 
     @Override
     public void configure(AuthorizationServerSecurityConfigurer security) throws Exception {
@@ -102,17 +102,24 @@ public class WebOauth2AuthorityConfig extends AuthorizationServerConfigurerAdapt
     }
 
     /**
-     * TODO->[GET请求]
-     * TODO->http://localhost:9201/oauth/authorize?response_type=code&client_id=baidu
+     * 第一步：获取授权码Code
+     * TODO->[GET请求][redirectUris(String... uris)配置单个参数时使用][dev环境]
+     * TODO->http://localhost:9200/oauth/authorize?response_type=code&client_id=client
+     * 或者
+     * TODO->[GET请求][redirectUris(String... uris)配置多个参数时使用][uat环境]
+     * TODO->http://localhost:9200/oauth/authorize?response_type=code&client_id=client&redirect_uri=http://localhost:9202/login
      * response_type 表示授权类型，必选项，此处的值固定为"code"。
      * client_id     表示客户端的ID，必选项。
      * client_secret 表示客户端的密码，可选项。
      * redirect_uri  表示重定向URI，可选项。
      * scope         表示申请的权限范围，可选项。
      * state         表示客户端的当前状态，可以指定任意值，认证服务器会原封不动地返回这个值。
-     * 跳转到Spring Security安全框架登录页面。http://localhost:9201/login
+     * 跳转到Spring Security安全框架登录页面。
+     * http://localhost:9200/login
      * 然后使用安全框架.configure(AuthenticationManagerBuilder auth)登录。
-     * 跳转到Oauth2授权页面。http://localhost:8881/oauth/authorize?response_type=code&client_id=baidu
+     * 跳转到Oauth2授权页面。
+     * http://localhost:9200/oauth/authorize?response_type=code&client_id=client
+     * http://localhost:9200/oauth/authorize?response_type=code&client_id=client&redirect_uri=http://localhost:9202/login
      * {
      *   OAuth Approval
      *   Do you authorize "baidu" to access your protected resources?
@@ -120,35 +127,37 @@ public class WebOauth2AuthorityConfig extends AuthorizationServerConfigurerAdapt
      *     scope.write:  Approve Deny
      *   [Authorize]
      * }
-     * 勾选同意Approve，点击授权Approve。跳转到已授权.redirectUris("https://www.baidu.com")
-     * 响应地址：https://www.baidu.com/?code=M8MDDv
+     * 勾选同意Approve，点击授权Approve。跳转到已授权.redirectUris("http://localhost:9202/login")
+     * 响应地址：
+     * https://www.baidu.com/?code=M8MDDv
+     * http://localhost:9202/login?code=ve6gZC
+     *
+     * 第二步：通过授权码Code获取令牌Token，浏览器方式
+     * 提示：需要开启endpoints.allowedTokenEndpointRequestMethods(HttpMethod.GET, HttpMethod.POST)允许的令牌端点请求方法支持。
+     * TODO->http://localhost:9200/oauth/token?client_id=client&client_secret=secret&grant_type=authorization_code&redirect_uri=http://localhost:9202/login&code=jrbBZS
+     * 或者
+     * 第二步：通过授权码Code获取令牌Token，Postman方式
      * TODO->[POST请求][表单-Body(form-data or x-www-form-urlencoded]
-     * TODO->http://localhost:9201/oauth/token
+     * TODO->http://localhost:9200/oauth/token
      * 1.授权码模式：grant_type=authorization_code,密码模式：grant_type=password,客户端模式：client_credentials(客户端模式),implicit(简化模式)
-     *     grant_type:authorization_code //授权模式
-     *     client_id:baidu               //客户端账号
-     *     client_secret:123456          //客户端密钥
-     *     username:admin                //授权用户账号
-     *     password:123456               //授权用户密码
-     *     code=M8MDDv                   //授权码
+     *     grant_type:authorization_code            //授权模式
+     *     client_id:baidu                          //客户端账号
+     *     client_secret:123456                     //客户端密钥
+     *     username:admin                           //授权用户账号
+     *     password:123456                          //授权用户密码
+     *     redirect_uri:http://localhost:9202/login //uat环境才需要
+     *     code=M8MDDv                              //授权码
      * 2.密码模式：grant_type=password,客户端模式：client_credentials(客户端模式),implicit(简化模式)
-     *     grant_type:password           //授权模式
-     *     client_id:baidu               //客户端账号
-     *     client_secret:123456          //客户端密钥
-     *     username:admin                //授权用户账号
-     *     password:123456               //授权用户密码
+     *     grant_type:password                      //授权模式
+     *     client_id:baidu                          //客户端账号
+     *     client_secret:123456                     //客户端密钥
+     *     username:admin                           //授权用户账号
+     *     password:123456                          //授权用户密码
      * 3.客户端模式：client_credentials(客户端模式),implicit(简化模式)
-     *     grant_type:client_credentials //授权模式
-     *     client_id:baidu               //客户端账号
-     *     client_secret:123456          //客户端密钥
+     *     grant_type:client_credentials            //授权模式
+     *     client_id:baidu                          //客户端账号
+     *     client_secret:123456                     //客户端密钥
      * 4.简化模式：implicit(简化模式)
-     * TODO->[POST请求][请求头-Headers]
-     * TODO->http://localhost:9201/oauth/token
-     * 提示：使用Postman请求，需要登录(Spring Security)。否则需要登录Spring Security。
-     * {
-     *     Content-Type:application/x-www-form-urlencoded
-     *     Authorization:Basic bXktY2xpZW50LTE6MTIzNDU2Nzg=
-     * }
      * 响应结果：
      * {
      *     "access_token": "e1eb928f-646b-47f5-b9c4-0901543b597b",
@@ -157,10 +166,23 @@ public class WebOauth2AuthorityConfig extends AuthorizationServerConfigurerAdapt
      *     "expires_in": 43199,
      *     "scope": "read write"
      * }
+     * 扩展：在使用refresh_token刷新令牌的时候，需要在认证服务器上面设置。需要登录。暂时未解决。可不刷，照样用。
+     * TODO->http://localhost:9200/oauth/token?grant_type=refresh_token&refresh_token=100ab29f-8de3-4fa1-a42e-d4aef6d747da
+     *
+     * 第三步：访问资源，请求头方式
+     * TODO->[POST请求][请求头-Headers]
+     * TODO->http://localhost:9201/oauth/token
+     * 提示：使用Postman请求，需要登录(Spring Security)。否则需要登录Spring Security。
+     * {
+     *     Content-Type:application/x-www-form-urlencoded
+     *     Authorization:Basic bXktY2xpZW50LTE6MTIzNDU2Nzg=
+     * }
+     * 第三步：访问资源，浏览器方式
      * TODO->[GET请求]
-     * TODO->http://localhost:9201/echo 未配置 OAuth2 资源服务器http.requestMatchers().antMatchers("")。因此只被Spring Security拦截登录即可。
-     * TODO->http://localhost:9201/admin/echo?access_token=e2b86af3-827a-4a62-aab0-c41c634937be 未经授权：访问此资源需要完全身份验证。
-     * TODO->http://localhost:9201/guest/echo?access_token=e2b86af3-827a-4a62-aab0-c41c634937be unauthorized: Full authentication is required to access this resource.
+     * TODO->http://localhost:9200/echo 未配置 OAuth2 资源服务器http.requestMatchers().antMatchers("")。因此只被Spring Security拦截登录即可。
+     * TODO->http://localhost:9200/admin/echo?access_token=e2b86af3-827a-4a62-aab0-c41c634937be 未经授权：访问此资源需要完全身份验证。
+     * TODO->http://localhost:9200/guest/echo?access_token=e2b86af3-827a-4a62-aab0-c41c634937be unauthorized: Full authentication is required to access this resource.
+     * 提示：这是资源服务器融合配置在授权服务器应用中。说白了就是保护授权服务器中的请求。WebOauth2ResourceConfig就是这个文件，授权服务本身不需要它，授权服务器只生成Token而已，哪有什么请求资源。
      * 提示：使用Postman请求，需要登录(Spring Security)。否则拒绝访问。
      * {
      *     "timestamp": "2021-08-24 08:30:10",
@@ -169,35 +191,43 @@ public class WebOauth2AuthorityConfig extends AuthorizationServerConfigurerAdapt
      *     "message": "Access Denied",
      *     "path": "/echo"
      * }
+     *
+     * 第四步：访问资源，资源服务器，或者客户端都已经被OAuth2保护资源，授权后访问。
+     * TODO->http://localhost:9202/echo 未配置 OAuth2 资源服务器http.requestMatchers().antMatchers("")。因此只被Spring Security拦截登录即可。
+     * TODO->http://localhost:9202/admin/echo?access_token=182e3ed7-8a29-455d-b166-4c00a4bae6db 未经授权：访问此资源需要完全身份验证。
+     * TODO->http://localhost:9202/guest/echo?access_token=182e3ed7-8a29-455d-b166-4c00a4bae6db unauthorized: Full authentication is required to access this resource.
+     * 提示：这是资源服务器独立配置在客户端应用中。说白了就是保护资源服务器，或者说客户端中的请求。
+     *
      * 1.从数据库取数据
      *     clients.withClientDetails(new ClientDetailsService());
      * 2.从内存中取数据
      *     clients.inMemory();
+     *     该Client允许的授权类型：authorization_code(授权码模式),password(密码模式),client_credentials(客户端模式),implicit(简化模式),refresh_token。
+     *     允许的授权范围：read,write。
+     *     是否跳过自动批准：false。建议不要跳过，不然怎么看见它：Do you authorize "baidu" to access your protected resources?
+     *     加上验证回调地址。
      * @param clients
      * @throws Exception
      */
     @Override
     public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
-        /**
-         * 2.从内存中取数据
-         * 该Client允许的授权类型：authorization_code(授权码模式),password(密码模式),client_credentials(客户端模式),implicit(简化模式),refresh_token。
-         * 允许的授权范围：read,write。
-         * 是否跳过自动批准：false。建议不要跳过，不然怎么看见它：Do you authorize "baidu" to access your protected resources?
-         * 加上验证回调地址。
-         */
         clients.inMemory()
-               .withClient("baidu")
-               .secret(passwordEncoder.encode("123456"))
+               .withClient("client")
+               .secret(passwordEncoder.encode("secret"))
                .resourceIds(RESOURCE_ID)
                .authorizedGrantTypes("authorization_code", "password", "client_credentials", "implicit", "refresh_token")
                .scopes("read", "write")
                .authorities("ADMIN", "GUEST")
                .autoApprove(false)
-               .redirectUris("https://www.baidu.com")
+               .redirectUris("http://localhost:9201/login", "http://localhost:9202/login", "http://localhost:9203/authorize/login")
                .accessTokenValiditySeconds(60 * 30)
                .refreshTokenValiditySeconds(60 * 60 * 24);
     }
 
+    @Resource
+    private AuthenticationManager authenticationManager;
+    @Resource
+    private UserDetailsService userDetailsService;
     /**
      * TODO->增加了TokenStore，将Token存储到Redis中。否则默认放在内存中的话每次重启的话token都丢了。
      * localhost:0>keys *
@@ -219,6 +249,9 @@ public class WebOauth2AuthorityConfig extends AuthorizationServerConfigurerAdapt
     }
     @Override
     public void configure(AuthorizationServerEndpointsConfigurer endpoints) throws Exception {
-        endpoints.authenticationManager(authenticationManager).tokenStore(tokenStore());
+        endpoints.authenticationManager(authenticationManager);
+        endpoints.allowedTokenEndpointRequestMethods(HttpMethod.GET, HttpMethod.POST);
+        endpoints.userDetailsService(userDetailsService);
+        endpoints.tokenStore(tokenStore());
     }
 }

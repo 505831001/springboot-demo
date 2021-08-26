@@ -1,8 +1,6 @@
 package org.liuweiwei.config;
 
-import lombok.extern.log4j.Log4j;
 import lombok.extern.log4j.Log4j2;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -12,6 +10,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -29,33 +28,35 @@ import java.util.Objects;
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     /**
-     * PasswordEncoder对象在OAuth2认证服务中要使用，提取放入IOC容器中
+     * 注意：PasswordEncoder对象在OAuth2认证服务中要使用，提取放入IOC容器中
+     * @return
      */
     @Bean
     public PasswordEncoder passwordEncoder() {
-        PasswordEncoder encoder = new PasswordEncoder() {
-            @Override
-            public String encode(CharSequence charSequence) {
-                return charSequence.toString();
-            }
-
-            @Override
-            public boolean matches(CharSequence charSequence, String string) {
-                return Objects.equals(charSequence.toString(), string);
-            }
-        };
-        encoder = NoOpPasswordEncoder.getInstance();
+        PasswordEncoder encoder = NoOpPasswordEncoder.getInstance();
         encoder = new BCryptPasswordEncoder();
         return encoder;
     }
 
     /**
-     * AuthenticationManager对象在OAuth2认证服务中要使用，提取放入IOC容器中
+     * 注意：AuthenticationManager对象在OAuth2认证服务中要使用，提取放入IOC容器中
+     * @return
+     * @throws Exception
      */
     @Bean
     @Override
     public AuthenticationManager authenticationManagerBean() throws Exception {
         return super.authenticationManagerBean();
+    }
+
+    /**
+     * 注意：在使用refresh_token刷新令牌的时候，需要在认证服务器上面设置
+     * @return
+     */
+    @Bean
+    @Override
+    protected UserDetailsService userDetailsService() {
+        return super.userDetailsService();
     }
 
     @Override
