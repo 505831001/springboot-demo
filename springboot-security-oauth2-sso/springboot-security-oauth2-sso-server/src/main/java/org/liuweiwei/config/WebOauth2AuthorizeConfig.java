@@ -6,6 +6,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.config.annotation.configurers.ClientDetailsServiceConfigurer;
 import org.springframework.security.oauth2.config.annotation.web.configuration.AuthorizationServerConfigurerAdapter;
@@ -52,6 +53,8 @@ public class WebOauth2AuthorizeConfig extends AuthorizationServerConfigurerAdapt
     @Resource
     private AuthenticationManager authenticationManager;
     @Resource
+    private UserDetailsService userDetailsService;
+    @Resource
     private RedisConnectionFactory redisConnectionFactory;
     @Bean
     public TokenStore tokenStore() {
@@ -61,6 +64,7 @@ public class WebOauth2AuthorizeConfig extends AuthorizationServerConfigurerAdapt
     public void configure(AuthorizationServerEndpointsConfigurer endpoints) throws Exception {
         endpoints.authenticationManager(authenticationManager);
         endpoints.allowedTokenEndpointRequestMethods(HttpMethod.GET, HttpMethod.POST);
+        endpoints.userDetailsService(userDetailsService);
         endpoints.tokenStore(tokenStore());
     }
 }
