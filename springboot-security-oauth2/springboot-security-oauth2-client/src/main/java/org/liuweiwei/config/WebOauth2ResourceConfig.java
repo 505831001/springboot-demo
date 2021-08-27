@@ -34,6 +34,7 @@ public class WebOauth2ResourceConfig extends ResourceServerConfigurerAdapter {
 
     /**
      * TODO->被保护的资源，简单的几个资源（都以/admin和/guest开头），只为测试。
+     * 如果全部保护，配置如此：http.authorizeRequests().anyRequest().authenticated().and().csrf().disable();
      * @param http
      * @throws Exception
      */
