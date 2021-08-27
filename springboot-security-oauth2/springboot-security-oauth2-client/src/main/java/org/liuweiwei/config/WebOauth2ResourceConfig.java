@@ -35,6 +35,7 @@ public class WebOauth2ResourceConfig extends ResourceServerConfigurerAdapter {
     /**
      * TODO->被保护的资源，简单的几个资源（都以/admin和/guest开头），只为测试。
      * 如果全部保护，配置如此：http.authorizeRequests().anyRequest().authenticated().and().csrf().disable();
+     * 如果不设置会话管理器，那么在通过浏览器访问被保护的任何资源时，每次是不同的SessionID，并且将每次请求的历史都记录在OAuth2Authentication的details的中。
      * @param http
      * @throws Exception
      */

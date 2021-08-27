@@ -13,9 +13,13 @@ import org.springframework.security.oauth2.config.annotation.web.configuration.E
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerEndpointsConfigurer;
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerSecurityConfigurer;
 import org.springframework.security.oauth2.provider.token.TokenStore;
+import org.springframework.security.oauth2.provider.token.store.JdbcTokenStore;
+import org.springframework.security.oauth2.provider.token.store.JwtAccessTokenConverter;
+import org.springframework.security.oauth2.provider.token.store.JwtTokenStore;
 import org.springframework.security.oauth2.provider.token.store.redis.RedisTokenStore;
 
 import javax.annotation.Resource;
+import javax.sql.DataSource;
 
 /**
  * OAuth2.0 授权服务器配置
@@ -197,7 +201,15 @@ public class WebOauth2AuthorityConfig extends AuthorizationServerConfigurerAdapt
     }
 
     @Resource
+    private DataSource dataSource;
+    @Resource
     private RedisConnectionFactory redisConnectionFactory;
+    @Bean
+    public JwtAccessTokenConverter jwtAccessTokenConverter(){
+        JwtAccessTokenConverter jwtAccessTokenConverter = new JwtAccessTokenConverter();
+        jwtAccessTokenConverter.setSigningKey("secret");
+        return jwtAccessTokenConverter;
+    }
     /**
      * TODO->增加了TokenStore，将Token存储到Redis中。否则默认放在内存中的话每次重启的话token都丢了。
      * localhost:0>keys * (空格)
@@ -213,7 +225,13 @@ public class WebOauth2AuthorityConfig extends AuthorizationServerConfigurerAdapt
      */
     @Bean
     public TokenStore tokenStore() {
-        return new RedisTokenStore(redisConnectionFactory);
+        //将Token存入DB
+        JdbcTokenStore  tokenStore0 = new JdbcTokenStore(dataSource);
+        //令牌生成器-对称加密
+        JwtTokenStore   tokenStore1 = new JwtTokenStore(jwtAccessTokenConverter());
+        //将Token存入Redis
+        RedisTokenStore tokenStore2 = new RedisTokenStore(redisConnectionFactory);
+        return tokenStore2;
     }
     @Resource
     private AuthenticationManager authenticationManager;
