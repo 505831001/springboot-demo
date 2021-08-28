@@ -7,6 +7,17 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.env.ConfigurableEnvironment;
 
 /**
+ * 1.为什么需要单点登录
+ * 2.单点登陆的来源
+ * 3.单点登录实现方式(分布式session方式实现单点登录(Session + Redis))
+ * 4.单点登录技术方案(Spring security + Oauth2)
+ *     Java中有很多用户认证的框架都可以实现单点登录：
+ *     1.Apache Shiro.
+ *     2.CAS.
+ *     3.Spring Security.
+ * 4.1.Spring security Oauth2 认证解决方案。
+ * 4.2.JWT令牌。
+ *
  * 1. Spring Security + OAuth2.0 授权服务器。使用 OAuth2 密码授权方式提供令牌。
  * TODO->第一步：获取授权码Code
  * http://localhost:9200/oauth/authorize?response_type=code&client_id=client&redirect_uri=http://localhost:9202/login
