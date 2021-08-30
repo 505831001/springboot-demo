@@ -1,10 +1,7 @@
 package org.liuweiwei.api;
 
 import lombok.extern.log4j.Log4j2;
-import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.web.client.RestTemplate;
 
-import javax.annotation.Resource;
 import javax.servlet.*;
 import javax.servlet.annotation.WebFilter;
 import java.io.IOException;
@@ -24,11 +21,6 @@ import java.io.IOException;
 @WebFilter(filterName = "sessionFilter", urlPatterns = {"/login", "/logout"})
 @Log4j2
 public class Web01MvcFilter implements Filter {
-
-    @Resource
-    private RestTemplate restTemplate;
-    @Resource
-    private RedisTemplate redisTemplate;
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {

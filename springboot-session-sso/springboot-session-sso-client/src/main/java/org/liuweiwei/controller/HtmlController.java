@@ -2,6 +2,7 @@ package org.liuweiwei.controller;
 
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
@@ -33,5 +34,17 @@ public class HtmlController {
         String token = "session: " + request.getSession().getId() + ", port: " + request.getServerPort();
         log.info("请求Url.session() -> {}", token);
         return token;
+    }
+
+    @GetMapping(value = "/index")
+    public String index(HttpServletRequest request, ModelMap modelMap) {
+        modelMap.addAttribute("sessionId", request.getSession().getId());
+        return "index";
+    }
+
+    @GetMapping(value = "/client")
+    public String client(HttpServletRequest request, ModelMap modelMap) {
+        modelMap.addAttribute("sessionId", request.getSession().getId());
+        return "client";
     }
 }
