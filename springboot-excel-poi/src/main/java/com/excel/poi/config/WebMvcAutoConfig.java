@@ -1,6 +1,7 @@
 package com.excel.poi.config;
 
 import com.excel.poi.api.Web01MvcInterceptor;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.format.FormatterRegistry;
@@ -23,6 +24,7 @@ import java.util.concurrent.Callable;
  * @since 2021-02-28
  */
 @Configuration
+@Log4j2
 public class WebMvcAutoConfig extends WebMvcAutoConfiguration implements WebMvcConfigurer {
 
     @Resource

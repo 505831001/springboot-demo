@@ -1,6 +1,7 @@
 package com.excel.poi.config;
 
 import com.excel.poi.api.Web02MvcInterceptor;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.format.FormatterRegistry;
 import org.springframework.http.converter.HttpMessageConverter;
@@ -17,6 +18,7 @@ import java.util.List;
  * @since 2021-02-28
  */
 @Configuration
+@Log4j2
 public class WebMvcSupportConfig extends WebMvcConfigurationSupport {
 
     @Resource

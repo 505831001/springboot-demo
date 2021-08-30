@@ -3,14 +3,9 @@ package org.liuweiwei.component;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
-import lombok.extern.slf4j.Slf4j;
+import lombok.extern.log4j.Log4j2;
 import org.liuweiwei.annotation.PassToken;
 import org.liuweiwei.annotation.UserLoginToken;
-import org.springframework.security.authentication.AuthenticationProvider;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Base64Utils;
 import org.springframework.util.StringUtils;
@@ -21,7 +16,10 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.lang.reflect.Method;
-import java.util.*;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Objects;
+import java.util.UUID;
 
 /**
  * java web 应用拦截请求的三种方式：
@@ -36,7 +34,7 @@ import java.util.*;
  * @since 2020-05-20
  */
 @Component
-@Slf4j
+@Log4j2
 public class Web01MvcInterceptor implements HandlerInterceptor {
 
     private static final String dbUsername = "liuweiwei";

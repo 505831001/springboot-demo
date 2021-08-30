@@ -1,7 +1,5 @@
 package org.liuweiwei.entity;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -24,7 +22,6 @@ import java.util.Date;
 public class TbUser implements Serializable {
     private static final long serialVersionUID = 4445608153487429917L;
     /**主键ID*/
-    @TableId(value = "id", type = IdType.UUID)
     private Long id;
     /**用户名*/
     private String username;

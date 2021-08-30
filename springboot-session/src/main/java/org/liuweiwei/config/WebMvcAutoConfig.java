@@ -1,17 +1,15 @@
-package com.liuweiwei.config;
+package org.liuweiwei.config;
 
-import com.liuweiwei.api.Web01MvcInterceptor;
 import lombok.extern.log4j.Log4j2;
+import org.liuweiwei.component.Web00MvcResolver;
+import org.liuweiwei.component.Web02MvcInterceptor;
 import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.web.context.request.NativeWebRequest;
-import org.springframework.web.context.request.async.CallableProcessingInterceptor;
-import org.springframework.web.context.request.async.DeferredResult;
-import org.springframework.web.context.request.async.DeferredResultProcessingInterceptor;
+import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.config.annotation.*;
 
 import javax.annotation.Resource;
-import java.util.concurrent.Callable;
+import java.util.List;
 
 /**
  * @author liuweiwei
@@ -22,7 +20,14 @@ import java.util.concurrent.Callable;
 public class WebMvcAutoConfig extends WebMvcAutoConfiguration implements WebMvcConfigurer {
 
     @Resource
-    private Web01MvcInterceptor mvcInterceptor;
+    private Web00MvcResolver mvcArgumentResolver;
+    @Resource
+    private Web02MvcInterceptor mvcInterceptor;
+
+    @Override
+    public void addArgumentResolvers(List<HandlerMethodArgumentResolver> resolvers) {
+        resolvers.add(mvcArgumentResolver);
+    }
 
     /**
      * 1. 允许跨域访问的路径。
@@ -66,33 +71,6 @@ public class WebMvcAutoConfig extends WebMvcAutoConfiguration implements WebMvcC
      */
     @Override
     public void configureAsyncSupport(AsyncSupportConfigurer configurer) {
-        configurer.registerCallableInterceptors(new CallableProcessingInterceptor() {
-            @Override
-            public <T> void preProcess(NativeWebRequest request, Callable<T> task) throws Exception {
 
-            }
-            @Override
-            public <T> void postProcess(NativeWebRequest request, Callable<T> task, Object concurrentResult) throws Exception {
-
-            }
-            @Override
-            public <T> void afterCompletion(NativeWebRequest request, Callable<T> task) throws Exception {
-
-            }
-        });
-        configurer.registerDeferredResultInterceptors(new DeferredResultProcessingInterceptor() {
-            @Override
-            public <T> void preProcess(NativeWebRequest request, DeferredResult<T> deferredResult) throws Exception {
-
-            }
-            @Override
-            public <T> void postProcess(NativeWebRequest request, DeferredResult<T> deferredResult, Object concurrentResult) throws Exception {
-
-            }
-            @Override
-            public <T> void afterCompletion(NativeWebRequest request, DeferredResult<T> deferredResult) throws Exception {
-
-            }
-        });
     }
 }

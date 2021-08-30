@@ -1,6 +1,6 @@
 package org.liuweiwei.api;
 
-import lombok.extern.slf4j.Slf4j;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.*;
@@ -19,7 +19,7 @@ import java.io.IOException;
  * @since 2021-03-22
  */
 @Component
-@Slf4j
+@Log4j2
 public class Web01MvcFilter implements Filter {
 
     @Override

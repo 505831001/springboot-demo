@@ -1,16 +1,13 @@
 package org.liuweiwei.component;
 
 import lombok.extern.log4j.Log4j2;
-import org.liuweiwei.annotation.PassToken;
-import org.liuweiwei.annotation.UserLoginToken;
 import org.springframework.stereotype.Component;
-import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.lang.reflect.Method;
 
 /**
  * java web 应用拦截请求的三种方式：
@@ -31,27 +28,20 @@ public class Web02MvcInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         log.info("02 - Interceptor 拦截器：preHandle(request, response, handler) 方法。");
-        // --- 注解方式签证校验 ---
-
-        //0.如果不是映射到方法直接通过
-        if (!(handler instanceof HandlerMethod)) {
+        //普通路径放行
+        if ("/index".equals(request.getRequestURI()) || "/login".equals(request.getRequestURI())) {
             return true;
         }
-        HandlerMethod handlerMethod = (HandlerMethod) handler;
-        Method method = handlerMethod.getMethod();
-        //0.检查是否有PassToken注释，有则跳过认证
-        if (method.isAnnotationPresent(PassToken.class)) {
-            PassToken passToken = method.getAnnotation(PassToken.class);
-            if (passToken.required()) {
-                return true;
+        //权限路径拦截
+        Cookie[] cookies = request.getCookies();
+        if (cookies != null && cookies.length > 0) {
+            for (Cookie cookie : cookies) {
+                log.debug("Request Header Cookie -> {}:{}", cookie.getName(), cookie.getValue());
             }
-        }
-        //0.检查有没有需要用户权限的注解
-        if (method.isAnnotationPresent(UserLoginToken.class)) {
-            UserLoginToken userLoginToken = method.getAnnotation(UserLoginToken.class);
-            if (userLoginToken.required()) {
-                return true;
-            }
+        } else {
+            log.debug("没有cookie或者cookie时间可能到期将重定向到登录页面");
+            response.sendRedirect("/login");
+            return false;
         }
         return true;
     }

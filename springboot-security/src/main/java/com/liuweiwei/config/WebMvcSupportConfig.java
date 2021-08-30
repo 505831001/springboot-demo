@@ -1,6 +1,7 @@
 package com.liuweiwei.config;
 
 import com.liuweiwei.api.Web02MvcInterceptor;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
@@ -14,6 +15,7 @@ import javax.annotation.Resource;
  * @since 2020-05-20
  */
 @Configuration
+@Log4j2
 public class WebMvcSupportConfig extends WebMvcConfigurationSupport {
 
     @Resource

@@ -20,7 +20,7 @@ import org.springframework.core.env.ConfigurableEnvironment;
  *     {
  *         JSESSIONID=712238f4321ea0ea5bfa3db0ca73a25e
  *     }
- * 三、登录状态
+ * 三、登录状态（session会话机制）
  *     1.有了会话机制，登录状态就好明白了，我们假设浏览器第一次请求服务器需要输入用户名与密码验证身份。
  *     2.服务器拿到用户名密码去数据库比对，正确的话说明当前持有这个会话的用户是合法用户。
  *     3.应该将这个会话标记为"已授权"或者"已登录"等等之类的状态，既然是会话的状态，自然要保存在会话对象中，tomcat在会话对象中设置登录状态如下。
@@ -33,12 +33,36 @@ import org.springframework.core.env.ConfigurableEnvironment;
  *         HttpSession session = request.getSession();
  *         session.getAttribute("Authorization");
  *     }
+ *     6.session 和 cookie 是保存用户状态的两种方式，session在服务端，cookie 在客户端。
+ *     7.session（会话）
+ *         1.粘性会话：如果某台服务器宕机，那么会话信息就没有了。
+ *         2.复制会话：每台机器都复制会话，如果量太大的话，不现实。
+ *         3.集中会话：使用 mongoDB，redis 等统一保持会话。
  *     5.每次请求受保护资源时都会检查会话对象中的登录状态，只有Authorization=712238f4321ea0ea5bfa3db0ca73a25e的会话才能访问，登录机制因此而实现。
- * 四、多系统的复杂性
+ * 四、多系统的复杂性（分布式session会话机制）
  *     1.单系统登录解决方案的核心是cookie，cookie携带会话id(JSESSIONID)在浏览器与服务器之间维护会话状态。
  *     2.cookie是有限制的，这个限制就是cookie的域（通常对应网站的域名），浏览器发送http请求时会自动携带与该域匹配的cookie，而不是所有cookie。
  *     3.因此，我们需要一种全新的登录方式来实现多系统应用群的登录，这就是单点登录。
- * 五、单点登录
+ *     一、为什么需要Spring Session
+ *     1.传统单机Web应用中，一般使用Tomcat或者Jetty等等Web容器时，用户的Session都是由容器管理。
+ *     2.浏览器使用Cookie中记住SessionId，容器根据SessionId判断用户是否存在会话Session。
+ *     3.这里的限制是Session存储在Web容器中，被单台Web容器管理。
+ *     4.随着网站的演变，分布式应用和集群是趋势（提高性能）。
+ *     5.此时用户的请求可能被负载分发至不同的服务器，此时传统的Web容器管理用户会话Session的方式即行不通。
+ *     6.除非集群或者分布式Web应用能够共享Session，尽管Tomcat或者Jetty等等Web容器支持这样做。但是这样存在以下两点问题：
+ *         1.需要侵入Web容器，提高问题的复杂。
+ *         2.Web容器之间共享Session，集群机器之间势必要交互耦合。
+ *     7.基于这些因素，必须提供新的可靠的集群分布式或者集群Session的解决方案，来突破Traditional-Session单机限制。
+ *     8.即Web容器Session方式，下面简称Traditional-Session，因此Spring-Session应用随之而生。
+ *     二、解决方案
+ *     1.Spring Session使得支持集群会话变得微不足道，而不依赖于特定于应用程序容器的解决方案。
+ *     2.它还提供透明集成：
+ *         1.HttpSession 允许以应用程序容器（即Tomcat）中立方式替换HttpSession，支持在头文件中提供会话ID以使用RESTFul API。
+ *         2.WebSocket   提供在接收WebSocket消息时保持HttpSession活动的能力。
+ *         3.WebSession  允许以应用程序容器中立方式替换Spring WebFlux的WebSession。
+ *     3.一个简化的方案就是使用Spring Session来实现这一功能，
+ *     4.Spring Session就是使用Spring中的代理过滤器，将所有的Session操作拦截下来，自动的将数据同步到Redis中，或者自动的从Redis中读取数据。
+ * 五、单点登录（1.分布式session会话机制，2.或者Spring Security+OAuth2认证中心）
  * 方法一：利用cookie的域实现
  *     1.我们上面讲到，浏览器会设置cookie，cookie中保存中和服务器通信的session id。
  *     2.但是cookie是有限制的，限制就是域（网站的域名），
@@ -81,47 +105,6 @@ import org.springframework.core.env.ConfigurableEnvironment;
  * 然后多应用同域名共享Session会话机制，此时已经是单点登录，
  * 最后，单点登录技术就开始有认证中心OAuth2等实现方式。
  * 完美！！！
- *
- * 1.为什么需要单点登录
- * 2.单点登陆的来源
- * 3.单点登录实现方式(分布式session方式实现单点登录(Session + Redis))
- * 4.单点登录技术方案(Spring security + Oauth2)
- *     Java中有很多用户认证的框架都可以实现单点登录：
- *     1.Apache Shiro.
- *     2.CAS.
- *     3.Spring Security.
- * 4.1.Spring security Oauth2 认证解决方案。
- * 4.2.JWT令牌。
- *
- * 一、历史演进
- * 第一阶段：http无状态协议。http无状态协议。
- * 第二阶段：Session会话机制。session会话机制。在传统的单服务架构中，一般来说，只有一个服务器，那么不存在 Session 共享问题，
- * 第二阶段：登录状态。登录状态。在传统的单服务架构中，一般来说，只有一个服务器，那么不存在 Session 共享问题，
- * 第三阶段：多系统的复杂性。共享会话机制。但是在分布式/集群项目中，Session 共享则是一个必须面对的问题，
- * 第三阶段：单点登录。sso单点登录。分布式Spring Session + Redis方式实现单点登录。Spring security + Oauth2方式单点登录技术方案。
- *
- * 一、为什么需要Spring Session
- * 1.传统单机Web应用中，一般使用Tomcat或者Jetty等等Web容器时，用户的Session都是由容器管理。
- * 2.浏览器使用Cookie中记住SessionId，容器根据SessionId判断用户是否存在会话Session。
- * 3.这里的限制是Session存储在Web容器中，被单台Web容器管理。
- * 4.随着网站的演变，分布式应用和集群是趋势（提高性能）。
- * 5.此时用户的请求可能被负载分发至不同的服务器，此时传统的Web容器管理用户会话Session的方式即行不通。
- * 6.除非集群或者分布式Web应用能够共享Session，尽管Tomcat或者Jetty等等Web容器支持这样做。但是这样存在以下两点问题：
- *     1.需要侵入Web容器，提高问题的复杂。
- *     2.Web容器之间共享Session，集群机器之间势必要交互耦合。
- * 7.基于这些因素，必须提供新的可靠的集群分布式或者集群Session的解决方案，来突破Traditional-Session单机限制。
- * 8.即Web容器Session方式，下面简称Traditional-Session，因此Spring-Session应用随之而生。
- *
- * 二、解决方案
- * 1.Spring Session使得支持集群会话变得微不足道，而不依赖于特定于应用程序容器的解决方案。
- * 2.它还提供透明集成：
- *     1.HttpSession允许以应用程序容器（即Tomcat）中立方式替换HttpSession，支持在头文件中提供会话ID以使用RESTFul API。
- *     2.WebSocket提供在接收WebSocket消息时保持HttpSession活动的能力。
- *     3.WebSession允许以应用程序容器中立方式替换Spring WebFlux的WebSession。
- * 3.一个简化的方案就是使用Spring Session来实现这一功能，
- * 4.Spring Session就是使用Spring中的代理过滤器，将所有的Session操作拦截下来，自动的将数据同步到Redis中，或者自动的从Redis中读取数据。
- *
- * 三、
  *
  * @author Liuweiwei
  * @since 2020-12-23
