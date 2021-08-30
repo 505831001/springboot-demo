@@ -34,25 +34,4 @@ public class HtmlController {
         log.info("请求Url.session() -> {}", token);
         return token;
     }
-
-    @GetMapping(value = "/echo")
-    @ResponseBody
-    public String echo() {
-        log.info("请求Url.echo()");
-        return "Hello World";
-    }
-
-    @GetMapping(value = "/admin/echo")
-    @ResponseBody
-    public String echo2() {
-        log.info("请求Url.echo2012()");
-        return "Hello World 2212";
-    }
-
-    @GetMapping(value = "/guest/echo")
-    @ResponseBody
-    public String echo4() {
-        log.info("请求Url.echo2014()");
-        return "Hello World 2214";
-    }
 }
