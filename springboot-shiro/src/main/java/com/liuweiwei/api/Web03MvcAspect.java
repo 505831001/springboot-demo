@@ -1,6 +1,6 @@
 package com.liuweiwei.api;
 
-import lombok.extern.slf4j.Slf4j;
+import lombok.extern.log4j.Log4j2;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
@@ -20,7 +20,7 @@ import org.springframework.stereotype.Component;
  */
 @Component
 @Aspect
-@Slf4j
+@Log4j2
 public class Web03MvcAspect {
 
     @Around("execution(* com.liuweiwei.controller.LoginController.*(..))")

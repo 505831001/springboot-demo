@@ -1,6 +1,7 @@
 package com.liuweiwei.config;
 
 import lombok.extern.log4j.Log4j;
+import lombok.extern.log4j.Log4j2;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -16,8 +17,7 @@ import springfox.documentation.spring.web.plugins.Docket;
  * @since 2020-12-23
  */
 @Configuration
-// @Log4j - java: 程序包org.apache.log4j不存在
-@Slf4j
+@Log4j2
 public class SwaggerConfig {
 
     /**
