@@ -107,6 +107,38 @@ import org.springframework.core.env.ConfigurableEnvironment;
  * 最后，单点登录技术就开始有认证中心OAuth2等实现方式。
  * 完美！！！
  *
+ * Session 会话管理。
+ *     1.Session机制
+ *     2.Cookie
+ *     3.Url重写
+ *     4.Session会话管理及带来的问题
+ *     5.Session会话共享方案
+ *     第一种：是使用容器扩展插件来实现，比如：tomcat-redis-session-manager插件，jetty-session-redis插件，memcached-session-manager插件
+ *     第二种：是使用Nginx负载均衡ip_hash策略实现用户每次访问都绑定到同一台具体的后台tomcat服务器实现session总是存在这种方案的局限性是ip不能变
+ *     第三种：是自己写一套Session会话管理的工具类，在需要使用会话的时候都从自己的工具类中获取，而工具类后端存储可以放到Redis中
+ *     第四种：是使用框架的会话管理工具，也就是Spring Session框架为我们提供，可以说是目前非常完美的session共享解决方案
+ * Spring Session 实现会话共享。
+ *     1.同域名下相同项目实现会话共享，比如集群环境
+ *     2.在同一个域名下，比如：www.niuOkay.com
+ *     {
+ *         127.0.0.1    www.niuOkay.com
+ *     }
+ *     1.同域名下不同项目实现会话共享，做法：设置Cookie路径为(根)上下文
+ *     2.在同一个域名下，有多个不同的项目(项目的上下文不一样)，比如：www.niuOkay.com/goods，www.niuOkay.com/order
+ *     {
+ *         127.0.0.1    www.niuOkay.com
+ *     }
+ *     1.同根域名不同二级子域名下的项目实现会话共享，做法：设置Cookie的域名为根域名niuOkay.com
+ *     2.同一个根域名，不同的二级子域名，比如：goods.niuOkay.com，order.niuOkay.com，shops.niuOkay.com
+ *     {
+ *         127.0.0.1    goods.niuOkay.com
+ *         127.0.0.1    order.niuOkay.com
+ *         127.0.0.1    shops.niuOkay.com
+ *     }
+ * Spring Session 实现单点登录。
+ *     1.不同根域名下的项目实现 Session 共享，比如：www.goods.com，www.order.com，www.shops.com
+ *     3.对于不同根域名的场景，要实现一处登录，处处登录，Spring Session 不支持
+ *
  * @author Liuweiwei
  * @since 2020-12-23
  */
