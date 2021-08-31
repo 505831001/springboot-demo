@@ -37,10 +37,10 @@ public class Web02MvcInterceptor implements HandlerInterceptor {
         Cookie[] cookies = request.getCookies();
         if (cookies != null && cookies.length > 0) {
             for (Cookie cookie : cookies) {
-                log.debug("Request Header Cookie -> {}:{}", cookie.getName(), cookie.getValue());
+                log.debug("02 - Interceptor 拦截器：请求头饼干：{}:{}", cookie.getName(), cookie.getValue());
             }
         } else {
-            log.debug("没有cookie或者cookie时间可能到期将重定向到登录页面");
+            log.debug("02 - Interceptor 拦截器：没有cookie或者cookie时间到期重定向到单点登录");
             response.sendRedirect("/login");
             return false;
         }

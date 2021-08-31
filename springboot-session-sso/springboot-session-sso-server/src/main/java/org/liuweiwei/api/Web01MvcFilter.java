@@ -37,10 +37,10 @@ public class Web01MvcFilter implements Filter {
         //根据某个值或某些值判断是否已登录
         if (StringUtils.isNotEmpty(sessionId) && sessionId != null) {
             //如果已登录则通过放行
-            log.info("缓存会话ID和浏览器会话ID：{}", ((HttpServletRequest) request).getSession().getId());
+            log.info("01 - Filter 过滤器：缓存会话和浏览器会话比较：{}", ((HttpServletRequest) request).getSession().getId());
         } else {
             //如果未登录则重定向跳转至sso认证中心
-            log.info("重定向到SSO认证中心登录地址：{}", ((HttpServletRequest) request).getRequestURL().toString());
+            log.info("01 - Filter 过滤器：重定向到单点认证中心登录：{}", ((HttpServletRequest) request).getRequestURL().toString());
         }
 
         chain.doFilter(request, response);
