@@ -51,9 +51,11 @@ public class HtmlController {
     }
 
     @PostMapping(value = "/login")
-    public String login(HttpServletRequest request, HttpServletResponse response,
-                        @RequestParam(value = "username", required = true, defaultValue = "guest") String username,
-                        @RequestParam(value = "password", required = true, defaultValue = "12345") String password) throws IOException {
+    public String login(
+            HttpServletRequest request,
+            HttpServletResponse response,
+            @RequestParam(value = "username", required = true, defaultValue = "guest") String username,
+            @RequestParam(value = "password", required = true, defaultValue = "12345") String password) throws IOException {
         if (StringUtils.isEmpty(username) || StringUtils.isEmpty(password)) {
             return "index";
         }

@@ -28,6 +28,7 @@ public class Web02MvcInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         log.info("02 - Interceptor 拦截器：preHandle(request, response, handler) 方法。");
+
         //普通路径放行
         if ("/index".equals(request.getRequestURI()) || "/login".equals(request.getRequestURI())) {
             return true;
@@ -43,6 +44,7 @@ public class Web02MvcInterceptor implements HandlerInterceptor {
             response.sendRedirect("/login");
             return false;
         }
+
         return true;
     }
 

@@ -1,9 +1,11 @@
 package org.liuweiwei.api;
 
 import lombok.extern.log4j.Log4j2;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.stereotype.Component;
 
 import javax.servlet.*;
-import javax.servlet.annotation.WebFilter;
+import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 
 /**
@@ -18,7 +20,7 @@ import java.io.IOException;
  * @author Liuweiwei
  * @since 2021-03-22
  */
-@WebFilter(filterName = "sessionFilter", urlPatterns = {"/login", "/logout"})
+@Component
 @Log4j2
 public class Web01MvcFilter implements Filter {
 
@@ -30,6 +32,17 @@ public class Web01MvcFilter implements Filter {
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
         log.info("01 - Filter 过滤器：doFilter(request, response, chain) 方法。");
+
+        String sessionId = ((HttpServletRequest) request).getRequestedSessionId();
+        //根据某个值或某些值判断是否已登录
+        if (StringUtils.isNotEmpty(sessionId) && sessionId != null) {
+            //如果已登录则通过放行
+            log.info("缓存会话ID和浏览器会话ID：{}", ((HttpServletRequest) request).getSession().getId());
+        } else {
+            //如果未登录则重定向跳转至sso认证中心
+            log.info("重定向到SSO认证中心登录地址：{}", ((HttpServletRequest) request).getRequestURL().toString());
+        }
+
         chain.doFilter(request, response);
     }
 

@@ -1,5 +1,5 @@
 <html>
-<head>Spring session login page</head>
+<head>测试SSO统一登录中心</head>
 <body>
 <div>
     <hr/>
