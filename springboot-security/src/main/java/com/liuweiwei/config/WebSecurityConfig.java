@@ -70,8 +70,8 @@ import java.util.Objects;
  *     {04}.auth.userDetailsService(null);     TODO->根据传入的【自定义身份】{UserDetailsService}添加验证。然后返回一个{DaoAuthenticationConfigurer}，以允许自定义身份验证。根据传入的自定义添加身份验证。
  *     {05}.auth.authenticationProvider(null); TODO->根据传入的【自定义身份】{AuthenticationProvider}添加验证。由于{AuthenticationProvider}实现未知，因此必须在外部完成所有自定义，并立即返回{AuthenticationManagerBuilder}。
  *   [02].configure(WebSecurity web);重写此方法以配置{WebSecurity}。例如，如果您希望忽略某些请求。
- *     {01}.
- *     {02}.
+ *     {01}.web.ignoring().antMatchers("/css/**", "/js/**", "/image/**", "/fonts/**", "/favicon.ico");
+ *     {02}.web.ignoring().antMatchers("/css/**", "/js/**", "/image/**", "/fonts/**", "/favicon.ico");
  *   [03].configure(HttpSecurity http);重写此方法以配置{HttpSecurity}。通常，子类不应该通过调用super来调用此方法，因为它可能会覆盖它们的配置。默认配置为：
  *     {01}.http.formLogin()                   TODO->登录功能。指定支持基于表单的身份验证。如果没有指定{loginPage(String)}，将生成一个默认的登录页面。
  *     {02}.http.rememberMe()                  TODO->记住我功能。允许配置"记住我"身份验证。
@@ -216,7 +216,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
      */
     @Override
     public void configure(WebSecurity web) throws Exception {
-        web.ignoring().antMatchers("/css/**", "/js/**");
+        web.ignoring().antMatchers("/css/**", "/js/**", "/image/**", "/fonts/**", "/favicon.ico");
         /**
          * super.configure(web);
          */
