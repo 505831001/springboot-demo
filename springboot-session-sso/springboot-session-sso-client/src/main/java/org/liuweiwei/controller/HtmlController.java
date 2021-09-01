@@ -1,14 +1,11 @@
 package org.liuweiwei.controller;
 
 import lombok.extern.log4j.Log4j2;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 /**
  * @author Liuweiwei
@@ -36,31 +33,5 @@ public class HtmlController {
         String token = "session: " + request.getSession().getId() + ", port: " + request.getServerPort();
         log.info("请求Url.session() -> {}", token);
         return token;
-    }
-
-    @GetMapping(value = "/index")
-    public String index(HttpServletRequest request, ModelMap modelMap) {
-        modelMap.addAttribute("sessionId", request.getSession().getId());
-        return "index";
-    }
-
-    @GetMapping(value = "/client")
-    public String client(HttpServletRequest request, ModelMap modelMap) {
-        modelMap.addAttribute("sessionId", request.getSession().getId());
-        return "client";
-    }
-
-    @GetMapping(value = "/setSession")
-    @ResponseBody
-    public String setSession(HttpServletRequest request, HttpServletResponse response) {
-        request.getSession().setAttribute("url", "https://www.niuokay.com");
-        return HttpStatus.OK.getReasonPhrase();
-    }
-
-    @GetMapping(value = "/getSession")
-    @ResponseBody
-    public String getSession(HttpServletRequest request, HttpServletResponse response) {
-        String url = (String) request.getSession().getAttribute("url");
-        return url == null ? "no session" : url;
     }
 }

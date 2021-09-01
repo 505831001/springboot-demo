@@ -119,22 +119,46 @@ import org.springframework.session.data.redis.config.annotation.web.http.EnableR
  *     第三种：是自己写一套Session会话管理的工具类，在需要使用会话的时候都从自己的工具类中获取，而工具类后端存储可以放到Redis中
  *     第四种：是使用框架的会话管理工具，也就是Spring Session框架为我们提供，可以说是目前非常完美的session共享解决方案
  * Spring Session 实现会话共享。
- *     1.同域名下相同项目实现会话共享，比如集群环境
+ *     1.同域名下相同项目实现Session共享，比如集群环境
  *     2.在同一个域名下，比如：www.niuOkay.com
+ *     http://localhost:9401/session
+ *     http://localhost:9402/session
  *     {
- *         127.0.0.1    www.niuOkay.com
+ *         1.每个模块添加依赖包：spring-boot-starter-data-redis和spring-session-data-redis
+ *         2.每个模块开启Spring Session的Redis缓存机制：@EnableRedisHttpSession
+ *         3.每个模块配置Redis缓存数据库
+ *         4.完美实现Spring Session分布式Session共享
  *     }
- *     1.同域名下不同项目实现会话共享，做法：设置Cookie路径为(根)上下文
+ *     1.同域名下不同项目实现Session共享，做法：设置Cookie路径为(根)上下文
  *     2.在同一个域名下，有多个不同的项目(项目的上下文不一样)，比如：www.niuOkay.com/goods，www.niuOkay.com/order
+ *     http://localhost:9401/goods/session
+ *     http://localhost:9402/order/session
  *     {
- *         127.0.0.1    www.niuOkay.com
+ *         1.每个模块添加依赖包：spring-boot-starter-data-redis和spring-session-data-redis
+ *         2.每个模块开启Spring Session的Redis缓存机制：@EnableRedisHttpSession
+ *         3.每个模块配置Redis缓存数据库
+ *         4.商品模块：server.servlet.context-path=/goods，订单模块：server.servlet.context-path=/order
+ *         4.配置文档：serializer.setCookiePath("/")设置路径为(根)上下文即可
+ *         5.完美实现Spring Session分布式Session共享
  *     }
- *     1.同根域名不同二级子域名下的项目实现会话共享，做法：设置Cookie的域名为根域名niuOkay.com
+ *     1.同根域名不同二级子域名下的项目实现Session共享，做法：设置Cookie的域名为根域名niuOkay.com
  *     2.同一个根域名，不同的二级子域名，比如：goods.niuOkay.com，order.niuOkay.com，shops.niuOkay.com
+ *     C:\Windows\System32\drivers\etc\hosts
  *     {
- *         127.0.0.1    goods.niuOkay.com
- *         127.0.0.1    order.niuOkay.com
- *         127.0.0.1    shops.niuOkay.com
+ *         127.0.0.1    goods.niuokay.com
+ *         127.0.0.1    order.niuokay.com
+ *         127.0.0.1    shops.niuokay.com
+ *     }
+ *     http://goods.niuokay.com:9401/goods/session
+ *     http://order.niuokay.com:9402/order/session
+ *     {
+ *         1.每个模块添加依赖包：spring-boot-starter-data-redis和spring-session-data-redis
+ *         2.每个模块开启Spring Session的Redis缓存机制：@EnableRedisHttpSession
+ *         3.每个模块配置Redis缓存数据库
+ *         4.商品模块：server.servlet.context-path=/goods，订单模块：server.servlet.context-path=/order
+ *         4.配置文档：serializer.setCookiePath("/")设置路径为(根)上下文
+ *         4.配置文档：serializer.setDomainName("niuokay.com")这允许跨子域共享cookie
+ *         5.完美实现Spring Session分布式Session共享
  *     }
  * Spring Session 实现单点登录。
  *     1.不同根域名下的项目实现 Session 共享，比如：www.goods.com，www.order.com，www.shops.com

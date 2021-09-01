@@ -17,7 +17,7 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
-import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -28,13 +28,13 @@ import java.util.Map;
  * @since 2021-08-27
  */
 @Component
-public class HttpUtils {
+public class HttpClientUtils {
 
     private static RestTemplate restTemplate;
 
     @Autowired
     private void setRestTemplate(RestTemplate restTemplate) {
-        HttpUtils.restTemplate = restTemplate;
+        HttpClientUtils.restTemplate = restTemplate;
     }
 
     public static <T> T doPost(String url, Map<String, ? extends Object> params, Class<T> resultType) {
@@ -63,69 +63,32 @@ public class HttpUtils {
 
     // ------ 华丽的分割线 ------
 
-    public static String doGet(String url, Map<String, String> param) {
+    public static String doGet(String url, Map<String, String> param) throws URISyntaxException, IOException {
         CloseableHttpClient httpClient = HttpClients.createDefault();
-        String resultMsg = "";
-        CloseableHttpResponse httpResponse = null;
-
-        try {
-            URIBuilder uriBuilder = new URIBuilder(url);
-            if (null != param) {
-                for (String key : param.keySet()) {
-                    uriBuilder.addParameter(key, param.get(key));
-                }
-            }
-            URI uri = uriBuilder.build();
-            HttpGet get = new HttpGet(uri);
-            httpResponse = httpClient.execute(get);
-            if (httpResponse.getStatusLine().getStatusCode() == 200) {
-                resultMsg = EntityUtils.toString(httpResponse.getEntity(), "UTF-8");
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            if (httpResponse != null) {
-                try {
-                    httpResponse.close();
-                    httpClient.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
+        URIBuilder uriBuilder = new URIBuilder(url);
+        for (String key : param.keySet()) {
+            uriBuilder.addParameter(key, param.get(key));
         }
+        HttpGet get = new HttpGet(uriBuilder.build());
+        CloseableHttpResponse httpResponse = httpClient.execute(get);
+        String resultMsg = EntityUtils.toString(httpResponse.getEntity(), "UTF-8");
+        httpResponse.close();
+        httpClient.close();
         return resultMsg;
     }
 
-    public static String doPost(String url, Map<String, String> param) {
+    public static String doPost(String url, Map<String, String> param) throws IOException {
         CloseableHttpClient httpClient = HttpClients.createDefault();
-        CloseableHttpResponse response = null;
-        String resultMsg = "";
-        try {
-            HttpPost httpPost = new HttpPost(url);
-            if (param != null) {
-                List<NameValuePair> paramList = new ArrayList<NameValuePair>();
-                for (String key : param.keySet()) {
-                    paramList.add(new BasicNameValuePair(key, param.get(key)));
-                }
-                UrlEncodedFormEntity entity = new UrlEncodedFormEntity(paramList);
-                httpPost.setEntity(entity);
-            }
-            response = httpClient.execute(httpPost);
-            if (response.getStatusLine().getStatusCode() == 200) {
-                resultMsg = EntityUtils.toString(response.getEntity(), "utf-8");
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            try {
-                if (response != null) {
-                    response.close();
-                }
-                httpClient.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+        HttpPost httpPost = new HttpPost(url);
+        List<NameValuePair> paramList = new ArrayList<NameValuePair>();
+        for (String key : param.keySet()) {
+            paramList.add(new BasicNameValuePair(key, param.get(key)));
         }
+        httpPost.setEntity(new UrlEncodedFormEntity(paramList));
+        CloseableHttpResponse response = httpClient.execute(httpPost);
+        String resultMsg = EntityUtils.toString(response.getEntity(), "utf-8");
+        response.close();
+        httpClient.close();
         return resultMsg;
     }
 }
