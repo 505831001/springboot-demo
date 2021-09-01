@@ -5,12 +5,14 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.env.ConfigurableEnvironment;
+import org.springframework.session.data.redis.config.annotation.web.http.EnableRedisHttpSession;
 
 /**
  * @author Liuweiwei
  * @since 2020-12-23
  */
 @SpringBootApplication
+@EnableRedisHttpSession
 @Log4j2
 public class DemoSessionClientApplication {
     public static void main(String[] args) {

@@ -1,13 +1,11 @@
 package org.liuweiwei.config;
 
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.session.web.http.CookieSerializer;
 import org.springframework.session.web.http.DefaultCookieSerializer;
 import org.springframework.session.web.http.HeaderHttpSessionIdResolver;
 
 /**
- * Spring Session 分布式Session机制。可选择配置类，说白了就是让你看看底层默认值是啥。
+ * Spring Session 分布式Session机制可选择配置类，配置域名的时候可选用。
  * @author LiuWeiWei
  * @since 2021-08-30
  */

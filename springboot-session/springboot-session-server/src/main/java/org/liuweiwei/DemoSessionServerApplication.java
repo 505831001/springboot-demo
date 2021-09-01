@@ -5,6 +5,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.env.ConfigurableEnvironment;
+import org.springframework.session.data.redis.config.annotation.web.http.EnableRedisHttpSession;
 
 /**
  * 一、http无状态协议
@@ -143,6 +144,7 @@ import org.springframework.core.env.ConfigurableEnvironment;
  * @since 2020-12-23
  */
 @SpringBootApplication
+@EnableRedisHttpSession
 @Log4j2
 public class DemoSessionServerApplication {
     public static void main(String[] args) {
