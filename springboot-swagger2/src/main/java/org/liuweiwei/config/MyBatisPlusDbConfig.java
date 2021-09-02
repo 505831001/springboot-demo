@@ -74,6 +74,10 @@ public class MyBatisPlusDbConfig {
     public SqlSessionFactory sqlSessionFactory(@Qualifier("dataSource") DataSource dataSource) throws Exception {
         MybatisSqlSessionFactoryBean sqlSessionFactoryBean = new MybatisSqlSessionFactoryBean();
         sqlSessionFactoryBean.setDataSource(dataSource);
+        //MyBatisPlus分页插件旧版
+        //PaginationInterceptor interceptor = new PaginationInterceptor();
+        //interceptor.setDialectType(DbType.MYSQL.getDb());
+        //interceptor.setLimit(-1);
         MybatisPlusInterceptor interceptor = new MybatisPlusInterceptor();
         interceptor.addInnerInterceptor(new PaginationInnerInterceptor(DbType.MYSQL));
         sqlSessionFactoryBean.setPlugins(new Interceptor[]{interceptor});

@@ -10,12 +10,12 @@ import org.springframework.web.bind.annotation.GetMapping;
  * @since 2021-01-05
  */
 @Controller
-@Api(tags = "Tags 用户控制器")
-public class TbUserController {
+@Api(value = "", tags = "Html页面跳转控制器")
+public class HtmlController {
 
     @GetMapping(value = "/loginPage")
-    @ApiOperation(value = "", notes = "对应于操作的备注字段")
-    public String lgoinPage() {
+    @ApiOperation(value = "登录页面", notes = "登录页面", tags = "")
+    public String loginPage() {
         return "login_page";
     }
 }

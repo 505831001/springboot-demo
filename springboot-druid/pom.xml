@@ -55,10 +55,11 @@
     </dependencyManagement>
 
     <dependencies>
-        <!-- spring boot -->
+        <!-- web -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
+            <!-- 排除自带默认日志框架：Logback。如果找不到spring-boot-starter则查找spring-boot-starter-web -->
             <exclusions>
                 <exclusion>
                     <groupId>org.springframework.boot</groupId>
@@ -66,7 +67,8 @@
                 </exclusion>
             </exclusions>
         </dependency>
-        <!-- log4j2 异步日志实现层 -->
+        <!-- log4j2 异步日志框架实现层 -->
+        <!-- SpringBoot需要注意的是只有1.3.x和1.3.x以下版本才支持log4j的日志配置。1.3.x以上版本只支持log4j2 -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-log4j2</artifactId>

@@ -41,8 +41,6 @@ public class Web02MvcInterceptor implements HandlerInterceptor {
             }
         } else {
             log.debug("02 - Interceptor 拦截器：没有cookie或者cookie时间到期重定向到单点登录");
-            response.sendRedirect("/login");
-            return false;
         }
 
         return true;
