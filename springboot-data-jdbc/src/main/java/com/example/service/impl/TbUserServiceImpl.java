@@ -2,7 +2,6 @@ package com.example.service.impl;
 
 import com.example.model.TbUser;
 import com.example.service.TbUserService;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
@@ -20,8 +19,6 @@ public class TbUserServiceImpl implements TbUserService {
 
     @Resource
     private JdbcTemplate jdbcTemplate;
-    @Resource
-    private RedisTemplate<String, Object> redisTemplate;
 
     @Override
     public TbUser otherById(Serializable id) {
