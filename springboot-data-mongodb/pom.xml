@@ -14,15 +14,15 @@
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
         <version>2.1.4.RELEASE</version>
-        <relativePath/> <!-- lookup parent from repository -->
-    </parent>
+        <relativePath/>
+    </parent> <!-- lookup parent from repository -->
 
-    <groupId>org.liuweiwei</groupId>
-    <artifactId>springboot-data-jpa</artifactId>
+    <groupId>org.example</groupId>
+    <artifactId>springboot-data-mongodb</artifactId>
     <version>1.0.0-SNAPSHOT</version>
 
-    <name>springboot-data-jpa</name>
-    <description>Spring data jpa project for Spring Boot</description>
+    <name>springboot-data-mongodb</name>
+    <description>mongodb project for Spring Boot</description>
 
     <properties>
         <java.version>1.8</java.version>
@@ -73,10 +73,10 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-log4j2</artifactId>
         </dependency>
-        <!-- jpa -->
+        <!-- mongodb -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-data-jpa</artifactId>
+            <artifactId>spring-boot-starter-data-mongodb</artifactId>
         </dependency>
         <!-- test -->
         <dependency>
@@ -115,6 +115,7 @@
             <artifactId>druid</artifactId>
             <version>1.1.21</version>
         </dependency>
+        <!-- lombok -->
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
