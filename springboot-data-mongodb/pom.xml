@@ -17,7 +17,7 @@
         <relativePath/>
     </parent> <!-- lookup parent from repository -->
 
-    <groupId>org.example</groupId>
+    <groupId>com.example</groupId>
     <artifactId>springboot-data-mongodb</artifactId>
     <version>1.0.0-SNAPSHOT</version>
 

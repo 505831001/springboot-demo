@@ -18,11 +18,11 @@
     </parent> <!-- lookup parent from repository -->
 
     <groupId>com.example</groupId>
-    <artifactId>springboot-data-elasticsearch</artifactId>
+    <artifactId>springboot-data-solr</artifactId>
     <version>1.0.0-SNAPSHOT</version>
 
-    <name>springboot-data-elasticsearch</name>
-    <description>elasticsearch project for Spring Boot</description>
+    <name>springboot-data-solr</name>
+    <description>solr project for Spring Boot</description>
 
     <properties>
         <java.version>1.8</java.version>
@@ -73,10 +73,10 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-log4j2</artifactId>
         </dependency>
-        <!-- elasticsearch -->
+        <!-- solr -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-data-elasticsearch</artifactId>
+            <artifactId>spring-boot-starter-data-solr</artifactId>
         </dependency>
         <!-- test -->
         <dependency>
