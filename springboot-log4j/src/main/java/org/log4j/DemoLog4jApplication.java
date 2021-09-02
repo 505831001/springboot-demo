@@ -37,8 +37,16 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
  * 日志<实现层>：
  *     JUL
  *     log4j
- *     log4j2
+ *     log4j2 TODO -> Log4j2中的同步日志与异步日志(AsyncAppender和AsyncLogger)。
  *     logback
+ *
+ * Log4j2中的同步日志与异步日志：
+ * 1.所谓同步日志，即当输出日志时，必须等待日志输出语句执行完毕后，才能执行后面的业务逻辑语句。
+ *     log4j2.xml 配置
+ * 2.使用异步日志，日志输出语句与业务逻辑语句并不是在同一个线程中运行，而是有专门的线程用于进行日志输出操作，处理业务逻辑的主线程不用等待即可执行后续业务逻辑。
+ * 2.Log4j2中的异步日志实现方式有 AsyncAppender 和 AsyncLogger 两种。
+ *     1.AsyncAppender采用了ArrayBlockingQueue来保存需要异步输出的日志事件；
+ *     2.AsyncLogger则使用了Disruptor框架来实现高吞吐。
  *
  * @author Liuweiwei
  * @since 2021-01-17
