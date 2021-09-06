@@ -1,4 +1,4 @@
---- 项目用户表 ---
+-- 项目用户表
 CREATE TABLE `tb_user` (
   `id` int(13) NOT NULL COMMENT '主键ID',
   `username` varchar(64) DEFAULT NULL COMMENT '用户名称',
@@ -13,7 +13,7 @@ CREATE TABLE `tb_user` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='用户表';
 
---- 产品菜单树形结构表 ---
+-- 产品菜单树形结构表
 CREATE TABLE `tb_menu_tree` (
   `id` varchar(24) NOT NULL COMMENT '类别ID',
   `parent_id` varchar(24) DEFAULT NULL COMMENT '父类别ID',
