@@ -64,6 +64,10 @@ import org.springframework.core.env.ConfigurableEnvironment;
  *     Using job-store 'org.quartz.simpl.RAMJobStore' - which does not support persistence. and is not clustered.
  *
  * Quartz 数据持久化：
+ * 1.数据持久化jdbc表下载官网：http://www.quartz-scheduler.org/downloads/，表存放目录：\docs\dbTables文件夹中tables_mysql.sql或者tables_mysql_innodb.sql
+ * 2.本案例表在sql目录下：mysql_quartz_initial_tables
+ * 3.框架提供了两种任务存储的类型分别为memory(内存)和jdbc(数据库)
+ * 4.项目中配置的都是Cron触发器，需要记录qrtz_cron_triggers和qrtz_job_details以及qrtz_triggers三个常用表
  *     spring.quartz.job-store-type=memory
  *     spring.quartz.job-store-type=jdbc
  *

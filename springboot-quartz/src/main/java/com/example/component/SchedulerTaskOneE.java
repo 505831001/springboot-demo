@@ -56,6 +56,7 @@ public class SchedulerTaskOneE {
             String value = context.getJobDetail().getJobDataMap().getString(JOB_KEY);
             log.info("context get using job data value:{}", value);
             log.info("第四种有状态流弊了：{}", new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()) + "->" + value);
+            context.setResult(value);
         }
     }
 
@@ -88,8 +89,8 @@ public class SchedulerTaskOneE {
     public JobDetail exampleJobDetail() {
         return JobBuilder
                 .newJob(MyJob.class)
-                .withIdentity("exampleDetail", "GUEST")
-                .withDescription("exampleDescription")
+                .withIdentity("JobName", "JobGroup")
+                .withDescription("JobDescription")
                 .usingJobData(JOB_KEY, JOB_VAL)
                 .storeDurably(true)
                 .build();
@@ -110,12 +111,13 @@ public class SchedulerTaskOneE {
         schedule = CronScheduleBuilder.cronSchedule("0/10 * * * * ?");
         schedule = DailyTimeIntervalScheduleBuilder.dailyTimeIntervalSchedule().withIntervalInSeconds(10);
         schedule = SimpleScheduleBuilder.simpleSchedule().withIntervalInSeconds(10).repeatForever();
-        CronScheduleBuilder cronSchedule = CronScheduleBuilder.cronSchedule("0/10 * * * * ?");
         return TriggerBuilder
                 .newTrigger()
                 .forJob(exampleJobDetail())
-                .withIdentity("exampleTrigger", "GUEST")
-                .withSchedule(cronSchedule)
+                .withPriority(5)
+                .withIdentity("TriggerName", "TriggerGroup")
+                .withDescription("TriggerDescription")
+                .withSchedule(schedule)
                 .build();
     }
 }

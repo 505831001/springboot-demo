@@ -19,9 +19,16 @@ public class QuartzController {
 
     /**
      * Form 表单提交数据格式：
-     * 1.enctype="multipart/form-data"               类型主要是上传文件时用到
-     * 2.enctype="application/x-www-form-urlencoded" 类型主要是提交k-v时用到，当然这种方法也可以将json设置在v中提交json数据
-     * 3.enctype="text/plain"                        类型主要是传递json数据用到，层次比较深的数据
+     * 1. enctype="multipart/form-data"               类型主要是上传文件时用到
+     * 2. enctype="application/x-www-form-urlencoded" 类型主要是提交k-v时用到，当然这种方法也可以将json设置在v中提交json数据
+     * 3. enctype="text/plain"                        类型主要是传递json数据用到，层次比较深的数据
+     *
+     * Quartz 数据持久化，5张表必须有数据：
+     * 1. qrtz_triggers
+     * 2. qrtz_job_details
+     * 3. qrtz_cron_triggers
+     * 4. qrtz_locks
+     * 5. qrtz_fired_triggers
      * @return
      */
     @PostMapping(value = "/insert")
