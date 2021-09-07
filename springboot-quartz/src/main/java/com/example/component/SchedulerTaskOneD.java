@@ -15,7 +15,7 @@ import java.util.Date;
  * @author Liuweiwei
  * @since 2021-09-02
  */
-//@Component
+@Component
 @Log4j2
 public class SchedulerTaskOneD implements CommandLineRunner {
 
@@ -29,20 +29,23 @@ public class SchedulerTaskOneD implements CommandLineRunner {
 
     private void scheduleJobAbc(Scheduler scheduler) throws SchedulerException {
         ScheduleBuilder schedule = null;
-        schedule = CalendarIntervalScheduleBuilder.calendarIntervalSchedule().withIntervalInSeconds(10);
-        schedule = CronScheduleBuilder.cronSchedule("0/10 * * * * ?");
-        schedule = DailyTimeIntervalScheduleBuilder.dailyTimeIntervalSchedule().withIntervalInSeconds(10);
-        schedule = SimpleScheduleBuilder.simpleSchedule().withIntervalInSeconds(10).repeatForever();
-        CronScheduleBuilder cronSchedule = CronScheduleBuilder.cronSchedule("0/10 * * * * ?");
+        schedule = CalendarIntervalScheduleBuilder.calendarIntervalSchedule().withIntervalInSeconds(20);
+        schedule = CronScheduleBuilder.cronSchedule("0/20 * * * * ?");
+        schedule = SimpleScheduleBuilder.simpleSchedule().withIntervalInSeconds(20).repeatForever();
+        schedule = DailyTimeIntervalScheduleBuilder.dailyTimeIntervalSchedule().withIntervalInSeconds(20);
         JobDetail jobDetail = JobBuilder
                 .newJob(HeTask.class)
-                //.withIdentity("opqDetails", "ADMIN")
-                .usingJobData("liu", "LiuWeiWei")
+                .withDescription("JobDescription")
+                .withIdentity("AdminJobName", "JobGroup")
+                .usingJobData("liu", "Jack")
+                .storeDurably(true)
                 .build();
-        CronTrigger jobTrigger = TriggerBuilder
+        Trigger jobTrigger = TriggerBuilder
                 .newTrigger()
-                //.withIdentity("opqTrigger", "ADMIN")
-                .withSchedule(cronSchedule)
+                .withPriority(5)
+                .withDescription("TriggerDescription")
+                .withIdentity("AdminTriggerName", "TriggerGroup")
+                .withSchedule(schedule)
                 .build();
         scheduler.scheduleJob(jobDetail, jobTrigger);
     }
@@ -59,20 +62,23 @@ public class SchedulerTaskOneD implements CommandLineRunner {
 
     private void scheduleJobXyz(Scheduler scheduler) throws SchedulerException {
         ScheduleBuilder schedule = null;
-        schedule = CalendarIntervalScheduleBuilder.calendarIntervalSchedule().withIntervalInSeconds(10);
-        schedule = CronScheduleBuilder.cronSchedule("0/10 * * * * ?");
-        schedule = DailyTimeIntervalScheduleBuilder.dailyTimeIntervalSchedule().withIntervalInSeconds(10);
-        schedule = SimpleScheduleBuilder.simpleSchedule().withIntervalInSeconds(10).repeatForever();
-        CronScheduleBuilder cronSchedule = CronScheduleBuilder.cronSchedule("0/10 * * * * ?");
+        schedule = CalendarIntervalScheduleBuilder.calendarIntervalSchedule().withIntervalInSeconds(20);
+        schedule = CronScheduleBuilder.cronSchedule("0/20 * * * * ?");
+        schedule = DailyTimeIntervalScheduleBuilder.dailyTimeIntervalSchedule().withIntervalInSeconds(20);
+        schedule = SimpleScheduleBuilder.simpleSchedule().withIntervalInSeconds(20).repeatForever();
         JobDetail jobDetail = JobBuilder
                 .newJob(MyTask.class)
-                //.withIdentity("rstDetails", "GUEST")
-                .usingJobData("lin", "LinYiMing")
+                .withDescription("JobDescription")
+                .withIdentity("GuestJobName", "JobGroup")
+                .usingJobData("lin", "Lucy")
+                .storeDurably(true)
                 .build();
-        CronTrigger jobTrigger = TriggerBuilder
+        Trigger jobTrigger = TriggerBuilder
                 .newTrigger()
-                //.withIdentity("rstTrigger", "GUEST")
-                .withSchedule(cronSchedule)
+                .withPriority(5)
+                .withDescription("TriggerDescription")
+                .withIdentity("GuestTriggerName", "TriggerGroup")
+                .withSchedule(schedule)
                 .build();
         scheduler.scheduleJob(jobDetail, jobTrigger);
     }

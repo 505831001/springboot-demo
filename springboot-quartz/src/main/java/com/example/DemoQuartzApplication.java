@@ -34,6 +34,14 @@ import org.springframework.core.env.ConfigurableEnvironment;
  *         2.schedule = CronScheduleBuilder.cronSchedule("0/10 * * * * ?");
  *         3.schedule = DailyTimeIntervalScheduleBuilder.dailyTimeIntervalSchedule().withIntervalInSeconds(10);
  *         4.schedule = SimpleScheduleBuilder.simpleSchedule().withIntervalInSeconds(10).repeatForever();
+ *     6.获取实例化的调度程序：
+ *         1.new SchedulerFactoryBean().getScheduler();
+ *         1.new StdSchedulerFactory().getScheduler();
+ *         2.scheduler.scheduleJob(JobDetail jobDetail, Trigger trigger);
+ *         3.scheduler.start();
+ *         4.scheduler.standby();
+ *         5.scheduler.shutdown();
+ *         6.scheduler.deleteJob(JobKey jobKey);
  *
  * Quartz 参数设置模板：
  * 1. Scheduled 参数。可以接受两种定时的设置：
@@ -169,7 +177,56 @@ import org.springframework.core.env.ConfigurableEnvironment;
  * 5.2.public class CronScheduleBuilder extends ScheduleBuilder<CronTrigger> {}
  * 5.3.public class DailyTimeIntervalScheduleBuilder extends ScheduleBuilder<DailyTimeIntervalTrigger> {}
  * 5.4.public class SimpleScheduleBuilder extends ScheduleBuilder<SimpleTrigger> {}
- * 6.作业监听器作业日志必备神器：org.quartz.JobListener
+ * 6.调度程序的主界面：org.quartz.Scheduler
+ * public interface Scheduler {
+ *     //TODO->启动触发器的调度程序的线程。首次创建调度程序时，它处于"备用"模式，不会触发触发器。通过调用standby()方法，也可以将调度程序置于待机模式。
+ *     void start()throws SchedulerException;
+ *     void startDelayed(int seconds)throws SchedulerException;
+ *     //TODO->暂时停止计划程序对触发器的触发。
+ *     void standby()throws SchedulerException;
+ *     //TODO->停止调度程序对触发器的触发，并清除与调度程序关联的所有资源。相当于shutdown(false)。
+ *     void shutdown()throws SchedulerException;
+ *     void shutdown(boolean waitForJobsToComplete) throws SchedulerException;
+ *     void setJobFactory(JobFactory factory)throws SchedulerException;
+ *     //TODO->使用相关的触发器集计划给定的作业。
+ *     void scheduleJobs(Map<JobDetail, Set<?extends Trigger>>triggersAndJobs, boolean replace)throws SchedulerException;
+ *     void scheduleJob(JobDetail jobDetail, Set<?extends Trigger> triggersForJob, boolean replace)throws SchedulerException;
+ *     //TODO->将给定的作业添加到计划程序-没有关联的触发器。作业将处于"休眠"状态，直到使用触发器或调度程序对其进行调度。为其调用Scheduler.triggerJob()。
+ *     void addJob(JobDetail jobDetail,boolean replace) throws SchedulerException;
+ *     void addJob(JobDetail jobDetail,boolean replace,boolean storeNonDurableWhileAwaitingScheduling) throws SchedulerException;
+ *     void triggerJob(JobKey jobKey) throws SchedulerException;
+ *     void triggerJob(JobKey jobKey,JobDataMap data) throws SchedulerException;
+ *     void pauseJob(JobKey jobKey) throws SchedulerException;
+ *     void pauseJobs(GroupMatcher<JobKey> matcher)throws SchedulerException;
+ *     void pauseTrigger(TriggerKey triggerKey) throws SchedulerException;
+ *     void pauseTriggers(GroupMatcher<TriggerKey> matcher)throws SchedulerException;
+ *     void resumeJob(JobKey jobKey) throws SchedulerException;
+ *     void resumeJobs(GroupMatcher<JobKey> matcher)throws SchedulerException;
+ *     void resumeTrigger(TriggerKey triggerKey) throws SchedulerException;
+ *     void resumeTriggers(GroupMatcher<TriggerKey> matcher)throws SchedulerException;
+ *     void pauseAll()throws SchedulerException;
+ *     void resumeAll()throws SchedulerException;
+ *     void resetTriggerFromErrorState(TriggerKey triggerKey) throws SchedulerException;
+ *     void addCalendar(String calName,Calendar calendar,boolean replace,boolean updateTriggers) throws SchedulerException;
+ *     void clear()throws SchedulerException;
+ *     boolean isStarted()throws SchedulerException;
+ *     boolean isInStandbyMode()throws SchedulerException;
+ *     boolean isShutdown()throws SchedulerException;
+ *     boolean unscheduleJob(TriggerKey triggerKey) throws SchedulerException;
+ *     boolean unscheduleJobs(List<TriggerKey> triggerKeys) throws SchedulerException;
+ *     //TODO->从计划程序中删除已识别的作业，以及任何相关的触发器。
+ *     boolean deleteJob(JobKey jobKey) throws SchedulerException;
+ *     boolean deleteJobs(List<JobKey> jobKeys) throws SchedulerException;
+ *     boolean deleteCalendar(String calName)throws SchedulerException;
+ *     boolean interrupt(JobKey jobKey)throws UnableToInterruptJobException;
+ *     boolean interrupt(String fireInstanceId)throws UnableToInterruptJobException;
+ *     boolean checkExists(JobKey jobKey)throws SchedulerException;
+ *     boolean checkExists(TriggerKey triggerKey)throws SchedulerException;
+ *     Date scheduleJob(JobDetail jobDetail,Trigger trigger) throws SchedulerException;
+ *     Date scheduleJob(Trigger trigger)throws SchedulerException;
+ *     Date rescheduleJob(TriggerKey triggerKey,Trigger newTrigger) throws SchedulerException;
+ * }
+ * 7.作业监听器作业日志必备神器：org.quartz.JobListener
  * public interface JobListener {
  *    String getName();
  *    void jobToBeExecuted(JobExecutionContext context);

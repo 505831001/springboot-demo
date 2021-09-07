@@ -107,10 +107,10 @@ public class SchedulerTaskOneE {
     @Bean
     public Trigger exampleJobTrigger() {
         ScheduleBuilder schedule = null;
-        schedule = CalendarIntervalScheduleBuilder.calendarIntervalSchedule().withIntervalInSeconds(10);
-        schedule = CronScheduleBuilder.cronSchedule("0/10 * * * * ?");
-        schedule = DailyTimeIntervalScheduleBuilder.dailyTimeIntervalSchedule().withIntervalInSeconds(10);
-        schedule = SimpleScheduleBuilder.simpleSchedule().withIntervalInSeconds(10).repeatForever();
+        schedule = CalendarIntervalScheduleBuilder.calendarIntervalSchedule().withIntervalInSeconds(30);
+        schedule = CronScheduleBuilder.cronSchedule("0/30 * * * * ?");
+        schedule = DailyTimeIntervalScheduleBuilder.dailyTimeIntervalSchedule().withIntervalInSeconds(30);
+        schedule = SimpleScheduleBuilder.simpleSchedule().withIntervalInSeconds(30).repeatForever();
         return TriggerBuilder
                 .newTrigger()
                 .forJob(exampleJobDetail())

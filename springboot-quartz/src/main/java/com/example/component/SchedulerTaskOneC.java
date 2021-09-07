@@ -16,8 +16,8 @@ import java.util.Date;
  * @author Liuweiwei
  * @since 2021-09-02
  */
-//@EnableScheduling
-//@Component
+@EnableScheduling
+@Component
 @Log4j2
 public class SchedulerTaskOneC {
 
@@ -26,10 +26,14 @@ public class SchedulerTaskOneC {
 
     /**
      * 同时启动两个定时任务
-     *
+     * Quartz 4种Scheduler调度器：
+     * 1.schedule = CalendarIntervalScheduleBuilder.calendarIntervalSchedule().withIntervalInSeconds(10);
+     * 2.schedule = CronScheduleBuilder.cronSchedule("0/10 * * * * ?");
+     * 3.schedule = DailyTimeIntervalScheduleBuilder.dailyTimeIntervalSchedule().withIntervalInSeconds(10);
+     * 4.schedule = SimpleScheduleBuilder.simpleSchedule().withIntervalInSeconds(10).repeatForever();
      * @throws SchedulerException
      */
-    @Scheduled(cron = "*/10 * * * * ?")
+    @Scheduled(cron = "*/30 * * * * ?")
     public void process() throws SchedulerException {
         Scheduler scheduler = schedulerFactoryBean.getScheduler();
 
@@ -44,14 +48,18 @@ public class SchedulerTaskOneC {
                                 log.info("第二种有状态流弊了：{}", new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()) + "->" + message);
                             }
                         }.getClass())
-                        //.withIdentity("abcDetails", "ADMIN")
-                        .usingJobData("liu", "Jack")
+                        .withDescription("JobDescription")
+                        .withIdentity("LiuJobName", "JobGroup")
+                        .usingJobData("liu", "LiuWeiWei")
+                        .storeDurably(true)
                         .build()
                 ,
                 TriggerBuilder
                         .newTrigger()
-                        //.withIdentity("abcTrigger", "ADMIN")
-                        .withSchedule(CronScheduleBuilder.cronSchedule("0/10 * * * * ?"))
+                        .withPriority(5)
+                        .withDescription("TriggerDescription")
+                        .withIdentity("LiuTriggerName", "TriggerGroup")
+                        .withSchedule(CalendarIntervalScheduleBuilder.calendarIntervalSchedule().withIntervalInSeconds(10))
                         .build());
 
         // ---------- 华丽的分割线 ----------
@@ -65,13 +73,17 @@ public class SchedulerTaskOneC {
                                 log.info("第二种有状态逗比了：{}", new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()) + "->" + message);
                             }
                         }.getClass())
-                        //.withIdentity("xyzDetails", "GUEST")
-                        .usingJobData("lin", "Lucy")
+                        .withDescription("JobDescription")
+                        .withIdentity("WeiJobName", "JobGroup")
+                        .usingJobData("lin", "LinYiMing")
+                        .storeDurably(true)
                         .build()
                 ,
                 TriggerBuilder
                         .newTrigger()
-                        //.withIdentity("xyzTrigger", "GUEST")
+                        .withPriority(5)
+                        .withDescription("TriggerDescription")
+                        .withIdentity("WeiTriggerName", "TriggerGroup")
                         .withSchedule(CronScheduleBuilder.cronSchedule("0/10 * * * * ?"))
                         .build());
     }

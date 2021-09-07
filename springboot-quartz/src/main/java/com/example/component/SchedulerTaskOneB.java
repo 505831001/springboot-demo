@@ -10,6 +10,7 @@ import java.util.Date;
 
 /**
  * 触发定时任务有两种方式：第二种是定时执行。
+ * 此方法未入库DB，不使用。
  * @author Liuweiwei
  * @since 2021-09-02
  */
