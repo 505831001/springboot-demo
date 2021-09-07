@@ -2,6 +2,7 @@ package com.example.controller;
 
 import lombok.extern.log4j.Log4j2;
 import org.quartz.*;
+import org.quartz.core.QuartzScheduler;
 import org.quartz.impl.DirectSchedulerFactory;
 import org.quartz.impl.StdSchedulerFactory;
 import org.springframework.scheduling.quartz.SchedulerFactoryBean;
@@ -51,9 +52,13 @@ public class QuartzController {
     }
 
     @Resource
+    private Scheduler scheduler;
+    @Resource
+    private SchedulerFactory schedulerFactory = new StdSchedulerFactory();;
+    @Resource
     private SchedulerFactoryBean schedulerFactoryBean;
     @Resource
-    private SchedulerFactory schedulerFactory = new StdSchedulerFactory();
+    private QuartzScheduler quartzScheduler;
 
     /**
      * 添加Quartz调度器任务，启动Quartz调度器任务
@@ -103,8 +108,10 @@ public class QuartzController {
                 .build();
         try {
             //获取实例化的Scheduler
-            Scheduler scheduler = schedulerFactoryBean.getScheduler();
+            scheduler.scheduleJob(jobDetail, jobTrigger);
             scheduler = schedulerFactory.getScheduler();
+            scheduler = schedulerFactoryBean.getScheduler();
+            quartzScheduler.scheduleJob(jobDetail, jobTrigger);
             //将任务及其触发器放入调度器
             scheduler.scheduleJob(jobDetail, jobTrigger);
             //调度器开始调度任务

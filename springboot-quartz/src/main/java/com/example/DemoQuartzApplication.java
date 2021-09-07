@@ -35,9 +35,14 @@ import org.springframework.core.env.ConfigurableEnvironment;
  *         3.schedule = DailyTimeIntervalScheduleBuilder.dailyTimeIntervalSchedule().withIntervalInSeconds(10);
  *         4.schedule = SimpleScheduleBuilder.simpleSchedule().withIntervalInSeconds(10).repeatForever();
  *     6.获取实例化的调度程序：
- *         1.new SchedulerFactoryBean().getScheduler();
- *         1.new StdSchedulerFactory().getScheduler();
- *         2.scheduler.scheduleJob(JobDetail jobDetail, Trigger trigger);
+ *         1.private Scheduler scheduler;
+ *         1.private SchedulerFactory schedulerFactory = new StdSchedulerFactory();;
+ *         1.private SchedulerFactoryBean schedulerFactoryBean;
+ *         1.private QuartzScheduler quartzScheduler;
+ *         2.scheduler.scheduleJob(jobDetail, jobTrigger);
+ *         2.scheduler = schedulerFactory.getScheduler();
+ *         2.scheduler = schedulerFactoryBean.getScheduler();
+ *         2.quartzScheduler.scheduleJob(jobDetail, jobTrigger);
  *         3.scheduler.start();
  *         4.scheduler.standby();
  *         5.scheduler.shutdown();
