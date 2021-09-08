@@ -83,6 +83,17 @@ import org.springframework.core.env.ConfigurableEnvironment;
  * 4.项目中配置的都是Cron触发器，需要记录qrtz_cron_triggers和qrtz_job_details以及qrtz_triggers三个常用表
  *     spring.quartz.job-store-type=memory
  *     spring.quartz.job-store-type=jdbc
+ * 5.数据持久化mysql数据库操作：
+ *     1.系统启动添加数据表：qrtz_locks
+ *     {
+ *         schedule_name:VisualSchedule
+ *         lock_name:Trigger_Access
+ *     }
+ *     2.执行创建任务添加数据表：qrtz_locks,qrtz_triggers,qrtz_job_details,qrtz_fired_triggers,qrtz_cron_triggers
+ *     {
+ *         ...
+ *     }
+ *     3.执行删除任务修改数据表：qrtz_locks(保留),其它4个表数据全部删除
  *
  * 1.作业执行上下文：org.quartz.JobExecutionContext
  * public interface JobExecutionContext {
@@ -187,7 +198,6 @@ import org.springframework.core.env.ConfigurableEnvironment;
  *     //TODO->启动触发器的调度程序的线程。首次创建调度程序时，它处于"备用"模式，不会触发触发器。通过调用standby()方法，也可以将调度程序置于待机模式。
  *     void start()throws SchedulerException;
  *     void startDelayed(int seconds)throws SchedulerException;
- *     //TODO->暂时停止计划程序对触发器的触发。
  *     void standby()throws SchedulerException;
  *     //TODO->停止调度程序对触发器的触发，并清除与调度程序关联的所有资源。相当于shutdown(false)。
  *     void shutdown()throws SchedulerException;
@@ -197,14 +207,16 @@ import org.springframework.core.env.ConfigurableEnvironment;
  *     void scheduleJobs(Map<JobDetail, Set<?extends Trigger>>triggersAndJobs, boolean replace)throws SchedulerException;
  *     void scheduleJob(JobDetail jobDetail, Set<?extends Trigger> triggersForJob, boolean replace)throws SchedulerException;
  *     //TODO->将给定的作业添加到计划程序-没有关联的触发器。作业将处于"休眠"状态，直到使用触发器或调度程序对其进行调度。为其调用Scheduler.triggerJob()。
- *     void addJob(JobDetail jobDetail,boolean replace) throws SchedulerException;
- *     void addJob(JobDetail jobDetail,boolean replace,boolean storeNonDurableWhileAwaitingScheduling) throws SchedulerException;
+ *     void addJob(JobDetail jobDetail, boolean replace) throws SchedulerException;
+ *     void addJob(JobDetail jobDetail, boolean replace, boolean storeNonDurableWhileAwaitingScheduling) throws SchedulerException;
  *     void triggerJob(JobKey jobKey) throws SchedulerException;
  *     void triggerJob(JobKey jobKey,JobDataMap data) throws SchedulerException;
+ *     //TODO->用给定的键暂停{JobDetail}——暂停所有当前的触发器。
  *     void pauseJob(JobKey jobKey) throws SchedulerException;
  *     void pauseJobs(GroupMatcher<JobKey> matcher)throws SchedulerException;
  *     void pauseTrigger(TriggerKey triggerKey) throws SchedulerException;
  *     void pauseTriggers(GroupMatcher<TriggerKey> matcher)throws SchedulerException;
+ *     //TODO->使用给定的键恢复，取消暂停{JobDetail}。
  *     void resumeJob(JobKey jobKey) throws SchedulerException;
  *     void resumeJobs(GroupMatcher<JobKey> matcher)throws SchedulerException;
  *     void resumeTrigger(TriggerKey triggerKey) throws SchedulerException;
@@ -229,6 +241,7 @@ import org.springframework.core.env.ConfigurableEnvironment;
  *     boolean checkExists(TriggerKey triggerKey)throws SchedulerException;
  *     Date scheduleJob(JobDetail jobDetail,Trigger trigger) throws SchedulerException;
  *     Date scheduleJob(Trigger trigger)throws SchedulerException;
+ *     //TODO->用给定的键移除{Trigger}，并存储新的给定触发器-必须与同一个作业关联（新触发器必须指定作业名称和组）-但是，新触发器不必与旧触发器同名。
  *     Date rescheduleJob(TriggerKey triggerKey,Trigger newTrigger) throws SchedulerException;
  * }
  * 7.作业监听器作业日志必备神器：org.quartz.JobListener
