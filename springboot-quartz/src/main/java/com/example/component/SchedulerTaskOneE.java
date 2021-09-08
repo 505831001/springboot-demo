@@ -111,13 +111,14 @@ public class SchedulerTaskOneE {
         schedule = CronScheduleBuilder.cronSchedule("0/30 * * * * ?");
         schedule = DailyTimeIntervalScheduleBuilder.dailyTimeIntervalSchedule().withIntervalInSeconds(30);
         schedule = SimpleScheduleBuilder.simpleSchedule().withIntervalInSeconds(30).repeatForever();
+        CronScheduleBuilder cronSchedule = CronScheduleBuilder.cronSchedule("0/30 * * * * ?");
         return TriggerBuilder
                 .newTrigger()
                 .forJob(exampleJobDetail())
                 .withPriority(5)
                 .withIdentity("TriggerName", "TriggerGroup")
                 .withDescription("TriggerDescription")
-                .withSchedule(schedule)
+                .withSchedule(cronSchedule)
                 .build();
     }
 }

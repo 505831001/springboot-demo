@@ -15,6 +15,6 @@ public class HtmlController {
     @GetMapping(value = "/index")
     public String index() {
         log.info("请求Url.index()");
-        return "index_page";
+        return "index_default";
     }
 }

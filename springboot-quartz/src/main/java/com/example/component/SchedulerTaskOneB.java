@@ -14,8 +14,8 @@ import java.util.Date;
  * @author Liuweiwei
  * @since 2021-09-02
  */
-//@EnableScheduling
-//@Component
+@EnableScheduling
+@Component
 @Log4j2
 public class SchedulerTaskOneB {
 

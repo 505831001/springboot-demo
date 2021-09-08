@@ -1,19 +1,13 @@
 package com.example.controller;
 
-import com.example.entity.QrtzJobDetails;
-import com.example.service.QrtzJobDetailsService;
 import lombok.extern.log4j.Log4j2;
 import org.quartz.*;
-import org.quartz.core.QuartzScheduler;
-import org.quartz.impl.DirectSchedulerFactory;
-import org.quartz.impl.StdSchedulerFactory;
 import org.springframework.scheduling.quartz.SchedulerFactoryBean;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -268,19 +262,5 @@ public class QuartzController {
             return "Failed";
         }
         return "Okay";
-    }
-
-    @Resource
-    private QrtzJobDetailsService qrtzJobDetailsService;
-
-    /**
-     * 查询Quartz调度器任务
-     * @param pageNum
-     * @param pageSize
-     * @return
-     */
-    @GetMapping(value = "/list")
-    public List<QrtzJobDetails> list(@RequestParam(value = "pageNum") String pageNum, @RequestParam(value = "pageSize") String pageSize) {
-        return qrtzJobDetailsService.getQrtzJobDetails(pageNum, pageSize);
     }
 }
