@@ -2,6 +2,9 @@ package com.example.controller;
 
 import lombok.extern.log4j.Log4j2;
 import org.quartz.*;
+import org.quartz.core.QuartzScheduler;
+import org.quartz.impl.StdScheduler;
+import org.quartz.impl.StdSchedulerFactory;
 import org.springframework.scheduling.quartz.SchedulerFactoryBean;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
@@ -51,6 +54,8 @@ public class QuartzController {
 
     //@Resource
     //private Scheduler scheduler;
+    //@Resource
+    //private StdScheduler stdScheduler;
     //@Resource
     //private SchedulerFactory schedulerFactory = new StdSchedulerFactory();
     //@Resource
@@ -106,14 +111,16 @@ public class QuartzController {
         if (StringUtils.containsWhitespace("simpleSchedule")) {
             schedule = SimpleScheduleBuilder.simpleSchedule().withIntervalInSeconds(intervalInSeconds).repeatForever();
         }
-        //创建任务
-        JobDetail jobDetail = JobBuilder.newJob(jobClass)
+        //创建任务：TODO->qrtz_job_details表写入数据(作业有了)
+        JobDetail jobDetail = JobBuilder
+                .newJob(jobClass)
                 .withIdentity(jobName, jobGroup)
                 .withDescription(jobDescription)
                 .usingJobData(jobDataKey, jobDataValue)
                 .build();
-        //创建触发器
-        Trigger jobTrigger = TriggerBuilder.newTrigger()
+        //创建触发器：TODO->qrtz_triggers表写入数据(触发器有了)
+        Trigger jobTrigger = TriggerBuilder
+                .newTrigger()
                 .withIdentity(triggerName, triggerGroup)
                 .withDescription(triggerDescription)
                 .withPriority(triggerPriority)
@@ -126,9 +133,12 @@ public class QuartzController {
             //scheduler = schedulerFactoryBean.getScheduler();
             //quartzScheduler.scheduleJob(jobDetail, jobTrigger);
             Scheduler scheduler = schedulerFactoryBean.getScheduler();
+            //scheduleJob(JobDetail jobDetail, Trigger trigger)
+            //将给定的任务详情{JobDetail}添加到调度程序，并将给定的触发器{Trigger}与其关联。
             scheduler.scheduleJob(jobDetail, jobTrigger);
             //调度器开始调度任务
-            if (!scheduler.isShutdown()) {
+            //org.quartz.SchedulerException: The Scheduler has been shutdown.
+            if (scheduler.isShutdown() == true || scheduler.isStarted() == false || scheduler.isInStandbyMode() == true) {
                 scheduler.start();
                 log.info("启动任务, 任务名称:{}, 分组:{}, 触发器名称:{}, 分组:{}, 间隔时间:{}s", jobName, jobGroup, triggerName, triggerGroup, cronExpression);
             }

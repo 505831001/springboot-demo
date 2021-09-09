@@ -1,9 +1,11 @@
 package com.example;
 
 import lombok.extern.log4j.Log4j2;
+import org.quartz.ee.servlet.QuartzInitializerListener;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.context.annotation.Bean;
 import org.springframework.core.env.ConfigurableEnvironment;
 
 /**
@@ -263,5 +265,14 @@ public class DemoQuartzApplication {
         log.info(environment.getProperty("java.vendor.url"));
         log.info(environment.getProperty("java.vendor.url.bug"));
         log.info(environment.getProperty("sun.java.command") + " started successfully.");
+    }
+
+    /**
+     * Quartz初始化监听器。这个监听器可以监听到工程的启动，在工程停止再启动时可以让已有的定时任务继续进行。
+     * @return
+     */
+    @Bean
+    public QuartzInitializerListener executorListener() {
+        return new QuartzInitializerListener();
     }
 }

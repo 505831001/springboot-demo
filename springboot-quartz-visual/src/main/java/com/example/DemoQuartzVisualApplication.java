@@ -10,12 +10,14 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.env.ConfigurableEnvironment;
+import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 /**
  * @author Liuweiwei
  * @since 2021-01-10
  */
 @SpringBootApplication
+@EnableSwagger2
 @MapperScan(basePackages = {"com.example.dao"})
 @Log4j2
 public class DemoQuartzVisualApplication {
@@ -29,7 +31,7 @@ public class DemoQuartzVisualApplication {
 
     /**
      * TODO -> 4. 分页插件：分布插件注入之前("total": 0,"pages": 0)
-     * TODO -> 4. 分页插件：分页插件注入之后，你品，你细品
+     * TODO -> 4. 分页插件：分页插件注入之后
      * {
      *   "records": [...],
      *   "total": 20,

@@ -3,7 +3,6 @@ package com.example.model;
 import lombok.Data;
 
 import java.io.Serializable;
-import java.sql.Blob;
 
 /**
  * @author Liuweiwei
@@ -26,5 +25,5 @@ public class QrtzTriggers implements Serializable {
     private Long endTime;
     private String calendarName;
     private Integer misfireInstr;
-    private Blob jobData;
+    private String jobData;
 }

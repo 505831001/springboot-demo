@@ -3,7 +3,6 @@ package com.example.model;
 import lombok.Data;
 
 import java.io.Serializable;
-import java.sql.Blob;
 
 /**
  * @author Liuweiwei
@@ -20,5 +19,5 @@ public class QrtzJobDetails implements Serializable {
     private String isNonconcurrent;
     private String isUpdateData;
     private String requestsRecovery;
-    private Blob jobData;
+    private String jobData;
 }
