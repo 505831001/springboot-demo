@@ -117,6 +117,11 @@
 </footer>
 
 <script>
+    class Vue {
+        constructor(param) {
+
+        }
+    }
     const vue = new Vue({
         el: "#liuweiwei",
         data: {
@@ -154,28 +159,30 @@
                 jobGroup: '',
                 cronExpression: '',
             },
-            options: [{
-                value: 1,
-                label: '年'
-            }, {
-                value: 2,
-                label: '月'
-            }, {
-                value: 3,
-                label: '天'
-            }, {
-                value: 4,
-                label: '小时'
-            }, {
-                value: 5,
-                label: '分钟'
-            }, {
-                value: 6,
-                label: '周'
-            }, {
-                value: 7,
-                label: '秒'
-            }],
+            options: [
+                {
+                    value: 1,
+                    label: '年'
+                }, {
+                    value: 2,
+                    label: '月'
+                }, {
+                    value: 3,
+                    label: '天'
+                }, {
+                    value: 4,
+                    label: '小时'
+                }, {
+                    value: 5,
+                    label: '分钟'
+                }, {
+                    value: 6,
+                    label: '周'
+                }, {
+                    value: 7,
+                    label: '秒'
+                }
+            ],
             value4: ''
         },
         methods: {
@@ -183,11 +190,11 @@
             loadData: function (pageNum, pageSize) {
                 this.$http.get('quartz/query?' + 'pageNum=' + pageNum + '&pageSize=' + pageSize).then(function (res) {
                     console.log(res)
-                    this.tableData    = res.body.records;
+                    this.tableData = res.body.records;
                     this.totalCurrent = res.body.current;
-                    this.totalPages   = res.body.pages;
-                    this.totalSize    = res.body.size;
-                    this.totalCount   = res.body.total;
+                    this.totalPages = res.body.pages;
+                    this.totalSize = res.body.size;
+                    this.totalCount = res.body.total;
                 }, function () {
                     console.log('failed');
                 });

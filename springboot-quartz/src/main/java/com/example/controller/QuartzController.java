@@ -10,6 +10,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -22,46 +23,39 @@ import java.util.Map;
 @Log4j2
 public class QuartzController {
 
+    @Resource
+    private Scheduler scheduler;
+    @Resource
+    private StdScheduler stdScheduler;
+    @Resource
+    private SchedulerFactory schedulerFactory = new StdSchedulerFactory();
+    @Resource
+    private SchedulerFactoryBean schedulerFactoryBean;
+    @Resource
+    private QuartzScheduler quartzScheduler;
+
     /**
      * Form 表单提交数据格式：
      * 1. enctype="multipart/form-data"               类型主要是上传文件时用到
      * 2. enctype="application/x-www-form-urlencoded" 类型主要是提交k-v时用到，当然这种方法也可以将json设置在v中提交json数据
      * 3. enctype="text/plain"                        类型主要是传递json数据用到，层次比较深的数据
-     * Quartz 数据持久化，5张表必须有数据：
-     * 1. qrtz_triggers
-     * 2. qrtz_job_details
-     * 3. qrtz_cron_triggers
-     * 4. qrtz_locks
-     * 5. qrtz_fired_triggers
-     * 接收Quartz调度器任务
      * @return
      */
     @PostMapping(value = "/receive")
-    public String receive(String jobName, String jobGroupName, String jobClassName, String triggerName, String triggerGroupName, String cronExpression) {
+    public String receive(String jobName, String jobGroup, String jobClassName, String triggerName, String triggerGroup, String cronExpression) {
         Map<String, Object> map = new HashMap<>();
         map.put("a", jobName);
-        map.put("b", jobGroupName);
+        map.put("b", jobGroup);
         map.put("c", jobClassName);
         map.put("d", triggerName);
-        map.put("e", triggerGroupName);
+        map.put("e", triggerGroup);
         map.put("f", cronExpression);
         for (Map.Entry<String, Object> entry : map.entrySet()) {
             log.info("jobKey:{}, jobValue:{}", entry.getKey(), entry.getValue());
         }
         log.info("请求Url.insert()");
-        return "index_page";
+        return "Received successfully.";
     }
-
-    //@Resource
-    //private Scheduler scheduler;
-    //@Resource
-    //private StdScheduler stdScheduler;
-    //@Resource
-    //private SchedulerFactory schedulerFactory = new StdSchedulerFactory();
-    //@Resource
-    //private QuartzScheduler quartzScheduler;
-    @Resource
-    private SchedulerFactoryBean schedulerFactoryBean;
 
     /**
      * 添加Quartz调度器任务，启动Quartz调度器任务
@@ -71,32 +65,23 @@ public class QuartzController {
      * 2.schedule = CronScheduleBuilder.cronSchedule("0/10 * * * * ?");
      * 3.schedule = DailyTimeIntervalScheduleBuilder.dailyTimeIntervalSchedule().withIntervalInSeconds(10);
      * 4.schedule = SimpleScheduleBuilder.simpleSchedule().withIntervalInSeconds(10).repeatForever();
-     * @param jobName
-     * @param jobGroup
-     * @param jobDescription
-     * @param jobDataKey
-     * @param jobDataValue
-     * @param triggerName
-     * @param triggerGroup
-     * @param triggerDescription
-     * @param triggerPriority
-     * @param cronExpression
-     * @param jobClass
      * @return
      */
     @GetMapping(value = "/create")
     public String create(
-            @RequestParam(value = "jobName", required = false, defaultValue = "JobName") String jobName,
-            @RequestParam(value = "jobGroup", required = false, defaultValue = "JobGroup") String jobGroup,
-            @RequestParam(value = "jobDescription", required = false, defaultValue = "JobDescription") String jobDescription,
-            @RequestParam(value = "jobDataKey", required = false, defaultValue = "email") String jobDataKey,
-            @RequestParam(value = "jobDataValue", required = false, defaultValue = "liuweiwei@163.com") String jobDataValue,
-            @RequestParam(value = "triggerName", required = false, defaultValue = "TriggerName") String triggerName,
-            @RequestParam(value = "triggerGroup", required = false, defaultValue = "TriggerGroup") String triggerGroup,
-            @RequestParam(value = "triggerDescription", required = false, defaultValue = "TriggerDescription") String triggerDescription,
-            @RequestParam(value = "triggerPriority", required = false, defaultValue = "5") int triggerPriority,
-            @RequestParam(value = "cronExpression", required = false, defaultValue = "0/10 * * * * ?") String cronExpression,
-            @RequestParam(value = "intervalInSeconds", required = false, defaultValue = "10") int intervalInSeconds,
+            String jobKey,
+            String jobName,
+            String jobGroup,
+            String jobDescription,
+            String jobDataKey,
+            String jobDataValue,
+            String triggerKey,
+            String triggerName,
+            String triggerGroup,
+            String triggerDescription,
+            int triggerPriority,
+            String cronExpression,
+            int intervalInSeconds,
             Class<? extends Job> jobClass) {
         ScheduleBuilder schedule = null;
         if (StringUtils.containsWhitespace("calendarIntervalSchedule")) {
@@ -114,33 +99,42 @@ public class QuartzController {
         //创建任务：TODO->qrtz_job_details表写入数据(作业有了)
         JobDetail jobDetail = JobBuilder
                 .newJob(jobClass)
+                .withIdentity(jobKey)
+                .withIdentity(JobKey.jobKey(jobKey))
                 .withIdentity(jobName, jobGroup)
                 .withDescription(jobDescription)
                 .usingJobData(jobDataKey, jobDataValue)
+                .storeDurably()
+                .requestRecovery()
                 .build();
         //创建触发器：TODO->qrtz_triggers表写入数据(触发器有了)
         Trigger jobTrigger = TriggerBuilder
                 .newTrigger()
+                .withIdentity(triggerKey)
+                .withIdentity(TriggerKey.triggerKey(triggerKey))
                 .withIdentity(triggerName, triggerGroup)
                 .withDescription(triggerDescription)
                 .withPriority(triggerPriority)
+                .startAt(new Date())
+                .endAt(new Date())
+                .startNow()
                 .withSchedule(CronScheduleBuilder.cronSchedule("0/10 * * * * ?"))
                 .build();
         try {
             //获取实例化的调度器，将任务及其触发器放入调度器中
-            //scheduler.scheduleJob(jobDetail, jobTrigger);
-            //scheduler = schedulerFactory.getScheduler();
-            //scheduler = schedulerFactoryBean.getScheduler();
-            //quartzScheduler.scheduleJob(jobDetail, jobTrigger);
+            scheduler = schedulerFactory.getScheduler();
+            scheduler = schedulerFactoryBean.getScheduler();
+            scheduler.scheduleJob(jobDetail, jobTrigger);
+            stdScheduler.scheduleJob(jobDetail, jobTrigger);
+            quartzScheduler.scheduleJob(jobDetail, jobTrigger);
             Scheduler scheduler = schedulerFactoryBean.getScheduler();
-            //scheduleJob(JobDetail jobDetail, Trigger trigger)
             //将给定的任务详情{JobDetail}添加到调度程序，并将给定的触发器{Trigger}与其关联。
             scheduler.scheduleJob(jobDetail, jobTrigger);
             //调度器开始调度任务
             //org.quartz.SchedulerException: The Scheduler has been shutdown.
             if (scheduler.isShutdown() == true || scheduler.isStarted() == false || scheduler.isInStandbyMode() == true) {
                 scheduler.start();
-                log.info("启动任务, 任务名称:{}, 分组:{}, 触发器名称:{}, 分组:{}, 间隔时间:{}s", jobName, jobGroup, triggerName, triggerGroup, cronExpression);
+                log.info("任务名称:{}, 分组:{}, 触发器名称:{}, 分组:{}, 间隔时间:{}s", jobName, jobGroup, triggerName, triggerGroup, cronExpression);
             }
         } catch (SchedulerException ex) {
             log.error("Quartz add task failed: {}", ex.getMessage());
