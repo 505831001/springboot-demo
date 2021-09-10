@@ -7,6 +7,7 @@ import com.example.model.QrtzJobDetails;
 import com.example.service.QrtzJobDetailsService;
 import com.example.utils.ResultData;
 import lombok.extern.log4j.Log4j2;
+import org.apache.commons.lang3.time.DateUtils;
 import org.quartz.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -47,7 +48,7 @@ public class QrtzJobDetailsServiceImpl extends ServiceImpl<QrtzJobDetailsMapper,
                 .withIdentity("08613713731139")
                 .withDescription(Scheduler.DEFAULT_GROUP)
                 .startAt(new Date())
-                .endAt(buildDatePlus())
+                .endAt(DateUtils.addDays(new Date(), 1))
                 .withSchedule(CronScheduleBuilder.cronSchedule("0/10 * * * * ?"))
                 .build();
         try {
