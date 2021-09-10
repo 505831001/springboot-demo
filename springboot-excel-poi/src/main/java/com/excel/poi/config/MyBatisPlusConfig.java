@@ -1,14 +1,15 @@
-package org.liuweiwei.config;
+package com.excel.poi.config;
 
 import com.baomidou.mybatisplus.annotation.DbType;
 import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;
+import com.baomidou.mybatisplus.extension.plugins.PaginationInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.inner.PaginationInnerInterceptor;
 import com.baomidou.mybatisplus.extension.spring.MybatisSqlSessionFactoryBean;
+import com.excel.poi.utils.AESUtils;
 import com.mysql.jdbc.jdbc2.optional.MysqlXADataSource;
 import lombok.extern.log4j.Log4j2;
 import org.apache.ibatis.plugin.Interceptor;
 import org.apache.ibatis.session.SqlSessionFactory;
-import org.liuweiwei.utils.AESUtils;
 import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -28,7 +29,7 @@ import javax.sql.DataSource;
  */
 @Configuration
 @Log4j2
-public class MyBatisPlusDbConfig {
+public class MyBatisPlusConfig {
 
     @Value(value = "${spring.datasource.encrypt}")
     private String encrypt;

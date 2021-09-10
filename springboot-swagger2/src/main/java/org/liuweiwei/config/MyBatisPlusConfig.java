@@ -1,28 +1,23 @@
-package com.liuweiwei.config;
+package org.liuweiwei.config;
 
 import com.baomidou.mybatisplus.annotation.DbType;
 import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;
-import com.baomidou.mybatisplus.extension.plugins.PaginationInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.inner.PaginationInnerInterceptor;
 import com.baomidou.mybatisplus.extension.spring.MybatisSqlSessionFactoryBean;
-import com.liuweiwei.utils.AESUtils;
 import com.mysql.jdbc.jdbc2.optional.MysqlXADataSource;
-import lombok.extern.log4j.Log4j;
 import lombok.extern.log4j.Log4j2;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.plugin.Interceptor;
 import org.apache.ibatis.session.SqlSessionFactory;
+import org.liuweiwei.utils.AESUtils;
 import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceProperties;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.boot.jta.atomikos.AtomikosDataSourceBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 
 import javax.sql.DataSource;
@@ -33,7 +28,7 @@ import javax.sql.DataSource;
  */
 @Configuration
 @Log4j2
-public class MyBatisPlusDbConfig {
+public class MyBatisPlusConfig {
 
     @Value(value = "${spring.datasource.encrypt}")
     private String encrypt;
@@ -53,7 +48,6 @@ public class MyBatisPlusDbConfig {
 
     /**
      * 主数据源-MySQL数据源
-     * @param dataSourceProperties
      * @return
      */
     @Primary
@@ -77,7 +71,7 @@ public class MyBatisPlusDbConfig {
      */
     @Primary
     @Bean(name = "sqlSessionFactory")
-    public SqlSessionFactory sqlSessionFactory(DataSource dataSource) throws Exception {
+    public SqlSessionFactory sqlSessionFactory(@Qualifier("dataSource") DataSource dataSource) throws Exception {
         MybatisSqlSessionFactoryBean sqlSessionFactoryBean = new MybatisSqlSessionFactoryBean();
         sqlSessionFactoryBean.setDataSource(dataSource);
         //MyBatisPlus分页插件旧版
@@ -98,7 +92,7 @@ public class MyBatisPlusDbConfig {
      */
     @Primary
     @Bean(name = "transactionManager")
-    public DataSourceTransactionManager transactionManager(DataSource dataSource) {
+    public DataSourceTransactionManager transactionManager(@Qualifier("dataSource") DataSource dataSource) {
         return new DataSourceTransactionManager(dataSource);
     }
 
@@ -109,40 +103,10 @@ public class MyBatisPlusDbConfig {
      */
     @Primary
     @Bean(name = "sqlSessionTemplate")
-    public SqlSessionTemplate sqlSessionTemplate(SqlSessionFactory sqlSessionFactory) {
+    public SqlSessionTemplate sqlSessionTemplate(@Qualifier("sqlSessionFactory") SqlSessionFactory sqlSessionFactory) {
         return new SqlSessionTemplate(sqlSessionFactory);
     }
 
     // --- 数据源2-Spring-jta-Atomikos数据源+JDBC模板 ---
 
-    /**
-     * 次数据源配置-Atomikos数据源
-     * @return
-     */
-    @Bean(name = "atomikosDataSource")
-    @ConfigurationProperties(prefix = "spring.jta.atomikos.datasource")
-    public DataSource atomikosDataSource() {
-        AtomikosDataSourceBean atomikos = new AtomikosDataSourceBean();
-        return atomikos;
-    }
-
-    /**
-     * 次事务管理器-Atomikos数据源
-     * @param atomikosDataSource
-     * @return
-     */
-    @Bean(name = "atomikosTransactionManager")
-    public DataSourceTransactionManager atomikosTransactionManager(@Qualifier("atomikosDataSource") DataSource atomikosDataSource) {
-        return new DataSourceTransactionManager(atomikosDataSource);
-    }
-
-    /**
-     * 创建会话模板-Atomikos数据源
-     * @param atomikosDataSource
-     * @return
-     */
-    @Bean(name = "atomikosJdbcTemplate")
-    public JdbcTemplate atomikosJdbcTemplate(@Qualifier("atomikosDataSource") DataSource atomikosDataSource) {
-        return new JdbcTemplate(atomikosDataSource);
-    }
 }

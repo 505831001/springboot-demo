@@ -29,7 +29,7 @@ import javax.sql.DataSource;
  */
 @Configuration
 @Log4j2
-public class MyBatisDbConfig {
+public class MyBatisConfig {
 
     @Value(value = "${spring.datasource.encrypt}")
     private String encrypt;
