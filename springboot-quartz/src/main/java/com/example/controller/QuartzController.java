@@ -10,6 +10,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -116,7 +117,7 @@ public class QuartzController {
                 .withDescription(triggerDescription)
                 .withPriority(triggerPriority)
                 .startAt(new Date())
-                .endAt(new Date())
+                .endAt(buildDatePlus())
                 .startNow()
                 .withSchedule(CronScheduleBuilder.cronSchedule("0/10 * * * * ?"))
                 .build();
@@ -266,5 +267,17 @@ public class QuartzController {
             return "Failed";
         }
         return "Okay";
+    }
+
+    /**
+     * 日期：加一天
+     * @return java.util.Date
+     */
+    private Date buildDatePlus() {
+        java.util.Calendar calendar = java.util.Calendar.getInstance();
+        calendar.setTime(new Date());
+        calendar.add(Calendar.DATE, 1);
+        Date date = calendar.getTime();
+        return date;
     }
 }
