@@ -16,6 +16,11 @@
     <version>0.0.1-SNAPSHOT</version>
 
     <packaging>pom</packaging>
+    <modules>
+        <module>springboot-security-oauth2-server</module>
+        <module>springboot-security-oauth2-client</module>
+    </modules>
+
     <name>springboot-security-oauth2</name>
     <description>Spring security oauth2 project for Spring Boot</description>
 
@@ -110,8 +115,28 @@
         </dependency>
     </dependencies>
 
-    <modules>
-        <module>springboot-security-oauth2-server</module>
-        <module>springboot-security-oauth2-client</module>
-    </modules>
+    <repositories>
+        <repository>
+            <id>public</id>
+            <name>aliyun nexus</name>
+            <url>http://maven.aliyun.com/nexus/content/groups/public/</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+        </repository>
+    </repositories>
+
+    <pluginRepositories>
+        <pluginRepository>
+            <id>public</id>
+            <name>aliyun nexus</name>
+            <url>http://maven.aliyun.com/nexus/content/groups/public/</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </pluginRepository>
+    </pluginRepositories>
 </project>

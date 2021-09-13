@@ -38,7 +38,7 @@ public class Swagger2Config {
         parameters.add(parameterBuilder.build());
 
         return new Docket(DocumentationType.SWAGGER_2)
-                .pathMapping("/")
+                //.pathMapping("/")
                 .select()
                 .apis(RequestHandlerSelectors.basePackage("org.liuweiwei.controller"))
                 .paths(PathSelectors.any())
