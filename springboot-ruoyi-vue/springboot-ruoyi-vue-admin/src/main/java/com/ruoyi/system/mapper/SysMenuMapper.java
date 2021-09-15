@@ -2,6 +2,7 @@ package com.ruoyi.system.mapper;
 
 import com.ruoyi.common.core.domain.entity.SysMenu;
 import org.apache.ibatis.annotations.Param;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
@@ -10,8 +11,8 @@ import java.util.List;
  *
  * @author ruoyi
  */
-public interface SysMenuMapper
-{
+@Repository
+public interface SysMenuMapper {
     /**
      * 查询系统菜单列表
      *
@@ -60,8 +61,8 @@ public interface SysMenuMapper
 
     /**
      * 根据角色ID查询菜单树信息
-     * 
-     * @param roleId 角色ID
+     *
+     * @param roleId            角色ID
      * @param menuCheckStrictly 菜单树选择项是否关联显示
      * @return 选中菜单列表
      */

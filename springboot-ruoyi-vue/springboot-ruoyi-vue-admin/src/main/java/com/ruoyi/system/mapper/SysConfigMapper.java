@@ -1,19 +1,20 @@
 package com.ruoyi.system.mapper;
 
 import com.ruoyi.system.domain.SysConfig;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
 /**
  * 参数配置 数据层
- * 
+ *
  * @author ruoyi
  */
-public interface SysConfigMapper
-{
+@Repository
+public interface SysConfigMapper {
     /**
      * 查询参数配置信息
-     * 
+     *
      * @param config 参数配置信息
      * @return 参数配置信息
      */
@@ -21,7 +22,7 @@ public interface SysConfigMapper
 
     /**
      * 查询参数配置列表
-     * 
+     *
      * @param config 参数配置信息
      * @return 参数配置集合
      */
@@ -29,7 +30,7 @@ public interface SysConfigMapper
 
     /**
      * 根据键名查询参数配置信息
-     * 
+     *
      * @param configKey 参数键名
      * @return 参数配置信息
      */
@@ -37,7 +38,7 @@ public interface SysConfigMapper
 
     /**
      * 新增参数配置
-     * 
+     *
      * @param config 参数配置信息
      * @return 结果
      */
@@ -45,7 +46,7 @@ public interface SysConfigMapper
 
     /**
      * 修改参数配置
-     * 
+     *
      * @param config 参数配置信息
      * @return 结果
      */
@@ -53,7 +54,7 @@ public interface SysConfigMapper
 
     /**
      * 删除参数配置
-     * 
+     *
      * @param configId 参数ID
      * @return 结果
      */
@@ -61,7 +62,7 @@ public interface SysConfigMapper
 
     /**
      * 批量删除参数信息
-     * 
+     *
      * @param configIds 需要删除的参数ID
      * @return 结果
      */
