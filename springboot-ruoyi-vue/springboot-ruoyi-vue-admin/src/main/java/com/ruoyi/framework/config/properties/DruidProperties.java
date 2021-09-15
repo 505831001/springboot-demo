@@ -6,12 +6,12 @@ import org.springframework.context.annotation.Configuration;
 
 /**
  * druid 配置属性
- * 
+ *
  * @author ruoyi
  */
 @Configuration
-public class DruidProperties
-{
+public class DruidProperties {
+
     @Value("${spring.datasource.druid.initialSize}")
     private int initialSize;
 
@@ -45,8 +45,7 @@ public class DruidProperties
     @Value("${spring.datasource.druid.testOnReturn}")
     private boolean testOnReturn;
 
-    public DruidDataSource dataSource(DruidDataSource datasource)
-    {
+    public DruidDataSource dataSource(DruidDataSource datasource) {
         /** 配置初始化大小、最小、最大 */
         datasource.setInitialSize(initialSize);
         datasource.setMaxActive(maxActive);

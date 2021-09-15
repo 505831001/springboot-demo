@@ -18,29 +18,23 @@ import java.lang.reflect.Method;
  * @author ruoyi
  */
 @Component
-public abstract class RepeatSubmitInterceptor extends HandlerInterceptorAdapter
-{
+public abstract class RepeatSubmitInterceptor extends HandlerInterceptorAdapter {
+
     @Override
-    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception
-    {
-        if (handler instanceof HandlerMethod)
-        {
+    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+        if (handler instanceof HandlerMethod) {
             HandlerMethod handlerMethod = (HandlerMethod) handler;
             Method method = handlerMethod.getMethod();
             RepeatSubmit annotation = method.getAnnotation(RepeatSubmit.class);
-            if (annotation != null)
-            {
-                if (this.isRepeatSubmit(request))
-                {
+            if (annotation != null) {
+                if (this.isRepeatSubmit(request)) {
                     AjaxResult ajaxResult = AjaxResult.error("不允许重复提交，请稍后再试");
                     ServletUtils.renderString(response, JSONObject.toJSONString(ajaxResult));
                     return false;
                 }
             }
             return true;
-        }
-        else
-        {
+        } else {
             return super.preHandle(request, response, handler);
         }
     }
