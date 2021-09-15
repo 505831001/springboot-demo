@@ -2,6 +2,9 @@ package com.ruoyi.web.controller.monitor;
 
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.utils.StringUtils;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisCallback;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -14,20 +17,22 @@ import java.util.*;
 
 /**
  * 缓存监控
- * 
+ *
  * @author ruoyi
  */
 @RestController
-@RequestMapping("/monitor/cache")
-public class CacheController
-{
+@RequestMapping(value = "/monitor/cache")
+@Api(value = "", tags = "缓存监控处理控制器")
+@Slf4j
+public class CacheController {
+
     @Autowired
     private RedisTemplate<String, String> redisTemplate;
 
     @PreAuthorize("@ss.hasPermi('monitor:cache:list')")
-    @GetMapping()
-    public AjaxResult getInfo() throws Exception
-    {
+    @GetMapping(value = "")
+    @ApiOperation(value = "缓存监控信息", notes = "缓存监控信息", tags = "")
+    public AjaxResult getInfo() throws Exception {
         Properties info = (Properties) redisTemplate.execute((RedisCallback<Object>) connection -> connection.info());
         Properties commandStats = (Properties) redisTemplate.execute((RedisCallback<Object>) connection -> connection.info("commandstats"));
         Object dbSize = redisTemplate.execute((RedisCallback<Object>) connection -> connection.dbSize());

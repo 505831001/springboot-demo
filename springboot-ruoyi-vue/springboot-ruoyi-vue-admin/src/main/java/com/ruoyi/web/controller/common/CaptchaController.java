@@ -7,6 +7,9 @@ import com.ruoyi.common.core.redis.RedisCache;
 import com.ruoyi.common.utils.sign.Base64;
 import com.ruoyi.common.utils.uuid.IdUtils;
 import com.ruoyi.system.service.ISysConfigService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.util.FastByteArrayOutputStream;
@@ -22,12 +25,14 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * 验证码操作处理
- * 
+ *
  * @author ruoyi
  */
 @RestController
-public class CaptchaController
-{
+@Api(value = "", tags = "验证码操作处理控制器")
+@Slf4j
+public class CaptchaController {
+
     @Resource(name = "captchaProducer")
     private Producer captchaProducer;
 
@@ -36,24 +41,24 @@ public class CaptchaController
 
     @Autowired
     private RedisCache redisCache;
-    
+
     // 验证码类型
-    @Value("${ruoyi.captchaType}")
+    @Value(value = "${ruoyi.captchaType}")
     private String captchaType;
-    
+
     @Autowired
     private ISysConfigService configService;
+
     /**
      * 生成验证码
      */
     @GetMapping("/captchaImage")
-    public AjaxResult getCode(HttpServletResponse response) throws IOException
-    {
+    @ApiOperation(value = "生成验证码", notes = "生成验证码", tags = "")
+    public AjaxResult getCode(HttpServletResponse response) throws IOException {
         AjaxResult ajax = AjaxResult.success();
         boolean captchaOnOff = configService.selectCaptchaOnOff();
         ajax.put("captchaOnOff", captchaOnOff);
-        if (!captchaOnOff)
-        {
+        if (!captchaOnOff) {
             return ajax;
         }
 
@@ -65,15 +70,12 @@ public class CaptchaController
         BufferedImage image = null;
 
         // 生成验证码
-        if ("math".equals(captchaType))
-        {
+        if ("math".equals(captchaType)) {
             String capText = captchaProducerMath.createText();
             capStr = capText.substring(0, capText.lastIndexOf("@"));
             code = capText.substring(capText.lastIndexOf("@") + 1);
             image = captchaProducerMath.createImage(capStr);
-        }
-        else if ("char".equals(captchaType))
-        {
+        } else if ("char".equals(captchaType)) {
             capStr = code = captchaProducer.createText();
             image = captchaProducer.createImage(capStr);
         }
@@ -81,12 +83,9 @@ public class CaptchaController
         redisCache.setCacheObject(verifyKey, code, Constants.CAPTCHA_EXPIRATION, TimeUnit.MINUTES);
         // 转换流信息写出
         FastByteArrayOutputStream os = new FastByteArrayOutputStream();
-        try
-        {
+        try {
             ImageIO.write(image, "jpg", os);
-        }
-        catch (IOException e)
-        {
+        } catch (IOException e) {
             return AjaxResult.error(e.getMessage());
         }
 

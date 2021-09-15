@@ -1,4 +1,4 @@
-package com.ruoyi.web.core.config;
+package com.ruoyi.web.config;
 
 import io.swagger.annotations.ApiOperation;
 import io.swagger.models.auth.In;
