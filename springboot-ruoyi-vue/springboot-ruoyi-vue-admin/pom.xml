@@ -153,6 +153,20 @@
             <artifactId>swagger-models</artifactId>
             <version>1.6.2</version>
         </dependency>
+        <!-- mybatis plus - core<基础BaseMapper> + extension<顶级IService> -->
+        <!-- mybatis-plus.mapper-locations=classpath*:mapper/*.xml -->
+        <!-- mybatis-plus.type-aliases-package=com.example.model -->
+        <dependency>
+            <groupId>com.baomidou</groupId>
+            <artifactId>mybatis-plus-boot-starter</artifactId>
+            <version>3.4.0</version>
+        </dependency>
+        <!-- mybatis plus - generator -->
+        <dependency>
+            <groupId>com.baomidou</groupId>
+            <artifactId>mybatis-plus-generator</artifactId>
+            <version>3.4.0</version>
+        </dependency>
         <!-- Mysql驱动包 -->
         <dependency>
             <groupId>mysql</groupId>
