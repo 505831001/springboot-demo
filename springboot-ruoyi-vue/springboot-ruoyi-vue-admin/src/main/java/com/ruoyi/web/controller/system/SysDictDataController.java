@@ -73,6 +73,7 @@ public class SysDictDataController extends BaseController {
     @GetMapping(value = "/type/{dictType}")
     @ApiOperation(value = "根据字典类型查询字典数据信息", notes = "根据字典类型查询字典数据信息", tags = "")
     public AjaxResult dictType(@PathVariable String dictType) {
+        log.info("[step 00] Request url: http://localhost/dev-api/system/dict/data/type/" + dictType);
         List<SysDictData> data = dictTypeService.selectDictDataByType(dictType);
         if (StringUtils.isNull(data)) {
             data = new ArrayList<SysDictData>();

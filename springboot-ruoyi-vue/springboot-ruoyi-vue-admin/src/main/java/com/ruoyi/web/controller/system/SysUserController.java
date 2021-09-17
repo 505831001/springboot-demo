@@ -54,6 +54,7 @@ public class SysUserController extends BaseController {
     @GetMapping(value = "/list")
     @ApiOperation(value = "获取用户列表", notes = "获取用户列表", tags = "")
     public TableDataInfo list(SysUser user) {
+        log.info("[step 01] Request url: http://localhost/dev-api/system/user/list?pageNum=1&pageSize=10");
         startPage();
         List<SysUser> list = userService.selectUserList(user);
         return getDataTable(list);

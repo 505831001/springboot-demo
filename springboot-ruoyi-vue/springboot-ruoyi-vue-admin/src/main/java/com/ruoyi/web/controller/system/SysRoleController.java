@@ -53,6 +53,7 @@ public class SysRoleController extends BaseController {
     @GetMapping(value = "/list")
     @ApiOperation(value = "角色信息列表", notes = "角色信息列表", tags = "")
     public TableDataInfo list(SysRole role) {
+        log.info("[step 02] Request url: http://localhost/dev-api/system/role/list?pageNum=1&pageSize=10");
         startPage();
         List<SysRole> list = roleService.selectRoleList(role);
         return getDataTable(list);

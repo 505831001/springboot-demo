@@ -72,6 +72,7 @@ public class SysConfigController extends BaseController {
     @GetMapping(value = "/configKey/{configKey}")
     @ApiOperation(value = "根据参数键名查询参数值", notes = "根据参数键名查询参数值", tags = "")
     public AjaxResult getConfigKey(@PathVariable String configKey) {
+        log.info("[step 01] Request url: http://localhost/dev-api/system/config/configKey/sys.user.initPassword");
         return AjaxResult.success(configService.selectConfigByKey(configKey));
     }
 

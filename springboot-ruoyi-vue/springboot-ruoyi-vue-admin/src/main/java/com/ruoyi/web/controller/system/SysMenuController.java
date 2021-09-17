@@ -39,6 +39,7 @@ public class SysMenuController extends BaseController {
     @GetMapping(value = "/list")
     @ApiOperation(value = "获取菜单列表", notes = "获取菜单列表", tags = "")
     public AjaxResult list(SysMenu menu) {
+        log.info("[step 03] Request url: http://localhost/dev-api/system/menu/list");
         List<SysMenu> menus = menuService.selectMenuList(menu, getUserId());
         return AjaxResult.success(menus);
     }

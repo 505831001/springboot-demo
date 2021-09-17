@@ -81,6 +81,7 @@ public class SysDeptController extends BaseController {
     @GetMapping(value = "/treeselect")
     @ApiOperation(value = "获取部门下拉树列表", notes = "获取部门下拉树列表", tags = "")
     public AjaxResult treeselect(SysDept dept) {
+        log.info("[step 01] Request url: http://localhost/dev-api/system/dept/treeselect");
         List<SysDept> depts = deptService.selectDeptList(dept);
         return AjaxResult.success(deptService.buildDeptTreeSelect(depts));
     }
