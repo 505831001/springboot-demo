@@ -72,6 +72,13 @@
 
     <build>
         <plugins>
+            <!-- Spring默认JDK编译版本
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+             -->
+            <!-- Apache指定JDK编译版本 -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
