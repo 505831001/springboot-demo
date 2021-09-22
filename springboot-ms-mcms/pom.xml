@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>2.2.13.RELEASE</version>
+    </parent>
+
+    <groupId>net.mingsoft</groupId>
+    <artifactId>springboot-ms-mcms</artifactId>
+    <version>5.2.3</version>
+
+    <name>springboot-ms-mcms</name>
+    <!-- 打包war包 -->
+    <!-- <packaging>war</packaging> -->
+
+    <properties>
+        <java.version>1.8</java.version>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
+
+    <dependencies>
+        <!-- base -->
+        <dependency>
+            <groupId>net.mingsoft</groupId>
+            <artifactId>ms-base</artifactId>
+            <version>2.1.7</version>
+        </dependency>
+        <!-- base源码 -->
+        <dependency>
+            <groupId>net.mingsoft</groupId>
+            <artifactId>ms-base</artifactId>
+            <version>2.1.7</version>
+            <classifier>sources</classifier>
+            <scope>provided</scope>
+        </dependency>
+
+        <!-- basic -->
+        <dependency>
+            <groupId>net.mingsoft</groupId>
+            <artifactId>ms-basic</artifactId>
+            <version>2.1.7</version>
+        </dependency>
+        <!-- basic源码 -->
+        <dependency>
+            <groupId>net.mingsoft</groupId>
+            <artifactId>ms-basic</artifactId>
+            <version>2.1.7</version>
+            <classifier>sources</classifier>
+            <scope>provided</scope>
+        </dependency>
+
+        <!-- mdiy -->
+        <dependency>
+            <groupId>net.mingsoft</groupId>
+            <artifactId>ms-mdiy</artifactId>
+            <version>2.1.7</version>
+        </dependency>
+        <!-- mdiy源码 -->
+        <dependency>
+            <groupId>net.mingsoft</groupId>
+            <artifactId>ms-mdiy</artifactId>
+            <version>2.1.7</version>
+            <classifier>sources</classifier>
+            <scope>provided</scope>
+        </dependency>
+
+        <!-- store入口依赖（源码不开发），如果不需要MStore可以直接去掉依赖 -->
+        <dependency>
+            <groupId>net.mingsoft</groupId>
+            <artifactId>store-client</artifactId>
+            <version>2.1.7.1</version>
+        </dependency>
+
+        <!-- lombok -->
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <optional>true</optional>
+        </dependency>
+    </dependencies>
+
+    <repositories>
+        <repository>
+            <id>central-repos</id>
+            <name>Central Repository 2</name>
+            <url>https://repo.maven.apache.org/maven2/</url>
+        </repository>
+        <!--阿里云仓库-->
+        <repository>
+            <id>alimaven</id>
+            <name>aliyun maven</name>
+            <url>https://maven.aliyun.com/nexus/content/groups/public/</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
+    </repositories>
+
+    <build>
+        <finalName>springboot-ms-mcms</finalName>
+        <resources>
+            <resource>
+                <directory>src/main/webapp</directory>
+                <excludes>
+                    <!-- 打包生产并手动将static、html、upload、template复制到生产 -->
+                    <exclude>static/</exclude>
+                    <exclude>html/</exclude>
+                    <exclude>upload/</exclude>
+                    <exclude>template/</exclude>
+                    <!-- 如果生产需要实时修改WEB-INF/下的页面可，启用这行并手动将项目中的WEB-INF目录复制到运行环境 -->
+                    <!-- <exclude>WEB-INF/</exclude>-->
+                </excludes>
+            </resource>
+            <resource>
+                <directory>src/main/resources</directory>
+            </resource>
+            <resource>
+                <directory>src/main/java</directory>
+                <excludes>
+                    <exclude>**/*.java</exclude>
+                </excludes>
+            </resource>
+        </resources>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <executable>true</executable>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.1</version>
+                <configuration>
+                    <source>${java.version}</source>
+                    <target>${java.version}</target>
+                    <encoding>${project.build.sourceEncoding}</encoding>
+                    <showDeprecation>true</showDeprecation>
+                    <showWarnings>true</showWarnings>
+                    <compilerArguments>
+                        <verbose/>
+                        <bootclasspath>${java.home}/lib/rt.jar${path.separator}${java.home}/lib/jce.jar</bootclasspath>
+                    </compilerArguments>
+                </configuration>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.codehaus.plexus</groupId>
+                        <artifactId>plexus-compiler-eclipse</artifactId>
+                        <version>2.1</version>
+                    </dependency>
+                </dependencies>
+            </plugin>
+        </plugins>
+        <defaultGoal>compile</defaultGoal>
+    </build>
+</project>

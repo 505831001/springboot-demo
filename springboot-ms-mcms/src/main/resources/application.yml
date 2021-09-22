@@ -1,0 +1,92 @@
+server:
+  port: 8080
+  servlet.session.timeout: P0DT60M0S #D天H小时M分钟S秒，字符T是紧跟在时分秒之前的，每个单位都必须由数字开始,且时分秒顺序不能乱
+#  ssl: #https证书配置 配置了之后只能通过https访问应用
+#    key-store: xxx.pfx 证书文件
+#    key-store-password:  1234 证书密码
+
+logging:
+  level:
+    net.mingsoft: debug
+  file:
+    name: mcms.log #会在项目的根目录下生成对应的mcms.log文件，也可以根据实际情况写绝对路径，例如：d:/mcms.log
+    path: log #会在项目的根目录下生成log目录，里面会生成对应的日期目录，日期目录下面生成日志压缩包备份文件,默认按每10M分割一个日志文件，例如：log/2020-01/app-2020-01-03-18.1.log.gz（表示2020年1月3号下午六点的第一个备份），也可以根据实际情况写绝对路径，例如：d:/log
+ms:
+  html-dir: html
+  #  scheme: https #解决使用代理服务器代理应用时标签解析域名依旧为http的问题
+  swagger-enable: false #启用swagger文档，生产的时候务必关掉 访问地址：http://ip|域名/项目发布名/swagger-ui.html
+  manager:
+    path: /ms #后台访问的路径，如:http://项目/ms/login.do，生产的时候建议修改
+    view-path: /WEB-INF/manager #后台视图层路径配置
+    check-code: true #默认开启验证码验证，false验证码不验证
+
+  upload:
+    enable-web: true  #启用web层的上传
+    template: template #模板文件夹支持重命名，不支持路径
+    path: upload #文件上传路径，可以根据实际写绝对路径
+    mapping: /upload/** #修改需要谨慎，系统第一次部署可以随意修改，如果已经有了上传数据，再次修改会导致之前上传的文件404
+    denied: .exe,.jsp
+    back-up: /upload_back
+    multipart:
+      #最大上传文件大小 单位：KB
+      max-file-size: 10240
+      #文件暂存临时目录
+      upload-temp-dir: temp
+      #临时文件大小
+      max-in-memory-size: 10240
+      #总上传最大大小 单位：KB -1禁用
+      max-request-size: -1
+
+spring:
+  datasource:
+    druid:
+      stat-view-servlet:
+        enabled: false #启用druid监控
+  profiles:
+    active: dev
+  cache:
+    ehcache:
+      config: classpath:ehcache.xml
+  mvc:
+    pathmatch:
+      use-suffix-pattern: true
+  devtools:
+    restart:
+      enabled: true
+      additional-paths: src/main/java
+      exclude: static/**,WEB-INF/**
+  servlet:
+    multipart:
+      max-request-size: 100MB
+      enabled: false
+  freemarker:
+    suffix: .ftl
+    charset: UTF-8
+    content-type: text/html
+    allow-request-override: true
+    allow-session-override: true
+    expose-request-attributes: true
+    expose-session-attributes: true
+    expose-spring-macro-helpers: true
+    prefer-file-system-access: false
+    template-loader-path: file:WEB-INF/,file:WEB-INF/manager,classpath:/,classpath:/WEB-INF/manager,classpath:/WEB-INF
+    settings:
+      template_update_delay: 1
+      default_encoding: UTF-8
+      classic_compatible: true
+      date_format: yyyy-MM-dd
+      time_format: HH:mm:ss
+      datetime_format: yyyy-MM-dd HH:mm:ss
+      number_format: 0.##
+  http:
+    encoding:
+      force: true
+      charset: utf-8
+      enabled: true
+
+mybatis-plus:
+  global-config:
+    db-config:
+      id-type: auto
+  configuration:
+    database-id: mysql
