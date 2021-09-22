@@ -1,5 +1,6 @@
 package org.liuweiwei.config;
 
+import io.swagger.annotations.ApiOperation;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import springfox.documentation.builders.ApiInfoBuilder;
@@ -38,12 +39,14 @@ public class Swagger2Config {
         parameters.add(parameterBuilder.build());
 
         return new Docket(DocumentationType.SWAGGER_2)
-                //.pathMapping("/")
+                .enable(true)
+                .apiInfo(apiInfo())
                 .select()
-                .apis(RequestHandlerSelectors.basePackage("org.liuweiwei.controller"))
+                .apis(RequestHandlerSelectors.withMethodAnnotation(ApiOperation.class))
+                //.apis(RequestHandlerSelectors.basePackage("org.liuweiwei.controller"))
+                //.apis(RequestHandlerSelectors.any())
                 .paths(PathSelectors.any())
                 .build()
-                .apiInfo(apiInfo())
                 .globalOperationParameters(parameters);
     }
 

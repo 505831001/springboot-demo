@@ -25,13 +25,13 @@ public class Swagger3Config {
         return new Docket(DocumentationType.OAS_30)
                 .enable(swaggerEnabled)
                 //.pathMapping("/")
+                .apiInfo(apiInfo())
                 .select()
                 .apis(RequestHandlerSelectors.basePackage("org.example.controller"))
                 //.apis(RequestHandlerSelectors.withMethodAnnotation(ApiOperation.class))
                 //.apis(RequestHandlerSelectors.any())
                 .paths(PathSelectors.any())
-                .build()
-                .apiInfo(apiInfo());
+                .build();
     }
 
     private ApiInfo apiInfo() {

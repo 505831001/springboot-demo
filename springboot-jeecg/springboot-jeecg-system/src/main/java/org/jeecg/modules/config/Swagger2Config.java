@@ -55,12 +55,14 @@ public class Swagger2Config implements WebMvcConfigurer {
 	@Bean
 	public Docket createRestApi() {
 		return new Docket(DocumentationType.SWAGGER_2)
+				.enable(true)
 				.apiInfo(apiInfo())
 				.select()
-				//此包路径下的类，才生成接口文档
-				//.apis(RequestHandlerSelectors.basePackage("org.jeecg.modules"))
 				//加了ApiOperation注解的类，才生成接口文档
 	            .apis(RequestHandlerSelectors.withMethodAnnotation(ApiOperation.class))
+				//此包路径下的类，才生成接口文档
+				//.apis(RequestHandlerSelectors.basePackage("org.jeecg.modules"))
+				//.apis(RequestHandlerSelectors.any())
 				.paths(PathSelectors.any())
 				.build()
 				.securitySchemes(Collections.singletonList(securityScheme()))
@@ -77,6 +79,7 @@ public class Swagger2Config implements WebMvcConfigurer {
 	SecurityScheme securityScheme() {
 		return new ApiKey(DefContants.X_ACCESS_TOKEN, DefContants.X_ACCESS_TOKEN, "header");
 	}
+
 	/**
 	 * JWT token
 	 * @return
@@ -100,7 +103,7 @@ public class Swagger2Config implements WebMvcConfigurer {
 				.title("Jeecg-Boot 后台服务API接口文档")
 				// 版本号
 				.version("1.0")
-//				.termsOfServiceUrl("NO terms of service")
+				//.termsOfServiceUrl("NO terms of service")
 				// 描述
 				.description("后台API接口")
 				// 作者
@@ -109,5 +112,4 @@ public class Swagger2Config implements WebMvcConfigurer {
                 .licenseUrl("http://www.apache.org/licenses/LICENSE-2.0.html")
 				.build();
 	}
-
 }
