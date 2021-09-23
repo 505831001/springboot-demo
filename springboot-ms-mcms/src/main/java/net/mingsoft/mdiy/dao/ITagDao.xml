@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="net.mingsoft.mdiy.dao.ITagDao">
+    <resultMap id="resultMap" type="net.mingsoft.mdiy.entity.TagEntity">
+        <id column="ID" property="id" /><!--暂无描述 -->
+        <result column="TAG_NAME" property="tagName" /><!--标签名称 -->
+        <result column="TAG_TYPE" property="tagType" /><!--标签类型 -->
+        <result column="TAG_DESCRIPTION" property="tagDescription" /><!--描述 -->
+    </resultMap>
+
+    <!--保存-->
+    <insert id="saveEntity" useGeneratedKeys="true" keyProperty="id"
+            parameterType="net.mingsoft.mdiy.entity.TagEntity" flushCache="true" >
+        insert into mdiy_tag
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="tagName != null and tagName != ''">TAG_NAME,</if>
+            <if test="tagType != null and tagType != ''">TAG_TYPE,</if>
+            <if test="tagDescription != null and tagDescription != ''">TAG_DESCRIPTION,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="tagName != null and tagName != ''">#{tagName},</if>
+            <if test="tagType != null and tagType != ''">#{tagType},</if>
+            <if test="tagDescription != null and tagDescription != ''">#{tagDescription},</if>
+        </trim>
+    </insert>
+
+    <!--更新-->
+    <update id="updateEntity" parameterType="net.mingsoft.mdiy.entity.TagEntity" flushCache="true">
+        update mdiy_tag
+        <set>
+            <if test="tagName != null and tagName != ''">TAG_NAME=#{tagName},</if>
+            <if test="tagType != null and tagType != ''">TAG_TYPE=#{tagType},</if>
+            <if test="tagDescription != null and tagDescription != ''">TAG_DESCRIPTION=#{tagDescription},</if>
+        </set>
+        where ID = #{id}
+    </update>
+
+    <!--根据id获取-->
+    <select id="getEntity" resultMap="resultMap" parameterType="int">
+		select * from mdiy_tag where ID=#{id}
+	</select>
+
+    <sql id="queryMdiyTagWhere">
+        <if test="tagName != null and tagName != ''"> and TAG_NAME=#{tagName} </if>
+        <if test="tagType != null and tagType != ''"> and TAG_TYPE=#{tagType} </if>
+        <if test="tagDescription != null and tagDescription != ''"> and TAG_DESCRIPTION=#{tagDescription} </if>
+    </sql>
+
+    <!--根据实体获取-->
+    <select id="getByEntity" resultMap="resultMap" parameterType="net.mingsoft.mdiy.entity.TagEntity" >
+        select * from mdiy_tag
+        <where>
+            <if test="tagName != null and tagName != ''"> and TAG_NAME=#{tagName} </if>
+            <if test="tagType != null and tagType != ''"> and TAG_TYPE=#{tagType} </if>
+            <if test="tagDescription != null and tagDescription != ''"> and TAG_DESCRIPTION=#{tagDescription} </if>
+        </where>
+    </select>
+
+
+    <!--删除-->
+    <delete id="deleteEntity" parameterType="int">
+		delete from mdiy_tag  where ID=#{id}
+	</delete>
+
+    <!--批量删除-->
+    <delete id="delete" >
+        delete from mdiy_tag
+        <where>
+            ID  in <foreach collection="ids" item="item" index="index"
+                            open="(" separator="," close=")">#{item}</foreach>
+        </where>
+    </delete>
+    <!--查询全部-->
+    <select id="queryAll" resultMap="resultMap">
+		select * from mdiy_tag order by ID desc
+	</select>
+    <!--条件查询-->
+    <select id="query" resultMap="resultMap">
+        select * from mdiy_tag
+        <where>
+            <include refid="queryMdiyTagWhere"></include>
+        </where>
+        order by ID desc
+    </select>
+    <update id="updateCache"  flushCache="true">
+		UPDATE mdiy_tag set del=0 where 1=-1
+	</update>
+
+
+</mapper>

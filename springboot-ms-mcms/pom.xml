@@ -54,20 +54,20 @@
             <scope>provided</scope>
         </dependency> -->
 
-        <!-- mdiy -->
+        <!-- mdiy
         <dependency>
             <groupId>net.mingsoft</groupId>
             <artifactId>ms-mdiy</artifactId>
             <version>2.1.7</version>
-        </dependency>
-        <!-- mdiy源码 -->
+        </dependency> -->
+        <!-- mdiy源码
         <dependency>
             <groupId>net.mingsoft</groupId>
             <artifactId>ms-mdiy</artifactId>
             <version>2.1.7</version>
             <classifier>sources</classifier>
             <scope>provided</scope>
-        </dependency>
+        </dependency> -->
 
         <!-- store入口依赖（源码不开发），如果不需要MStore可以直接去掉依赖 -->
         <dependency>
