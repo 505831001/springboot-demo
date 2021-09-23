@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<!-- 管理员持久化层XML配置继承IManagerDao -->
+<mapper namespace="net.mingsoft.basic.dao.IManagerDao">
+    <cache />
+    <sql id="column_list">
+		id,MANAGER_NAME,MANAGER_NICKNAME,MANAGER_PASSWORD,ROLE_ID,PEOPLE_ID,MANAGER_ADMIN
+	</sql>
+
+    <sql id="all_column_list">
+		m.id,m.MANAGER_NAME,m.MANAGER_NICKNAME,m.MANAGER_PASSWORD,m.ROLE_ID,m.PEOPLE_ID,m.MANAGER_ADMIN,
+		r.ROLE_NAME
+	</sql>
+
+    <!-- 管理员表字段与评论实体属性对应，供返回实体信息时使用 -->
+    <resultMap id="resultMap" type="net.mingsoft.basic.entity.ManagerEntity">
+        <id column="id" property="id" />
+        <result column="MANAGER_NAME" property="managerName" />
+        <result column="MANAGER_NICKNAME" property="managerNickName" />
+        <result column="MANAGER_PASSWORD" property="managerPassword" />
+        <result column="ROLE_ID" property="roleId" />
+        <result column="PEOPLE_ID" property="peopleId" />
+        <result column="MANAGER_ADMIN" property="managerAdmin" />
+        <result column="ROLE_NAME" property="roleName" />
+    </resultMap>
+
+
+    <!-- 查询此时登录的管理员的子管理员列表开始 -->
+    <select id="queryAllChildManager" resultMap="resultMap" parameterType="int">
+		select m.*, r.ROLE_NAME from manager m
+		left join role r on m.ROLE_ID = r.id
+		order by m.id DESC
+	</select>
+    <!-- 查询此时登录的管理员的子管理员列表开始  -->
+
+    <sql id="insertColumns">
+        <if test="managerName != null and managerName != ''">MANAGER_NAME,</if>
+        <if test="managerNickName != null and managerNickName != ''">MANAGER_NICKNAME,</if>
+        <if test="managerAdmin != null and managerAdmin != ''">MANAGER_ADMIN,</if>
+        <if test="managerPassword != null and managerPassword != ''">MANAGER_PASSWORD,</if>
+        <if test="roleId &gt; 0">ROLE_ID,</if>
+        <if test="peopleId &gt; 0">PEOPLE_ID,</if>
+    </sql>
+
+    <sql id="insertValues">
+        <if test="managerName != null and managerName != ''">#{managerName},</if>
+        <if test="managerNickName != null and managerNickName != ''">#{managerNickName},</if>
+        <if test="managerAdmin != null and managerAdmin != ''">#{managerAdmin},</if>
+        <if test="managerPassword != null and managerPassword != ''">#{managerPassword},</if>
+        <if test="roleId &gt; 0">#{roleId},</if>
+        <if test="peopleId &gt; 0">#{peopleId},</if>
+    </sql>
+
+    <insert id="saveEntity" parameterType="net.mingsoft.basic.entity.ManagerEntity"  useGeneratedKeys="true" keyProperty="id" >
+        insert into manager
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <include refid="insertColumns"></include>
+        </trim>
+        <!-- 注入控制层字段 -->
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <include refid="insertValues"></include>
+        </trim>
+    </insert>
+
+
+    <!-- 更新缓存开始 -->
+    <update id="updateCache"  flushCache="true">
+		UPDATE manager set del=0 where 1=-1
+	</update>
+    <!-- 更新缓存结束 -->
+
+    <!-- 删除管理员开始 -->
+    <delete id="deleteEntity" parameterType="int" flushCache="true">
+		delete from manager where id = #{id}
+	</delete>
+    <!-- 删除管理员结束 -->
+
+    <!--批量删除-->
+    <delete id="delete" flushCache="true">
+        delete from manager
+        <where>
+            id  in <foreach collection="ids" item="item" index="index"
+                            open="(" separator="," close=")">#{item}</foreach>
+        </where>
+    </delete>
+
+    <!-- 查询管理员开始 -->
+    <select id="getEntity" resultMap="resultMap" parameterType="int">
+        select
+        <include refid="column_list"/>
+        from manager where id=#{id}
+    </select>
+    <!-- 查询管理员结束 -->
+
+    <!--根据实体获取-->
+    <sql id="getManagerWhere">
+        <if test="managerName != null and managerName != ''"> and MANAGER_NAME=#{managerName} </if>
+        <if test="managerNickName != null and managerNickName != ''"> and MANAGER_NICKNAME=#{managerNickName} </if>
+        <if test="managerPassword != null and managerPassword != ''"> and MANAGER_PASSWORD=#{managerPassword} </if>
+        <if test="managerAdmin != null and managerAdmin != ''">and MANAGER_ADMIN=#{managerAdmin}</if>
+        <if test="roleId &gt; 0"> and ROLE_ID=#{roleId} </if>
+        <if test="peopleId &gt; 0"> and PEOPLE_ID=#{peopleId} </if>
+    </sql>
+    <select id="getByEntity" resultMap="resultMap" parameterType="net.mingsoft.basic.entity.ManagerEntity" >
+        select * from manager
+        <where>
+            <include refid="getManagerWhere"></include>
+        </where>
+    </select>
+
+    <!-- 更新管理员开始 -->
+    <update id="updateEntity" parameterType="net.mingsoft.basic.entity.ManagerEntity" flushCache="true">
+        update manager
+        <set>
+            <if test="managerName != null">MANAGER_NAME=#{managerName},</if>
+            <if test="managerNickName != null">MANAGER_NICKNAME=#{managerNickName},</if>
+            <if test="managerAdmin != null and managerAdmin != ''"> MANAGER_ADMIN=#{managerAdmin},</if>
+            <if test="managerPassword != null and managerPassword != ''">MANAGER_PASSWORD=#{managerPassword},</if>
+            <if test="roleId != null and roleId &gt; 0">ROLE_ID=#{roleId},</if>
+            <if test="peopleId != null and peopleId &gt; 0">PEOPLE_ID=#{peopleId},</if>
+        </set>
+        where id = #{id}
+    </update>
+    <!-- 更新管理员结束 -->
+
+    <!-- 修改用户登录密码开始 -->
+    <update id="updateUserPasswordByUserName" parameterType="net.mingsoft.basic.entity.ManagerEntity" flushCache="true">
+        update manager
+        <set>
+            <if test="managerPassword != null">MANAGER_PASSWORD=#{managerPassword}</if>
+        </set>
+        where MANAGER_NAME = #{managerName}
+    </update>
+    <!-- 修改用户登录密码结束 -->
+
+    <!--查询全部-->
+    <select id="queryAll" resultMap="resultMap">
+		select * from manager order by id desc
+	</select>
+    <!--条件查询-->
+    <select id="query" resultMap="resultMap">
+        select * from manager
+        <where>
+            <if test="managerName != null and managerName != ''"> and MANAGER_NAME=#{managerName} </if>
+            <if test="managerNickName != null and managerNickName != ''"> and MANAGER_NICKNAME=#{managerNickName} </if>
+            <if test="managerAdmin != null and managerAdmin != ''">and MANAGER_ADMIN=#{managerAdmin}</if>
+            <if test="managerPassword != null and managerPassword != ''"> and MANAGER_PASSWORD=#{managerPassword} </if>
+            <if test="roleId &gt; 0"> and ROLE_ID=#{roleId} </if>
+            <if test="peopleId &gt; 0"> and PEOPLE_ID=#{peopleId} </if>
+        </where>
+        order by id desc
+    </select>
+
+</mapper>

@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="net.mingsoft.basic.dao.ILogDao">
+
+    <resultMap id="resultMap" type="net.mingsoft.basic.entity.LogEntity">
+        <id column="id" property="id" /><!--编号 -->
+        <result column="log_title" property="logTitle" /><!--标题 -->
+        <result column="log_ip" property="logIp" /><!--IP -->
+        <result column="log_method" property="logMethod" /><!--请求方法 -->
+        <result column="log_request_method" property="logRequestMethod" /><!--请求方式 -->
+        <result column="log_url" property="logUrl" /><!--请求地址 -->
+        <result column="log_status" property="logStatus" /><!--请求状态 -->
+        <result column="log_business_type" property="logBusinessType" /><!--业务类型 -->
+        <result column="log_user_type" property="logUserType" /><!--用户类型 -->
+        <result column="log_user" property="logUser" /><!--操作人员 -->
+        <result column="log_location" property="logLocation" /><!--所在地区 -->
+        <result column="log_param" property="logParam" /><!--请求参数 -->
+        <result column="log_result" property="logResult" /><!--返回参数 -->
+        <result column="log_error_msg" property="logErrorMsg" /><!--错误消息 -->
+        <result column="create_by" property="createBy" /><!--创建人 -->
+        <result column="create_date" property="createDate" /><!--创建时间 -->
+        <result column="update_by" property="updateBy" /><!--修改人 -->
+        <result column="update_date" property="updateDate" /><!--修改时间 -->
+        <result column="del" property="del" /><!--删除标记 -->
+    </resultMap>
+
+    <!--保存-->
+    <insert id="saveEntity" useGeneratedKeys="true" keyProperty="id"
+            parameterType="net.mingsoft.basic.entity.LogEntity" >
+        insert into logger
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="logTitle != null ">log_title,</if>
+            <if test="logIp != null ">log_ip,</if>
+            <if test="logMethod != null ">log_method,</if>
+            <if test="logRequestMethod != null ">log_request_method,</if>
+            <if test="logUrl != null ">log_url,</if>
+            <if test="logStatus != null ">log_status,</if>
+            <if test="logBusinessType != null ">log_business_type,</if>
+            <if test="logUserType != null ">log_user_type,</if>
+            <if test="logUser != null ">log_user,</if>
+            <if test="logLocation != null ">log_location,</if>
+            <if test="logParam != null ">log_param,</if>
+            <if test="logResult != null ">log_result,</if>
+            <if test="logErrorMsg != null ">log_error_msg,</if>
+            <if test="createBy &gt; 0">create_by,</if>
+            <if test="createDate != null">create_date,</if>
+            <if test="updateBy &gt; 0">update_by,</if>
+            <if test="updateDate != null">update_date,</if>
+            <if test="del != null">del,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="logTitle != null ">#{logTitle},</if>
+            <if test="logIp != null ">#{logIp},</if>
+            <if test="logMethod != null ">#{logMethod},</if>
+            <if test="logRequestMethod != null ">#{logRequestMethod},</if>
+            <if test="logUrl != null ">#{logUrl},</if>
+            <if test="logStatus != null ">#{logStatus},</if>
+            <if test="logBusinessType != null ">#{logBusinessType},</if>
+            <if test="logUserType != null ">#{logUserType},</if>
+            <if test="logUser != null ">#{logUser},</if>
+            <if test="logLocation != null ">#{logLocation},</if>
+            <if test="logParam != null ">#{logParam},</if>
+            <if test="logResult != null ">#{logResult},</if>
+            <if test="logErrorMsg != null ">#{logErrorMsg},</if>
+            <if test="createBy &gt; 0">#{createBy},</if>
+            <if test="createDate != null">#{createDate},</if>
+            <if test="updateBy &gt; 0">#{updateBy},</if>
+            <if test="updateDate != null">#{updateDate},</if>
+            <if test="del != null">#{del},</if>
+        </trim>
+    </insert>
+
+    <!--更新-->
+    <update id="updateEntity" parameterType="net.mingsoft.basic.entity.LogEntity">
+        update logger
+        <set>
+            <if test="logTitle != null ">log_title=#{logTitle},</if>
+            <if test="logIp != null ">log_ip=#{logIp},</if>
+            <if test="logMethod != null ">log_method=#{logMethod},</if>
+            <if test="logRequestMethod != null ">log_request_method=#{logRequestMethod},</if>
+            <if test="logUrl != null ">log_url=#{logUrl},</if>
+            <if test="logStatus != null ">log_status=#{logStatus},</if>
+            <if test="logBusinessType != null ">log_business_type=#{logBusinessType},</if>
+            <if test="logUserType != null ">log_user_type=#{logUserType},</if>
+            <if test="logUser != null ">log_user=#{logUser},</if>
+            <if test="logLocation != null ">log_location=#{logLocation},</if>
+            <if test="logParam != null ">log_param=#{logParam},</if>
+            <if test="logResult != null ">log_result=#{logResult},</if>
+            <if test="logErrorMsg != null ">log_error_msg=#{logErrorMsg},</if>
+            <if test="createBy &gt; 0">create_by=#{createBy},</if>
+            <if test="createDate != null">create_date=#{createDate},</if>
+            <if test="updateBy &gt; 0">update_by=#{updateBy},</if>
+            <if test="updateDate != null">update_date=#{updateDate},</if>
+            <if test="del != null">del=#{del},</if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <!--根据id获取-->
+    <select id="getEntity" resultMap="resultMap" parameterType="int">
+			select * from logger where id=#{id}
+		</select>
+
+    <!--根据实体获取-->
+    <select id="getByEntity" resultMap="resultMap" parameterType="net.mingsoft.basic.entity.LogEntity">
+        select * from logger
+        <where>
+            <if test="logTitle != null and logTitle != ''">and  log_title like CONCAT(CONCAT('%',#{logTitle}),'%')</if>
+            <if test="logIp != null and logIp != ''">and log_ip=#{logIp}</if>
+            <if test="logMethod != null and logMethod != ''">and log_method=#{logMethod}</if>
+            <if test="logRequestMethod != null and logRequestMethod != ''">and log_request_method=#{logRequestMethod}</if>
+            <if test="logUrl != null and logUrl != ''">and  log_url like CONCAT(CONCAT('%',#{logUrl}),'%')</if>
+            <if test="logStatus != null and logStatus != ''">and log_status=#{logStatus}</if>
+            <if test="logBusinessType != null and logBusinessType != ''">and log_business_type=#{logBusinessType}</if>
+            <if test="logUserType != null and logUserType != ''">and log_user_type=#{logUserType}</if>
+            <if test="logUser != null and logUser != ''">and  log_user like CONCAT(CONCAT('%',#{logUser}),'%')</if>
+            <if test="logLocation != null and logLocation != ''">and log_location=#{logLocation}</if>
+            <if test="logParam != null and logParam != ''">and log_param=#{logParam}</if>
+            <if test="logResult != null and logResult != ''">and log_result=#{logResult}</if>
+            <if test="logErrorMsg != null and logErrorMsg != ''">and log_error_msg=#{logErrorMsg}</if>
+            <if test="createBy &gt; 0"> and create_by=#{createBy} </if>
+            <if test="createDate != null"> and create_date=#{createDate} </if>
+            <if test="updateBy &gt; 0"> and update_by=#{updateBy} </if>
+            <if test="updateDate != null"> and update_date=#{updateDate} </if>
+            <if test="del != null"> and del=#{del} </if>
+        </where>
+    </select>
+
+
+    <!--删除-->
+    <delete id="deleteEntity" parameterType="int">
+			delete from logger  where id=#{id}
+		</delete>
+
+    <!--批量删除-->
+    <delete id="delete" >
+        delete from logger
+        <where>
+            id  in <foreach collection="ids" item="item" index="index"
+                            open="(" separator="," close=")">#{item}</foreach>
+        </where>
+    </delete>
+    <!--查询全部-->
+    <select id="queryAll" resultMap="resultMap">
+			select * from logger order by id desc
+		</select>
+    <!--条件查询-->
+    <select id="query" resultMap="resultMap">
+        select * from logger
+        <where>
+            <if test="logTitle != null and logTitle != ''"> and  log_title like CONCAT(CONCAT('%',#{logTitle}),'%')</if>
+            <if test="logIp != null and logIp != ''"> and log_ip=#{logIp}</if>
+            <if test="logMethod != null and logMethod != ''"> and log_method=#{logMethod}</if>
+            <if test="logRequestMethod != null and logRequestMethod != ''"> and log_request_method=#{logRequestMethod}</if>
+            <if test="logUrl != null and logUrl != ''"> and  log_url like CONCAT(CONCAT('%',#{logUrl}),'%')</if>
+            <if test="logStatus != null and logStatus != ''"> and log_status=#{logStatus}</if>
+            <if test="logBusinessType != null and logBusinessType != ''"> and log_business_type=#{logBusinessType}</if>
+            <if test="logUserType != null and logUserType != ''"> and log_user_type=#{logUserType}</if>
+            <if test="logUser != null and logUser != ''"> and  log_user like CONCAT(CONCAT('%',#{logUser}),'%')</if>
+            <if test="logLocation != null and logLocation != ''"> and log_location=#{logLocation}</if>
+            <if test="logParam != null and logParam != ''"> and log_param=#{logParam}</if>
+            <if test="logResult != null and logResult != ''"> and log_result=#{logResult}</if>
+            <if test="logErrorMsg != null and logErrorMsg != ''"> and log_error_msg=#{logErrorMsg}</if>
+            <if test="createBy &gt; 0"> and create_by=#{createBy} </if>
+            <if test="createDate != null"> and create_date=#{createDate} </if>
+            <if test="updateBy &gt; 0"> and update_by=#{updateBy} </if>
+            <if test="updateDate != null"> and update_date=#{updateDate} </if>
+            <if test="del != null"> and del=#{del} </if>
+            <if test="startTime != null and endTime != null">
+                and (date(create_date) between
+                #{startTime} and #{endTime})
+            </if>
+            <include refid="net.mingsoft.base.dao.IBaseDao.sqlWhere"></include>
+        </where>
+        order by id desc
+    </select>
+
+</mapper>

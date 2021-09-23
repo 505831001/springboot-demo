@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="net.mingsoft.basic.dao.IModelDao">
+    <cache />
+    <!-- 表字段 -->
+    <sql id="column_list">
+		id,MODEL_TITLE,MODEL_CODE,MODEL_ID,MODEL_URL,MODEL_DATETIME,MODEL_ICON,MANAGER_ID,MODEL_SORT,MODEL_ISMENU,MODEL_PARENT_IDS,IS_CHILD
+	</sql>
+    <resultMap id="resultMap" type="net.mingsoft.basic.entity.ModelEntity">
+        <id column="id" property="id" /><!--模块自增长id -->
+        <result column="MODEL_TITLE" property="modelTitle" /><!--模块标题 -->
+        <result column="MODEL_CODE" property="modelCode" /><!--模块编码 -->
+        <result column="MODEL_ID" property="modelId" /><!--模块的父模块id -->
+        <result column="MODEL_URL" property="modelUrl" /><!--模块连接地址 -->
+        <result column="MODEL_DATETIME" property="modelDatetime" /><!-- -->
+        <result column="MODEL_ICON" property="modelIcon" /><!--模块图标 -->
+        <result column="MANAGER_ID" property="managerId" /><!--模块关联的关联员id -->
+        <result column="MODEL_SORT" property="modelSort" /><!--模块的排序 -->
+        <result column="MODEL_ISMENU" property="modelIsMenu" /><!--模块是否是菜单 -->
+        <result column="MODEL_PARENT_IDS" property="modelParentIds" /><!--模块是否是菜单 -->
+        <result column="IS_CHILD" property="isChild" /><!--菜单类型-->
+        <result column="DEPTH" property="depth" /><!--菜单层级-->
+    </resultMap>
+    <sql id="insertColumns">
+        <if test="modelTitle != null and modelTitle != ''">MODEL_TITLE,</if>
+        <if test="modelCode != null and modelCode != ''">MODEL_CODE,</if>
+        <if test="modelId &gt; 0">MODEL_ID,</if>
+        <if test="modelUrl != null and modelUrl != ''">MODEL_URL,</if>
+        <if test="modelDatetime != null">MODEL_DATETIME,</if>
+        <if test="modelIcon != null and modelIcon != ''">MODEL_ICON,</if>
+        <if test="managerId != null">MANAGER_ID,</if>
+        <if test="modelSort != null">MODEL_SORT,</if>
+        <if test="modelIsMenu != null">MODEL_ISMENU,</if>
+        <if test="isChild != null and isChild != ''">IS_CHILD,</if>
+        <if test="modelParentIds != null and modelParentIds != ''">MODEL_PARENT_IDS,</if>
+    </sql>
+
+    <sql id="insertValues">
+        <if test="modelTitle != null and modelTitle != ''">#{modelTitle},</if>
+        <if test="modelCode != null and modelCode != ''">#{modelCode},</if>
+        <if test="modelId &gt; 0">#{modelId},</if>
+        <if test="modelUrl != null and modelUrl != ''">#{modelUrl},</if>
+        <if test="modelDatetime != null">#{modelDatetime},</if>
+        <if test="modelIcon != null and modelIcon != ''">#{modelIcon},</if>
+        <if test="managerId != null">#{managerId},</if>
+        <if test="modelSort != null">#{modelSort},</if>
+        <if test="modelIsMenu != null">#{modelIsMenu},</if>
+        <if test="isChild != null and isChild != ''">#{isChild},</if>
+        <if test="modelParentIds != null and modelParentIds != ''">#{modelParentIds},</if>
+    </sql>
+
+    <insert id="saveEntity" useGeneratedKeys="true" keyProperty="id"
+            parameterType="net.mingsoft.basic.entity.ModelEntity" flushCache="true">
+        insert into model
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <include refid="insertColumns"></include>
+        </trim>
+        <!-- 注入控制层字段 -->
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <include refid="insertValues"></include>
+        </trim>
+    </insert>
+
+
+    <!-- 查询 -->
+    <select id="queryAll" resultMap="resultMap">
+        select
+        <include refid="column_list" />
+        from model
+    </select>
+
+
+    <!-- 查询结束 -->
+
+    <!-- 查询带分页 -->
+    <select id="queryByPage" resultMap="resultMap" parameterType="java.util.Map">
+        select
+        <include refid="column_list" />
+        from model order by id desc
+    </select>
+    <!-- 查询带分页结束 -->
+
+    <!-- 查询模块总数 -->
+    <select id="queryCount" resultType="int">
+		select count(*) from
+		model
+	</select>
+    <!-- 查询模块总数结束 -->
+
+    <!-- 根据模块id查询model开始 -->
+    <select id="getEntity" resultMap="resultMap" parameterType="int">
+        select
+        <include refid="column_list" />
+        from model
+        where id=#{id}
+    </select>
+    <!--根据模块id查询model结束 -->
+    <!-- 根据模块查询model开始 -->
+    <select id="getByEntity" resultMap="resultMap" parameterType="net.mingsoft.basic.entity.ModelEntity">
+        select
+        <include refid="column_list" />
+        from model
+        <where>
+            <if test="modelTitle != null">MODEL_TITLE=#{modelTitle}</if>
+            <if test="modelIsMenu != null">and MODEL_ISMENU=#{modelIsMenu}</if>
+            <if test="modelId == null">and MODEL_ID is null</if>
+            <if test="modelId != null">and MODEL_ID=#{modelId}</if>
+        </where>
+    </select>
+    <!--根据模块查询model结束 -->
+
+    <!-- 根据角色id查询model开始 -->
+    <select id="queryModelByRoleId" resultMap="resultMap"
+            parameterType="int">
+		select *
+		from model
+		where id in (select MODEL_ID from role_model where
+		ROLE_ID=#{roleId}) order by MODEL_SORT desc,id desc
+	</select>
+    <!--根据角色id查询model结束 -->
+
+    <!-- 更新 -->
+    <update id="updateEntity" parameterType="net.mingsoft.basic.entity.ModelEntity" flushCache="true">
+        update model
+        <set>
+            <if test="modelTitle != null">MODEL_TITLE=#{modelTitle},</if>
+            <if test="modelCode != null">MODEL_CODE=#{modelCode},</if>
+            MODEL_ID=#{modelId},
+            <if test="modelUrl != null">MODEL_URL=#{modelUrl},</if>
+            <if test="modelDatetime != null">MODEL_DATETIME=#{modelDatetime},</if>
+            <if test="modelIcon != null">MODEL_ICON=#{modelIcon},</if>
+            <if test="managerId != null">MANAGER_ID=#{managerId},</if>
+            <if test="modelIsMenu != null">MODEL_ISMENU=#{modelIsMenu},</if>
+            <if test="modelSort != null">MODEL_SORT=#{modelSort},</if>
+            <if test="isChild != null and isChild != ''">IS_CHILD=#{isChild},</if>
+            <if test="modelParentIds != null and modelParentIds != ''">MODEL_PARENT_IDS=#{modelParentIds} </if>
+        </set>
+        where id=#{id}
+    </update>
+    <!-- 更新结束 -->
+
+    <!-- 更新缓存开始 -->
+    <update id="updateCache"  flushCache="true">
+		UPDATE model set model_id=0 where model_id=-1
+	</update>
+    <!-- 更新缓存结束 -->
+
+    <!-- 删除 -->
+    <delete id="deleteEntity" parameterType="java.lang.Integer" flushCache="true">
+		delete from model
+		where
+		id = #{id}
+	</delete>
+
+    <!-- 更具模块编号查询模块实体开始 -->
+    <select id="getEntityByModelCode" resultMap="resultMap">
+        select
+        <include refid="column_list" />
+        from model
+        where MODEL_CODE = #{modelCode}
+    </select>
+    <!-- 更具模块编号查询模块实体结束 -->
+
+    <!-- 根据应用编号与模块编号查处通用的模块信息 -->
+    <select id="getModel"   resultMap="resultMap" >
+		select id,MODEL_TITLE,MODEL_CODE,MODEL_ID,MODEL_URL,MODEL_DATETIME,MODEL_ICON,MANAGER_ID from  model where substring(model_code,3,2)=#{modelCodeRegex} and (MODEL_ID = (select MODEL_ID from model where id=#{id}) or MODEL_ID = (select id from model where id=#{id}))
+	</select>
+    <!--条件查询-->
+    <select id="query" resultMap="resultMap">
+        select * from model
+        <where>
+            <if test="modelTitle != null and modelTitle != ''"> and MODEL_TITLE=#{modelTitle} </if>
+            <if test="modelCode != null and modelCode != ''"> and MODEL_CODE=#{modelCode} </if>
+            <if test="modelId &gt; 0"> and MODEL_ID=#{modelId} </if>
+            <if test="modelUrl != null and modelUrl != ''"> and MODEL_URL=#{modelUrl} </if>
+            <if test="modelDatetime != null"> and MODEL_DATETIME=#{modelDatetime} </if>
+            <if test="modelIcon != null and modelIcon != ''"> and MODEL_ICON=#{modelIcon} </if>
+            <if test="managerId &gt; 0"> and MANAGER_ID=#{managerId} </if>
+            <if test="modelSort &gt; 0"> and MODEL_SORT=#{modelSort} </if>
+            <if test="modelIsMenu != null"> and MODEL_ISMENU=#{modelIsMenu} </if>
+            <if test="isChild != null and isChild != ''"> and IS_CHILD=#{isChild}</if>
+            <if test="modelParentIds != null and modelParentIds != ''"> and FIND_IN_SET(#{modelParentIds}, model_parent_ids )>0 </if>
+        </where>
+        order by MODEL_ISMENU desc,MODEL_SORT,id
+    </select>
+    <!--批量删除-->
+    <delete id="delete" flushCache="true">
+        delete from model
+        <where>
+            id  in <foreach collection="ids" item="item" index="index"
+                            open="(" separator="," close=")">#{item}</foreach>
+        </where>
+    </delete>
+</mapper>

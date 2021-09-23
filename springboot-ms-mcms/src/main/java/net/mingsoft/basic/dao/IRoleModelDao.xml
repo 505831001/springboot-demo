@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<!-- 角色模块关联持久化层XML配置继承IRoleModelDao -->
+<mapper namespace="net.mingsoft.basic.dao.IRoleModelDao">
+    <resultMap id="resultMap" type="net.mingsoft.basic.entity.RoleModelEntity">
+        <id column="ROLE_ID" property="roleId"/><!-- 将实体的ID属性与表的ID字段对接 -->
+        <result column="MODEL_ID" property="modelId"/><!-- 将实体的roleName属性与表的roleName字段对接 -->
+    </resultMap>
+
+    <insert id="saveEntity" parameterType="java.util.List">
+        insert into role_model (MODEL_ID,ROLE_ID) values
+        <foreach collection="list" item="item" index="index" separator=",">
+            (#{item.modelId},#{item.roleId})
+        </foreach>
+    </insert>
+
+    <insert id="saveBatch" parameterType="java.util.List">
+        insert into role_model (MODEL_ID,ROLE_ID) values
+        <foreach collection="list" item="item" index="index" separator=",">
+            (#{item.modelId},#{item.roleId})
+        </foreach>
+    </insert>
+
+
+    <!--为角色批量修改模块开始 -->
+    <update id="updateEntity" parameterType="java.util.List">
+        replace into role_model (MODEL_ID,ROLE_ID) values
+        <foreach collection="list" item="item" index="index" separator=",">
+            (#{item.modelId},#{item.roleId})
+        </foreach>
+    </update>
+
+    <!--删除指定角色的模块开始 -->
+    <update id="deleteEntity" parameterType="int">
+	   delete from role_model where ROLE_ID=#{roleId}
+	</update>
+    <update id="deleteByRoleId" parameterType="int">
+	   delete from role_model where ROLE_ID=#{roleId}
+	</update>
+    <!--删除指定角色的模块结束 -->
+    <!-- 通过角色id获取所有的关联模块id -->
+    <select id="queryByRoleId" resultMap="resultMap" parameterType="int" >
+		select * from role_model where ROLE_ID=#{roleId}
+	</select>
+    <!-- 通过角色id获取所有的关联模块id -->
+
+    <update id="updateCache"  flushCache="true">
+	  	UPDATE role_model set ROLE_ID=-1 where 1=-1
+	 </update>
+
+</mapper>

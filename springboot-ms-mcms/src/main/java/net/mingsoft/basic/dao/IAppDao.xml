@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="net.mingsoft.basic.dao.IAppDao">
+    <!-- 字段绑定 开始 -->
+    <resultMap type="net.mingsoft.basic.entity.AppEntity" id="resultMap">
+        <id column="id" property="id" /><!-- 与website表绑定id -->
+        <result column="APP_PAY_DATE" property="appPayDate" />
+        <result column="APP_PAY" property="appPay" />
+        <result column="APP_KEYWORD" property="appKeyword" /><!-- 与website表绑定keyword -->
+        <result column="APP_COPYRIGHT" property="appCopyright" /><!-- 与website表绑定copyright -->
+        <result column="APP_STYLE" property="appStyle" /><!-- 与website表绑定style -->
+        <result column="APP_URL" property="appUrl" /><!-- 与website表绑定url -->
+        <result column="APP_NAME" property="appName" />
+        <result column="APP_DESCRIPTION" property="appDescription" />
+        <result column="APP_LOGO" property="appLogo" />
+        <result column="APP_DATETIME" property="appDatetime" />
+        <result column="APP_DIR" property="appDir" />
+    </resultMap>
+    <!-- 字段绑定结束 -->
+
+    <!-- 更新website开始 -->
+    <update id="updateEntity" parameterType="net.mingsoft.base.entity.BaseEntity"
+            flushCache="true">
+        update app
+        <set>
+            <if test="appName != null">APP_NAME =#{appName},</if>
+            <if test="appDescription != null">APP_DESCRIPTION =#{appDescription},</if>
+            <if test="appLogo != null">APP_LOGO =#{appLogo},</if>
+            <if test="appDatetime != null">APP_DATETIME =#{appDatetime},</if>
+            <if test="appKeyword != null">APP_keyword =#{appKeyword},</if>
+            <if test="appCopyright != null">APP_copyright =#{appCopyright},</if>
+            <if test="appStyle != null">APP_style =#{appStyle},</if>
+            <if test="appUrl!= null">APP_URL=#{appUrl},</if>
+            <if test="appPayDate != null">APP_PAY_DATE=#{appPayDate},</if>
+            <if test="appPay != null">APP_PAY=#{appPay},</if>
+            <if test="appDir != null">app_dir=#{appDir},</if>
+        </set>
+        where id = #{id}
+    </update>
+    <!-- 更新website结束 -->
+
+    <!-- 根据ID查询开始 -->
+    <select id="getEntity" resultMap="resultMap" parameterType="int">
+		select * from app
+		where id = #{id}
+	</select>
+
+    <!-- 根据域名查询 -->
+    <select id="countByUrl" resultType="int" parameterType="String">
+		select
+		count(id)
+		from app
+		where
+		REPLACE(APP_URL,"/","") =
+		REPLACE(#{appUrl},"/","")
+	</select>
+    <!-- 根据域名查询结束 -->
+
+    <!--条件查询-->
+    <select id="query" resultMap="resultMap">
+		select * from app
+		order by
+		id asc
+	</select>
+
+    <update id="updateCache"  flushCache="true">
+		UPDATE app set del=0 where 1=-1
+	</update>
+
+</mapper>

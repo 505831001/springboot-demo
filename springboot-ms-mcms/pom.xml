@@ -24,35 +24,35 @@
     </properties>
 
     <dependencies>
-        <!-- base -->
+        <!-- base
         <dependency>
             <groupId>net.mingsoft</groupId>
             <artifactId>ms-base</artifactId>
             <version>2.1.7</version>
-        </dependency>
-        <!-- base源码 -->
+        </dependency> -->
+        <!-- base源码
         <dependency>
             <groupId>net.mingsoft</groupId>
             <artifactId>ms-base</artifactId>
             <version>2.1.7</version>
             <classifier>sources</classifier>
             <scope>provided</scope>
-        </dependency>
+        </dependency> -->
 
-        <!-- basic -->
+        <!-- basic
         <dependency>
             <groupId>net.mingsoft</groupId>
             <artifactId>ms-basic</artifactId>
             <version>2.1.7</version>
-        </dependency>
-        <!-- basic源码 -->
+        </dependency> -->
+        <!-- basic源码
         <dependency>
             <groupId>net.mingsoft</groupId>
             <artifactId>ms-basic</artifactId>
             <version>2.1.7</version>
             <classifier>sources</classifier>
             <scope>provided</scope>
-        </dependency>
+        </dependency> -->
 
         <!-- mdiy -->
         <dependency>

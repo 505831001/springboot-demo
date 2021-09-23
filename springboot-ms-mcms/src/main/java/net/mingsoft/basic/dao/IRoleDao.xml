@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<!-- 角色持久化层XML配置继承IRoleDao -->
+<mapper namespace="net.mingsoft.basic.dao.IRoleDao">
+    <cache />
+
+    <!-- 将实体属性与表字段对接开始 -->
+    <resultMap id="resultMap" type="net.mingsoft.basic.bean.RoleBean">
+        <id column="id" property="id"/><!-- 将实体的ID属性与表的ID字段对接 -->
+        <result column="ROLE_NAME" property="roleName"/><!-- 将实体的roleName属性与表的roleName字段对接 -->
+        <result column="MANAGER_ID" property="managerId"/><!-- 将实体的managerId属性与表的managerId字段对接 -->
+    </resultMap>
+    <!-- 将实体属性与表字段对接结束 -->
+    <sql id="insertColumns">
+        <if test="roleName != null">ROLE_NAME,</if>
+        <if test="managerId != null">MANAGER_ID,</if>
+    </sql>
+
+    <sql id="insertValues">
+        <if test="roleName != null">#{roleName},</if>
+        <if test="managerId != null">#{managerId},</if>
+    </sql>
+
+    <insert id="saveEntity" parameterType="net.mingsoft.basic.entity.RoleEntity" useGeneratedKeys="true" keyProperty="id" flushCache="true">
+        insert into role
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <include refid="insertColumns"></include>
+        </trim>
+        <!-- 注入控制层字段 -->
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <include refid="insertValues"></include>
+        </trim>
+    </insert>
+
+    <!-- 删除角色开始 -->
+    <delete id="deleteEntity" parameterType="int" flushCache="true">
+		delete  r,rm
+		from role r left join role_model rm on r.id=rm.ROLE_ID left join model m on m.MODEL_ID=rm.MODEL_ID where r.id=#{id}
+	</delete>
+    <!-- 删除角色结束 -->
+
+    <!-- 根据角色ID查询角色开始 -->
+    <select id="getEntity" resultMap="resultMap" parameterType="int">
+		select id,ROLE_NAME,MANAGER_ID from role where id=#{id}
+	</select>
+    <!-- 根据角色ID查询角色结束 -->
+
+    <!-- 更新角色开始 -->
+    <update id="updateEntity" parameterType="net.mingsoft.basic.entity.RoleEntity" flushCache="true">
+        update role
+        <set>
+            <if test="roleName != null and roleName !=''">ROLE_NAME=#{roleName},</if>
+            <if test="managerId &gt; 0">MANAGER_ID=#{managerId},</if>
+        </set>
+        where id = #{id}
+    </update>
+    <!-- 更新角色结束 -->
+
+    <!-- 查询所有的角色 -->
+    <select id="queryAll" resultMap="resultMap">
+		select * from role
+	</select>
+
+    <select id="query" resultMap="resultMap">
+        select * from role
+        <where>
+            <if test="roleName != null and roleName != ''">and ROLE_NAME  like  CONCAT(CONCAT('%',#{roleName}),'%')</if>
+            <if test="managerId != null and  managerId &gt; 0"> and MANAGER_ID=#{managerId} </if>
+        </where>
+        order by id desc
+    </select>
+
+    <!--批量删除-->
+    <delete id="delete" flushCache="true">
+        delete from role
+        <where>
+            id  in <foreach collection="ids" item="item" index="index"
+                            open="(" separator="," close=")">#{item}</foreach>
+        </where>
+    </delete>
+    <!--根据实体获取-->
+    <sql id="getRoleWhere">
+        <if test="roleName != null and roleName != ''"> ROLE_NAME=#{roleName} </if>
+        <if test="managerId &gt; 0"> and MANAGER_ID=#{managerId} </if>
+    </sql>
+
+    <select id="getByEntity" resultMap="resultMap" parameterType="net.mingsoft.basic.entity.RoleEntity">
+        select * from role
+        <where>
+            <include refid="getRoleWhere"></include>
+        </where>
+    </select>
+
+    <!-- 更新缓存开始 -->
+    <update id="updateCache"  flushCache="true">
+		UPDATE role set del=0 where 1=-1
+	</update>
+    <!-- 更新缓存结束 -->
+
+
+
+
+</mapper>

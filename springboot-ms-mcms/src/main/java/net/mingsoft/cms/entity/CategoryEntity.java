@@ -396,7 +396,7 @@ public class CategoryEntity extends BaseEntity {
      * 获取栏目链接 （标签使用，动态链接不考虑）
      */
     public String getTypelink() {
-        return "3".equals(this.categoryType) ? this.categoryDiyUrl : this.categoryPath + "/index.html";
+        return "3".equals(this.categoryType) ? this.categoryDiyUrl : this.categoryPath + "/index.ftl";
     }
 
     /**

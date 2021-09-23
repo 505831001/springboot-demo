@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="net.mingsoft.basic.dao.ICityDao">
+
+    <resultMap id="resultMap" type="net.mingsoft.basic.entity.CityEntity">
+        <id column="id" property="id" /><!--主键编号 -->
+        <result column="province_id" property="provinceId" /><!--省／直辖市／自治区级id -->
+        <result column="province_name" property="provinceName" /><!--省／直辖市／自治区级名称 -->
+        <result column="city_id" property="cityId" /><!--市级id  -->
+        <result column="city_name" property="cityName" /><!--市级名称 -->
+        <result column="city_py" property="cityPy" /><!--城市拼音首字母 -->
+        <result column="county_id" property="countyId" /><!--县／区级id -->
+        <result column="county_name" property="countyName" /><!--县／区级名称 -->
+        <result column="town_id" property="townId" /><!--街道／镇级id -->
+        <result column="town_name" property="townName" /><!--街道／镇级名称 -->
+        <result column="village_id" property="villageId" /><!--村委会id -->
+        <result column="village_name" property="villageName" /><!--村委会名称 -->
+    </resultMap>
+
+    <!--保存-->
+    <insert id="saveEntity" useGeneratedKeys="true" keyProperty="id"
+            parameterType="net.mingsoft.basic.entity.CityEntity" >
+        insert into city
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="provinceId != null">province_id,</if>
+            <if test="provinceName != null and provinceName != ''">province_name,</if>
+            <if test="cityId != null">city_id,</if>
+            <if test="cityName != null and cityName != ''">city_name,</if>
+            <if test="cityPy != null and cityPy != ''">city_py,</if>
+            <if test="countyId != null">county_id,</if>
+            <if test="countyName != null and countyName != ''">county_name,</if>
+            <if test="townId != null">town_id,</if>
+            <if test="townName != null and townName != ''">town_name,</if>
+            <if test="villageId != null">village_id,</if>
+            <if test="villageName != null and villageName != ''">village_name,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="provinceId != null">#{provinceId},</if>
+            <if test="provinceName != null and provinceName != ''">#{provinceName},</if>
+            <if test="cityId != null">#{cityId},</if>
+            <if test="cityName != null and cityName != ''">#{cityName},</if>
+            <if test="cityPy != null and cityPy != ''">#{cityPy},</if>
+            <if test="countyId != null">#{countyId},</if>
+            <if test="countyName != null and countyName != ''">#{countyName},</if>
+            <if test="townId != null">#{townId},</if>
+            <if test="townName != null and townName != ''">#{townName},</if>
+            <if test="villageId != null">#{villageId},</if>
+            <if test="villageName != null and villageName != ''">#{villageName},</if>
+        </trim>
+    </insert>
+
+    <!--更新-->
+    <update id="updateEntity" parameterType="net.mingsoft.basic.entity.CityEntity">
+        update city
+        <set>
+            <if test="provinceId != null">province_id=#{provinceId},</if>
+            <if test="provinceName != null and provinceName != ''">province_name=#{provinceName},</if>
+            <if test="cityId != null">city_id=#{cityId},</if>
+            <if test="cityName != null and cityName != ''">city_name=#{cityName},</if>
+            <if test="cityPy != null and cityPy != ''">city_py=#{cityPy},</if>
+            <if test="countyId != null">county_id=#{countyId},</if>
+            <if test="countyName != null and countyName != ''">county_name=#{countyName},</if>
+            <if test="townId != null">town_id=#{townId},</if>
+            <if test="townName != null and townName != ''">town_name=#{townName},</if>
+            <if test="villageId != null">village_id=#{villageId},</if>
+            <if test="villageName != null and villageName != ''">village_name=#{villageName},</if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <!--根据id获取-->
+    <select id="getEntity" resultMap="resultMap" parameterType="int">
+		select * from city where id=#{id}
+	</select>
+
+    <!--根据实体获取-->
+    <select id="getByEntity" resultMap="resultMap" parameterType="net.mingsoft.basic.entity.CityEntity">
+        select * from city
+        <where>
+            <if test="provinceId != null"> and province_id=#{provinceId} </if>
+            <if test="provinceName != null and provinceName != ''"> and province_name=#{provinceName} </if>
+            <if test="cityId != null"> and city_id=#{cityId} </if>
+            <if test="cityName != null and cityName != ''"> and city_name=#{cityName} </if>
+            <if test="cityPy != null and cityPy != ''"> and city_py=#{cityPy} </if>
+            <if test="countyId != null"> and county_id=#{countyId} </if>
+            <if test="countyName != null and countyName != ''"> and county_name=#{countyName} </if>
+            <if test="townId != null"> and town_id=#{townId} </if>
+            <if test="townName != null and townName != ''"> and town_name=#{townName} </if>
+            <if test="villageId != null"> and village_id=#{villageId} </if>
+            <if test="villageName != null and villageName != ''"> and village_name=#{villageName} </if>
+        </where>
+    </select>
+
+
+    <!--删除-->
+    <delete id="deleteEntity" parameterType="int">
+		delete from city  where id=#{id}
+	</delete>
+
+    <!--批量删除-->
+    <delete id="delete" >
+        delete from city
+        <where>
+            id  in <foreach collection="ids" item="item" index="index"
+                            open="(" separator="," close=")">#{item}</foreach>
+        </where>
+    </delete>
+    <!--查询全部-->
+    <select id="queryByLevel" resultMap="resultMap" parameterType="int" >
+        select
+        <if test="level == 1">
+            distinct(province_id),
+        </if>
+        <if test="level == 2">
+            distinct(city_id),
+        </if>
+        <if test="level == 3">
+            distinct(county_id),
+        </if>
+        <if test="level == 4">
+            distinct(town_id),
+        </if>
+        <if test="level == 5">
+            distinct(village_id),
+        </if>
+        city.* from city
+
+        order by id desc
+    </select>
+    <!--条件查询-->
+    <select id="query" resultMap="resultMap">
+        SELECT * from city
+        <where>
+            <if test="provinceId != null"> and province_id=#{provinceId} </if>
+            <if test="provinceName != null and provinceName != ''"> and province_name=#{provinceName} </if>
+            <if test="cityId != null"> and city_id=#{cityId} </if>
+            <if test="cityName != null and cityName != ''"> and city_name=#{cityName} </if>
+            <if test="cityPy != null and cityPy != ''"> and city_py like CONCAT(CONCAT('%',#{cityPy}),'%')</if>
+            <if test="countyId != null"> and county_id=#{countyId} </if>
+            <if test="countyName != null and countyName != ''"> and county_name=#{countyName} </if>
+            <if test="townId != null"> and town_id=#{townId} </if>
+            <if test="townName != null and townName != ''"> and town_name=#{townName} </if>
+            <if test="villageId != null"> and village_id=#{villageId} </if>
+            <if test="villageName != null and villageName != ''"> and village_name=#{villageName} </if>
+        </where>
+        <if test="cityPy != null and cityPy != ''"> GROUP BY city_name HAVING(city_name&lt;&gt;"县")</if>
+        order by id
+    </select>
+
+    <!--查询省／直辖市／自治区-->
+    <select id="queryProvince" resultMap="resultMap">
+		SELECT distinct city.province_id,city.province_name from city;
+	</select>
+
+    <!--查询市-->
+    <select id="queryCity" resultMap="resultMap">
+        SELECT distinct city.city_id,city.city_name from city
+        <where>
+            <if test="provinceId != null"> and province_id=#{provinceId} </if>
+        </where>
+    </select>
+
+    <!--查询区／县-->
+    <select id="queryCounty" resultMap="resultMap">
+        SELECT distinct city.county_id,city.county_name from city
+        <where>
+            <if test="cityId != null"> and city_id=#{cityId} </if>
+        </where>
+    </select>
+
+    <!--查询街道／镇-->
+    <select id="queryTown" resultMap="resultMap">
+        SELECT distinct city.town_id,city.town_name from city
+        <where>
+            <if test="countyId != null"> and county_id=#{countyId} </if>
+        </where>
+    </select>
+
+    <!--查询街道／镇-->
+    <select id="queryVillage" resultMap="resultMap">
+        SELECT distinct city.village_id,city.village_name from city
+        <where>
+            <if test="townId != null"> and town_id=#{townId} </if>
+        </where>
+    </select>
+
+
+</mapper>
