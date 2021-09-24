@@ -24,56 +24,16 @@
     </properties>
 
     <dependencies>
-        <!-- base
         <dependency>
             <groupId>net.mingsoft</groupId>
             <artifactId>ms-base</artifactId>
             <version>2.1.7</version>
-        </dependency> -->
-        <!-- base源码
-        <dependency>
-            <groupId>net.mingsoft</groupId>
-            <artifactId>ms-base</artifactId>
-            <version>2.1.7</version>
-            <classifier>sources</classifier>
-            <scope>provided</scope>
-        </dependency> -->
+        </dependency>
 
-        <!-- basic
         <dependency>
-            <groupId>net.mingsoft</groupId>
-            <artifactId>ms-basic</artifactId>
-            <version>2.1.7</version>
-        </dependency> -->
-        <!-- basic源码
-        <dependency>
-            <groupId>net.mingsoft</groupId>
-            <artifactId>ms-basic</artifactId>
-            <version>2.1.7</version>
-            <classifier>sources</classifier>
-            <scope>provided</scope>
-        </dependency> -->
-
-        <!-- mdiy
-        <dependency>
-            <groupId>net.mingsoft</groupId>
-            <artifactId>ms-mdiy</artifactId>
-            <version>2.1.7</version>
-        </dependency> -->
-        <!-- mdiy源码
-        <dependency>
-            <groupId>net.mingsoft</groupId>
-            <artifactId>ms-mdiy</artifactId>
-            <version>2.1.7</version>
-            <classifier>sources</classifier>
-            <scope>provided</scope>
-        </dependency> -->
-
-        <!-- store入口依赖（源码不开发），如果不需要MStore可以直接去掉依赖 -->
-        <dependency>
-            <groupId>net.mingsoft</groupId>
-            <artifactId>store-client</artifactId>
-            <version>2.1.7.1</version>
+            <groupId>org.apache.ant</groupId>
+            <artifactId>ant</artifactId>
+            <version>1.10.5</version>
         </dependency>
 
         <!-- lombok -->
@@ -104,6 +64,17 @@
         </repository>
     </repositories>
 
+    <!--
+    D:\...\jdk1.8.0_291\bin\java.exe
+    -Dmaven.multiModuleProjectDirectory=D:\...\springboot-ms-mcms
+    -Dmaven.home=D:\...\plugins\maven\lib\maven3"
+    -Dclassworlds.conf=D:\...\plugins\maven\lib\maven3\bin\m2.conf"
+    -Dmaven.ext.class.path=D:\...\plugins\maven\lib\maven-event-listener.jar"
+    -javaagent:D:\...\lib\idea_rt.jar=2189:D:\...\bin"
+    -Dfile.encoding=UTF-8 -classpath org.*.Launcher
+    -Didea.version=2020.2.4 -s D:\...\conf\settings.xml
+    -Dmaven.repo.local=D:\localRepository clean
+    -->
     <build>
         <finalName>springboot-ms-mcms</finalName>
         <resources>
@@ -130,6 +101,7 @@
             </resource>
         </resources>
         <plugins>
+            <!-- Spring默认JDK编译版本
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
@@ -137,6 +109,8 @@
                     <executable>true</executable>
                 </configuration>
             </plugin>
+             -->
+            <!-- Apache指定JDK编译版本 -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
