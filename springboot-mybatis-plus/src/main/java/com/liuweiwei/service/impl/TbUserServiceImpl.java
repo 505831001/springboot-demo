@@ -13,10 +13,10 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.google.common.collect.Lists;
 import com.liuweiwei.dao.TbUserMapper;
-import com.liuweiwei.dto.TbUserDTO;
+import com.liuweiwei.dto.TbUserDto;
 import com.liuweiwei.model.TbUser;
 import com.liuweiwei.service.TbUserService;
-import com.liuweiwei.vo.TbUserVO;
+import com.liuweiwei.vo.TbUserVo;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.collections4.CollectionUtils;
@@ -444,15 +444,15 @@ public class TbUserServiceImpl extends ServiceImpl<TbUserMapper, TbUser> impleme
     }
 
     @Override
-    public Page<TbUserVO> otherPage(Page<TbUser> page) {
+    public Page<TbUserVo> otherPage(Page<TbUser> page) {
         /**字符串转日期格式*/
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
         Page<TbUser> pages = this.page(page);
         List<TbUser> list = pages.getRecords();
-        List<TbUserVO> records = new ArrayList<>();
+        List<TbUserVo> records = new ArrayList<>();
         list.stream().forEach(source -> {
-            TbUserVO target = new TbUserVO();
+            TbUserVo target = new TbUserVo();
             org.springframework.beans.BeanUtils.copyProperties(source, target);
             target.setId(String.valueOf(source.getId()));
             target.setCreated(format.format(source.getCreated()));
@@ -460,7 +460,7 @@ public class TbUserServiceImpl extends ServiceImpl<TbUserMapper, TbUser> impleme
             records.add(target);
         });
 
-        Page<TbUserVO> data = new Page<>();
+        Page<TbUserVo> data = new Page<>();
         data.setRecords(records);
         data.setTotal(pages.getTotal());
         data.setSize(pages.getSize());
@@ -506,7 +506,7 @@ public class TbUserServiceImpl extends ServiceImpl<TbUserMapper, TbUser> impleme
     }
 
     @Override
-    public Boolean otherSave(TbUserDTO source) throws ParseException {
+    public Boolean otherSave(TbUserDto source) throws ParseException {
         /**UUID生成纯数字*/
         Integer uuid = UUID.randomUUID().toString().hashCode();
         uuid = uuid < 0 ? -uuid : uuid;

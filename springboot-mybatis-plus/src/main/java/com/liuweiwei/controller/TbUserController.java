@@ -3,10 +3,10 @@ package com.liuweiwei.controller;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.liuweiwei.components.ValidationGroup;
-import com.liuweiwei.dto.TbUserDTO;
+import com.liuweiwei.dto.TbUserDto;
 import com.liuweiwei.model.TbUser;
 import com.liuweiwei.service.TbUserService;
-import com.liuweiwei.vo.TbUserVO;
+import com.liuweiwei.vo.TbUserVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.stereotype.Controller;
@@ -78,8 +78,8 @@ public class TbUserController {
     @GetMapping(value = "/otherPage")
     @ApiOperation(value = "无条件翻页查询", notes = "无条件翻页查询", tags = "")
     @ResponseBody
-    public Page<TbUserVO> otherPage(@RequestParam long current, @RequestParam long size) {
-        Page<TbUserVO> pages = userService.otherPage(new Page<>(current, size));
+    public Page<TbUserVo> otherPage(@RequestParam long current, @RequestParam long size) {
+        Page<TbUserVo> pages = userService.otherPage(new Page<>(current, size));
         return pages;
     }
 
@@ -94,7 +94,7 @@ public class TbUserController {
     @PostMapping(value = "/otherSave")
     @ApiOperation(value = "插入一条记录（选择字段，策略插入）", notes = "插入一条记录（选择字段，策略插入）", tags = "")
     @ResponseBody
-    public Boolean otherSave(@RequestBody @Validated(ValidationGroup.class) TbUserDTO dto) {
+    public Boolean otherSave(@RequestBody @Validated(ValidationGroup.class) TbUserDto dto) {
         Boolean flag = null;
         try {
             flag = userService.otherSave(dto);

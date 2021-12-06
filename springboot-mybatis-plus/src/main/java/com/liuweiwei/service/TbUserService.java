@@ -4,9 +4,9 @@ package com.liuweiwei.service;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.liuweiwei.dto.TbUserDTO;
+import com.liuweiwei.dto.TbUserDto;
 import com.liuweiwei.model.TbUser;
-import com.liuweiwei.vo.TbUserVO;
+import com.liuweiwei.vo.TbUserVo;
 
 import java.io.Serializable;
 import java.text.ParseException;
@@ -110,7 +110,7 @@ public interface TbUserService extends IService<TbUser> {
      * @param page
      * @return
      */
-    Page<TbUserVO> otherPage(Page<TbUser> page);
+    Page<TbUserVo> otherPage(Page<TbUser> page);
 
     /**
      * 根据 entity 条件，查询全部记录（并翻页）
@@ -159,7 +159,7 @@ public interface TbUserService extends IService<TbUser> {
      * @param dto
      * @return
      */
-    Boolean otherSave(TbUserDTO dto) throws ParseException;
+    Boolean otherSave(TbUserDto dto) throws ParseException;
 
     /**
      * Spring-jta-Atomikos数据源+JDBC模板

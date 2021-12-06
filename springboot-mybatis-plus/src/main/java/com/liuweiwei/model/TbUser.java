@@ -3,8 +3,7 @@ package com.liuweiwei.model;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
-import lombok.Data;
-import lombok.ToString;
+import lombok.*;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -18,6 +17,9 @@ import java.util.Date;
  * @since 2021-01-06
  */
 @Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @ToString
 public class TbUser extends Model<TbUser> implements Serializable {
     private static final long serialVersionUID = 1L;
