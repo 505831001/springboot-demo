@@ -63,4 +63,11 @@ public class TbMenuTreeController {
     public ResultData selectPage(@RequestParam String current, @RequestParam String size) {
         return menuTreeService.selectPageOther(current, size);
     }
+
+    @GetMapping(value = "/menu/tree")
+    @ApiOperation(value = "树型结构查询接口", notes = "树型结构查询接口", tags = "")
+    @ResponseBody
+    public ResultData selectMenuTree() {
+        return menuTreeService.selectMenuTree();
+    }
 }

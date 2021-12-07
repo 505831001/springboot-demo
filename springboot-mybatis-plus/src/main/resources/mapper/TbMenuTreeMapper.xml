@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.mapper.TbMenuTreeMapper">
+
+    <!-- 开启二级缓存 -->
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.liuweiwei.model.TbMenuTree">
+        <id column="id" property="id" />
+        <result column="parent_id" property="parentId" />
+        <result column="menu_name" property="menuName" />
+        <result column="role" property="role" />
+        <result column="permission" property="permission" />
+        <result column="create_time" property="createTime" />
+        <result column="create_name" property="createName" />
+        <result column="update_time" property="updateTime" />
+        <result column="update_name" property="updateName" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, parent_id, menu_name, role, permission, create_time, create_name, update_time, update_name
+    </sql>
+
+</mapper>

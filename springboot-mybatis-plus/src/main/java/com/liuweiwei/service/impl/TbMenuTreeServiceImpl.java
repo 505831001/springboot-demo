@@ -1,17 +1,24 @@
 package com.liuweiwei.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.liuweiwei.common.constants.MenuTreeConstant;
 import com.liuweiwei.dao.TbMenuTreeMapper;
 import com.liuweiwei.model.TbMenuTree;
 import com.liuweiwei.service.TbMenuTreeService;
+import com.liuweiwei.utils.MenuTreeUtils;
 import com.liuweiwei.utils.ResultData;
+import com.liuweiwei.vo.TbMenuTreeVo;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 /**
  * @author Liuweiwei
@@ -85,5 +92,25 @@ public class TbMenuTreeServiceImpl extends ServiceImpl<TbMenuTreeMapper, TbMenuT
     @Override
     public ResultData selectPageOther(String current, String size) {
         return null;
+    }
+
+    @Override
+    public ResultData selectMenuTree() {
+        List<TbMenuTreeVo> voList = new ArrayList<>();
+        List<TbMenuTree> poList = menuTreeMapper.selectList(new QueryWrapper<TbMenuTree>().lambda().eq(TbMenuTree::getRole, "ADMIN"));
+        if (CollectionUtils.isNotEmpty(poList)) {
+            poList.forEach(source -> {
+                TbMenuTreeVo target = new TbMenuTreeVo();
+                BeanUtils.copyProperties(source, target);
+                voList.add(target);
+            });
+        }
+        if (CollectionUtils.isNotEmpty(voList)) {
+            List<TbMenuTreeVo> tree = new MenuTreeUtils(voList).builTree();
+            if (CollectionUtils.isNotEmpty(tree)) {
+                return ResultData.success(tree);
+            }
+        }
+        return ResultData.success();
     }
 }

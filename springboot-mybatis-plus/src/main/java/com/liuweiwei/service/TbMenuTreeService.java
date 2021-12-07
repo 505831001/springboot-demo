@@ -52,4 +52,10 @@ public interface TbMenuTreeService extends IService<TbMenuTree> {
      * @return
      */
     ResultData selectPageOther(String current, String size);
+
+    /**
+     * 树型结构查询接口
+     * @return
+     */
+    ResultData selectMenuTree();
 }
