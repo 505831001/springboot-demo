@@ -1,9 +1,6 @@
 package com.mybatis.dynamic.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
+import lombok.*;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -13,10 +10,14 @@ import java.util.Date;
  * @since 2020-08-14
  */
 @Data
-@ToString
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString
 public class TbItem implements Serializable {
+    private static final long serialVersionUID = -1950423695788614535L;
+    /**主键ID(MyBatis-Plus默认主键策略:ASSIGN_ID使用了雪花算法(19位),ASSIGN_UUID(32位))*/
+    /**@TableId(value = "id", type = IdType.ASSIGN_ID)*/
     private Long id;
     private String title;
     private String sellPoint;
@@ -28,4 +29,7 @@ public class TbItem implements Serializable {
     private Byte status;
     private Date created;
     private Date updated;
+    /**乐观锁(版本号)*/
+    //@Version
+    //private Integer version;
 }
