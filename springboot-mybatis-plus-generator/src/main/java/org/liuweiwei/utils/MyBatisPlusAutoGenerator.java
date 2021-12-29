@@ -26,7 +26,7 @@ public class MyBatisPlusAutoGenerator {
          */
         GlobalConfig global = new GlobalConfig();
         global.setActiveRecord(true); 
-        global.setAuthor("72137497");
+        global.setAuthor("LiuWeiWei");
         global.setOutputDir(System.getProperty("user.dir") + "/springboot-mybatis-plus-generator/src/main/java");
         global.setFileOverride(true);
         global.setIdType(IdType.AUTO);
@@ -52,9 +52,9 @@ public class MyBatisPlusAutoGenerator {
         DataSourceConfig source = new DataSourceConfig();
         source.setDbType(DbType.MYSQL);
         source.setDriverName("com.mysql.jdbc.Driver");
-        source.setUrl("jdbc:mysql://172.16.74.89:6033/srm_dev?useUnicode=true&characterEncoding=utf8&autoReconnect=true&allowMultiQueries=true&serverTimezone=Asia/Shanghai&useSSL=false");
-        source.setUsername("srm_rw");
-        source.setPassword("g7cGbVaIHnR7");
+        source.setUrl("jdbc:mysql://127.0.0.1:3306/ego?useUnicode=true&characterEncoding=utf8&autoReconnect=true&allowMultiQueries=true&serverTimezone=Asia/Shanghai&useSSL=false");
+        source.setUsername("root");
+        source.setPassword("12345678");
 
         /**
          * 3. 包名策略配置
@@ -81,7 +81,7 @@ public class MyBatisPlusAutoGenerator {
         strategy.setCapitalMode(true);
         strategy.setDbColumnUnderline(true);
         strategy.setNaming(NamingStrategy.underline_to_camel);
-        strategy.setInclude("slm_supplier_resource_pool_authority", "srm_msg", "srm_notice");
+        strategy.setInclude("tb_user", "tb_menu_tree", "srm_notice");
 
         /**
          * 5. 整合配置

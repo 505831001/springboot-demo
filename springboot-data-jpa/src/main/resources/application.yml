@@ -1,6 +1,0 @@
-server:
-  port: 8411
-
-spring:
-  profiles:
-    active: dev
