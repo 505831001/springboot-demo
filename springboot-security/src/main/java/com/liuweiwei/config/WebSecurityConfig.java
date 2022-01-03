@@ -3,6 +3,7 @@ package com.liuweiwei.config;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.liuweiwei.component.*;
 import com.liuweiwei.service.TbUserService;
+import com.liuweiwei.web.VerifyCodeFilter;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -31,6 +32,7 @@ import org.springframework.security.web.DefaultRedirectStrategy;
 import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.logout.LogoutHandler;
 import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
 import org.springframework.security.web.authentication.rememberme.JdbcTokenRepositoryImpl;
@@ -38,6 +40,8 @@ import org.springframework.security.web.authentication.rememberme.PersistentToke
 import org.springframework.security.web.session.InvalidSessionStrategy;
 import org.springframework.security.web.session.SessionInformationExpiredEvent;
 import org.springframework.security.web.session.SessionInformationExpiredStrategy;
+import org.springframework.util.Base64Utils;
+import org.springframework.util.DigestUtils;
 import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
@@ -183,6 +187,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                         log.info("【第一步】获取页面用户名称<principal>：" + httpUsername);
                         String httpPassword = (String) authentication.getCredentials();
                         log.info("【第二步】获取页面用户密码<credentials>：" + httpPassword);
+                        String md5Password = DigestUtils.md5DigestAsHex(httpPassword.getBytes());
+                        log.info("【第二步】使用页面用户秘密之MD5加密<md-5>：" + md5Password);
+                        String base64Password = Base64Utils.encodeToString(httpPassword.getBytes());
+                        log.info("【第二步】使用页面用户密码之BASE64加密<base-64>：" + base64Password);
 
                         UserDetails details = userDetailsService.loadUserByUsername(httpUsername);
                         if (Objects.nonNull(details)) {
@@ -294,7 +302,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                         .loginPage("/loginPage")
                         .loginProcessingUrl("/authentication/form")
                         .defaultSuccessUrl("/successPage")
-                        .failureUrl("/failurePage").permitAll()
+                        .failureUrl("/failurePage")
+                        .permitAll()
                         .and().csrf().disable();
                 break;
             case "second":
@@ -305,8 +314,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                         .anyRequest().authenticated().and().formLogin()
                         .loginPage("/loginPage")
                         .loginProcessingUrl("/authentication/form")
-                        .defaultSuccessUrl("/successPage")
-                        .failureUrl("/failurePage").permitAll()
+                        .successForwardUrl("/successPage")
+                        .failureForwardUrl("/failurePage")
+                        .permitAll()
                         .and().csrf().disable().headers().frameOptions().disable();
                 break;
             case "third":
@@ -320,7 +330,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                         .successHandler(new AuthenticationSuccessHandler() {
                             @Override
                             public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
-                                log.info("登录成功...");
+                                log.info("Login succeeded.");
                                 response.setStatus(HttpStatus.OK.value());
                                 response.setContentType("application/json;charset=utf-8");
                                 response.getWriter().write(new ObjectMapper().writeValueAsString(authentication));
@@ -330,7 +340,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                         .failureHandler(new AuthenticationFailureHandler() {
                             @Override
                             public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException, ServletException {
-                                log.info("登录失败...");
+                                log.info("Login failed.");
                                 response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
                                 response.setContentType("application/json;charset=utf-8");
                                 response.getWriter().write(new ObjectMapper().writeValueAsString(exception.getMessage()));
@@ -349,12 +359,13 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                         .antMatchers("/guest/css").hasAnyRole("ADMIN", "GUEST")
                         .anyRequest().authenticated()
                         //外挂过滤器。
-                        .and()/*.addFilterBefore(new VerifyCodeFilter(), UsernamePasswordAuthenticationFilter.class)*/
+                        .and()
+                        .addFilterBefore(new VerifyCodeFilter(), UsernamePasswordAuthenticationFilter.class)
                         //TODO -> 指定支持基于表单的身份验证。如果未指定{@link loginPage(String)}，将生成默认登录页面。
                         .formLogin()
                         .loginPage("/loginPage")
                         .loginProcessingUrl("/authentication/form")
-                        //.defaultSuccessUrl("/successPage")
+                        //.successForwardUrl("/successPage")
                         .successHandler(new AuthenticationSuccessHandler() {
                             @Override
                             public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
@@ -369,7 +380,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                                 response.addHeader("AuthorizationY", token);
                                 //校验通过后设置Token到饼干中后再在控制器中从请求域中获取Token
                                 response.addCookie(new Cookie("AuthorizationZ", token));
-                                log.info("登录成功...");
+                                log.info("Login succeeded.");
                                 response.setStatus(HttpStatus.OK.value());
                                 response.setStatus(HttpServletResponse.SC_OK);
                                 response.setContentType("application/json;charset=utf-8");
@@ -377,11 +388,11 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                                 new DefaultRedirectStrategy().sendRedirect(request, response, "/successPage");
                             }
                         })
-                        //.failureUrl("/failurePage")
+                        //.failureForwardUrl("/failurePage")
                         .failureHandler(new AuthenticationFailureHandler() {
                             @Override
                             public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException, ServletException {
-                                log.info("登录失败...");
+                                log.info("Login failed.");
                                 response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
                                 response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
                                 response.setContentType("application/json;charset=utf-8");
@@ -451,14 +462,14 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                             @Override
                             public void logout(HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
                                 response.setContentType("application/json;charset=UTF-8");
-                                log.info("登录退出a...");
+                                log.info("Log in and out A.");
                             }
                         })
                         .logoutSuccessHandler(new LogoutSuccessHandler() {
                             @Override
                             public void onLogoutSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
                                 String username = ((User) authentication.getPrincipal()).getUsername();
-                                log.info(username + "登录退出b...");
+                                log.info(username + "Log in and out B.");
                                 response.setStatus(HttpStatus.OK.value());
                                 response.setStatus(HttpServletResponse.SC_OK);
                                 response.setContentType("application/json;charset=utf-8");
