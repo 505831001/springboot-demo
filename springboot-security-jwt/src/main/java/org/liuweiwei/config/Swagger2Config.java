@@ -21,21 +21,11 @@ import java.util.List;
  */
 @Configuration
 public class Swagger2Config {
-
     @Bean
     public Docket createRestApi() {
-        /**
-         * 添加请求参数，我们这里把token作为请求头部参数传入后端。
-         */
-        ParameterBuilder parameterBuilder = new ParameterBuilder();
+        //添加请求参数，我们这里把token作为请求头部参数传入后端。
         List<Parameter> parameters = new ArrayList<Parameter>();
-        parameterBuilder.name("Authorization")
-                .description("Token")
-                .modelRef(new ModelRef("string"))
-                .parameterType("header")
-                .required(false)
-                .build();
-        parameters.add(parameterBuilder.build());
+        parameters.add(new ParameterBuilder().name("Authorization").description("Token").modelRef(new ModelRef("string")).parameterType("header").required(false).build());
 
         return new Docket(DocumentationType.SWAGGER_2)
                 .apiInfo(apiInfo())

@@ -17,7 +17,7 @@ import springfox.documentation.spring.web.plugins.Docket;
  * @since 2020-05-20
  */
 @Configuration
-@Log4j2
+@Slf4j
 public class SwaggerConfig {
 
     /**

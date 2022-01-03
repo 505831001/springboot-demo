@@ -1,9 +1,7 @@
 package com.liuweiwei.component;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.extern.log4j.Log4j;
 import lombok.extern.log4j.Log4j2;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.DefaultRedirectStrategy;

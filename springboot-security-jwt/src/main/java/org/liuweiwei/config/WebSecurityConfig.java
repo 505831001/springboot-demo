@@ -18,6 +18,7 @@ import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
@@ -39,6 +40,7 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -83,16 +85,17 @@ import java.util.Objects;
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     /**
-     * 使用BCrypt强哈希函数的PasswordEncoder的实现。
-     * 客户可以选择提供一个"版本"($2a, $2b, $2y)和一个"强度"(也称为BCrypt中的日志轮次)以及一个SecureRandom实例。
-     * 强度参数越大，需要(以指数方式)对密码进行散列的工作就越多。默认值为10。
-     * 加密方式：BCRYPT_PATTERN = Pattern.compile("\\A\\$2(a|y|b)?\\$(\\d\\d)\\$[./0-9A-Za-z]{53}");
+     * TODO->1-使用明文密码非加密实现。
+     * public PasswordEncoder passwordEncoder() {
+     *     PasswordEncoder encoder = NoOpPasswordEncoder.getInstance();
+     *     return encoder;
+     * }
+     * TODO->2-使用BCrypt强哈希函数的PasswordEncoder的实现。
      * @return
      */
     @Bean
-    public PasswordEncoder passwordEncoder() {
-        PasswordEncoder encoder = NoOpPasswordEncoder.getInstance();
-        encoder = new BCryptPasswordEncoder();
+    public BCryptPasswordEncoder bCryptPasswordEncoder() {
+        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
         return encoder;
     }
 
@@ -114,63 +117,94 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
      */
     @Override
     public void configure(AuthenticationManagerBuilder auth) throws Exception {
-        String dbUsername = "admin";
-        String dbPassword = passwordEncoder().encode("123456");
-        String dbRoles    = "ADMIN,GUEST";
-        auth.inMemoryAuthentication().withUser(dbUsername).password(dbPassword).roles(dbRoles);
-
-        UserDetailsService userDetailsService = new UserDetailsService() {
-            @Override
-            public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-                log.info("[step 03] Http request username - {}", username);
-                String password = dbPassword;
-                log.info("[step 04] Http request username from DB password - {}", password);
-                if (!org.springframework.util.StringUtils.isEmpty(username) && !StringUtils.isEmpty(password)) {
-                    User user = new User(username, password, AuthorityUtils.commaSeparatedStringToAuthorityList(dbRoles));
-                    log.info("[step 05] Spring security convert username - {}", user.getUsername());
-                    log.info("[step 05] Spring security convert password - {}", user.getPassword());
-                    log.info("[step 05] Spring security convert authored - {}", user.getAuthorities());
-                    return user;
-                }
-                return null;
-            }
-        };
-        auth.userDetailsService(userDetailsService);
-
-        AuthenticationProvider authenticationProvider = new AuthenticationProvider() {
-            @Override
-            public Authentication authenticate(Authentication authentication) throws AuthenticationException {
-                UsernamePasswordAuthenticationToken token = null;
-                String httpUsername = (String) authentication.getPrincipal();
-                log.info("[step 01] Http request username - {}", httpUsername);
-                String httpPassword = (String) authentication.getCredentials();
-                log.info("[step 02] Http request password - {}", httpPassword);
-                String md5Password = DigestUtils.md5DigestAsHex(httpPassword.getBytes());
-                log.info("[step 02] Http request password convert MD5 - {}", md5Password);
-                String base64Password = Base64Utils.encodeToString(httpPassword.getBytes());
-                log.info("[step 02] Http request password convert BASE64 - {}", base64Password);
-                UserDetails userDetails = userDetailsService.loadUserByUsername(httpUsername);
-                if (Objects.nonNull(userDetails)) {
-                    String bCryptUser = userDetails.getUsername();
-                    log.info("[step 06] Http request username convert BCrypt - {}", bCryptUser);
-                    String bCryptPass = userDetails.getPassword();
-                    log.info("[step 06] Http request password convert BCrypt - {}", bCryptPass);
-                    log.info("[step 07] BCrypt http request password with spring security password - {}", passwordEncoder().matches(dbPassword, bCryptPass));
-                    log.info("[step 07] String http request password with spring security password - {}", dbPassword.equals(bCryptPass));
-                    token = new UsernamePasswordAuthenticationToken(bCryptUser, bCryptPass, userDetails.getAuthorities());
-                    log.info("[step 08] Http request username convert BCrypt to Token - {}", token.getPrincipal());
-                    log.info("[step 08] Http request password convert BCrypt to Token - {}", token.getCredentials());
-                    SecurityContextHolder.getContext().setAuthentication(token);
-                    return token;
-                }
-                return null;
-            }
-            @Override
-            public boolean supports(Class<?> authentication) {
-                return true;
-            }
-        };
-        auth.authenticationProvider(authenticationProvider);
+        String options = "";
+        switch (options) {
+            case "inMemory":
+                String dbUsername = "admin";
+                String dbPassword = bCryptPasswordEncoder().encode("123456");
+                String dbRoles    = "ADMIN,GUEST";
+                auth.inMemoryAuthentication().withUser(dbUsername).password(dbPassword).roles(dbRoles);
+                break;
+            case "jdbc":
+                auth.jdbcAuthentication();
+                break;
+            case "ldap":
+                auth.ldapAuthentication();
+                break;
+            case "userDetails":
+                auth.userDetailsService(new UserDetailsService() {
+                    @Override
+                    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+                        log.info("[step 03] Http request username - {}", username);
+                        String password = bCryptPasswordEncoder().encode("438438");
+                        log.info("[step 04] Http request username from DB password - {}", password);
+                        String dbRoles  = "ADMIN,GUEST";
+                        if (!org.springframework.util.StringUtils.isEmpty(username) && !StringUtils.isEmpty(password)) {
+                            User user = new User(username, password, AuthorityUtils.commaSeparatedStringToAuthorityList(dbRoles));
+                            log.info("[step 05] Spring security convert username - {}", user.getUsername());
+                            log.info("[step 05] Spring security convert password - {}", user.getPassword());
+                            log.info("[step 05] Spring security convert authored - {}", user.getAuthorities());
+                            return user;
+                        }
+                        return null;
+                    }
+                });
+                break;
+            case "authenticProvider":
+                UserDetailsService userDetailsService = new UserDetailsService() {
+                    @Override
+                    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+                        log.info("[step 03] Http request username - {}", username);
+                        String password = bCryptPasswordEncoder().encode("438438");
+                        log.info("[step 04] Http request username from DB password - {}", password);
+                        String dbRoles = "ADMIN,GUEST";
+                        if (!StringUtils.isEmpty(username) && !StringUtils.isEmpty(password)) {
+                            User user = new User(username, password, AuthorityUtils.commaSeparatedStringToAuthorityList(dbRoles));
+                            log.info("[step 05] Spring security convert username - {}", user.getUsername());
+                            log.info("[step 05] Spring security convert password - {}", user.getPassword());
+                            log.info("[step 05] Spring security convert authored - {}", user.getAuthorities());
+                            return user;
+                        }
+                        return null;
+                    }
+                };
+                auth.authenticationProvider(new AuthenticationProvider() {
+                    @Override
+                    public Authentication authenticate(Authentication authentication) throws AuthenticationException {
+                        UsernamePasswordAuthenticationToken token = null;
+                        String httpUsername = (String) authentication.getPrincipal();
+                        log.info("[step 01] Http request username - {}", httpUsername);
+                        String httpPassword = (String) authentication.getCredentials();
+                        log.info("[step 02] Http request password - {}", httpPassword);
+                        String md5Password = DigestUtils.md5DigestAsHex(httpPassword.getBytes());
+                        log.info("[step 02] Http request password convert MD5 - {}", md5Password);
+                        String base64Password = Base64Utils.encodeToString(httpPassword.getBytes());
+                        log.info("[step 02] Http request password convert BASE64 - {}", base64Password);
+                        UserDetails userDetails = userDetailsService.loadUserByUsername(httpUsername);
+                        if (Objects.nonNull(userDetails)) {
+                            String bCryptUser = userDetails.getUsername();
+                            log.info("[step 06] Http request username convert BCrypt - {}", bCryptUser);
+                            String bCryptPass = userDetails.getPassword();
+                            log.info("[step 06] Http request password convert BCrypt - {}", bCryptPass);
+                            log.info("[step 07] BCrypt http request password with spring security password - {}", bCryptPasswordEncoder().matches(httpPassword, bCryptPass));
+                            log.info("[step 07] String http request password with spring security password - {}", httpPassword.equals(bCryptPass));
+                            token = new UsernamePasswordAuthenticationToken(bCryptUser, bCryptPass, userDetails.getAuthorities());
+                            log.info("[step 08] Http request username convert BCrypt to Token - {}", token.getPrincipal());
+                            log.info("[step 08] Http request password convert BCrypt to Token - {}", token.getCredentials());
+                            SecurityContextHolder.getContext().setAuthentication(token);
+                            return token;
+                        }
+                        return null;
+                    }
+                    @Override
+                    public boolean supports(Class<?> authentication) {
+                        return authentication.equals(UsernamePasswordAuthenticationToken.class);
+                    }
+                });
+                break;
+            default:
+                break;
+        }
     }
 
     /**

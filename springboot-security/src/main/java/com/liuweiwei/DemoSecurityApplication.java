@@ -1,13 +1,8 @@
 package com.liuweiwei;
 
 import com.liuweiwei.web.VerifyCodeServlet;
-import lombok.extern.log4j.Log4j;
-import lombok.extern.log4j.Log4j2;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.mybatis.spring.annotation.MapperScan;
-import org.slf4j.LoggerFactory;
 import org.springframework.boot.Banner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -33,36 +28,17 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 @EnableWebMvc
 @MapperScan(basePackages = {"com.liuweiwei.mapper"})
 @EnableWebSecurity
-@Log4j2
+@Slf4j
 public class DemoSecurityApplication {
-    /**
-     * 同步日志-实现层：logback<org.slf4j>
-     * private static final org.slf4j.Logger SLF4J = LoggerFactory.getLogger(DemoSecurityApplication.class);
-     * 异步日志-实现层：log4j<org.apache.log4j>
-     * private static final Logger LOG4J2 = LogManager.getLogger(DemoSecurityApplication.class);
-     */
-
-    /**
-     * TODO -> org.springframework.boot.SpringApplication - application
-     * 类，该类可用于从Java主方法引导和启动Spring应用程序。默认情况下，类将执行以下步骤来引导应用程序：
-     * TODO -> org.springframework.context.ConfigurableApplicationContext - application.context
-     * SPI接口将由大多数（如果不是所有）应用程序上下文实现。除了{ApplicationContext}接口中的应用程序上下文客户端方法外，还提供了配置应用程序上下文的工具。
-     * TODO -> org.springframework.core.env.ConfigurableEnvironment - application.context.environment
-     * SPI接口要由大多数（如果不是所有的话）{@link-Environment}类型实现的配置接口。提供用于设置活动配置文件和默认配置文件以及操作基础属性源的工具。允许客户端设置和验证所需的属性，通过{ConfigurablePropertyResolver}超级界面定制转换服务等。
-     */
-    private static SpringApplication application;
-    private static ConfigurableApplicationContext applicationContext;
-    private static ConfigurableEnvironment applicationContextEnvironment;
 
     public static void main(String[] args) {
-        application = new SpringApplication(DemoSecurityApplication.class);
+        SpringApplication application = new SpringApplication(DemoSecurityApplication.class);
         application.setBannerMode(Banner.Mode.CONSOLE);
-        applicationContext = application.run(args);
-        applicationContextEnvironment = applicationContext.getEnvironment();
-
-        log.info(applicationContextEnvironment.getProperty("java.vendor.url"));
-        log.info(applicationContextEnvironment.getProperty("java.vendor.url.bug"));
-        log.info(applicationContextEnvironment.getProperty("sun.java.command") + " started successfully.");
+        ConfigurableApplicationContext context = application.run(args);
+        ConfigurableEnvironment environment = context.getEnvironment();
+        log.info(environment.getProperty("java.vendor.url"));
+        log.info(environment.getProperty("java.vendor.url.bug"));
+        log.info(environment.getProperty("sun.java.command") + " started successfully.");
     }
 
     @LoadBalanced
