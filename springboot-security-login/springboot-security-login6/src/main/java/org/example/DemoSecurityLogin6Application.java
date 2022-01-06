@@ -5,14 +5,12 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.env.ConfigurableEnvironment;
-import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 /**
  * @author Liuweiwei
  * @since 2021-12-29
  */
 @SpringBootApplication
-@EnableWebMvc
 @Slf4j
 public class DemoSecurityLogin6Application {
     public static void main(String[] args) {

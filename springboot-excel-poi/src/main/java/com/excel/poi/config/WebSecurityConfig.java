@@ -1,5 +1,7 @@
 package com.excel.poi.config;
 
+import com.excel.poi.components.UserDetailsDto;
+import com.excel.poi.components.UserDto;
 import com.excel.poi.web.VerifyCodeFilter;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.context.annotation.Bean;
@@ -68,8 +70,13 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                         log.info("[step 04] Http request username from DB password - {}", dbPassword);
                         List<GrantedAuthority> dbAuthorities = AuthorityUtils.commaSeparatedStringToAuthorityList("ADMIN");
                         log.info("[step 05] Http request username from DB authorities - {}", dbAuthorities);
-                        if (org.apache.commons.lang3.StringUtils.isNotEmpty(dbUsername) && !StringUtils.isEmpty(dbPassword)) {
+                        String other = "user";
+                        if ("user".equals(other)) {
                             return new User(dbUsername, dbPassword, dbAuthorities);
+                        } else if ("userDto".equals(other)) {
+                            return new UserDto(dbUsername, dbPassword, dbAuthorities);
+                        } else if ("userDetailsDto".equals(other)) {
+                            return UserDetailsDto.builder().username(dbUsername).password(dbPassword).authorities(dbAuthorities).build();
                         }
                         return null;
                     }
@@ -85,8 +92,13 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                         log.info("[step 04] Http request username from DB password - {}", dbPassword);
                         List<GrantedAuthority> dbAuthorities = AuthorityUtils.commaSeparatedStringToAuthorityList("ADMIN");
                         log.info("[step 05] Http request username from DB authorities - {}", dbAuthorities);
-                        if (org.apache.commons.lang3.StringUtils.isNotEmpty(dbUsername) && !StringUtils.isEmpty(dbPassword)) {
+                        String other = "user";
+                        if ("user".equals(other)) {
                             return new User(dbUsername, dbPassword, dbAuthorities);
+                        } else if ("userDto".equals(other)) {
+                            return new UserDto(dbUsername, dbPassword, dbAuthorities);
+                        } else if ("userDetailsDto".equals(other)) {
+                            return UserDetailsDto.builder().username(dbUsername).password(dbPassword).authorities(dbAuthorities).build();
                         }
                         return null;
                     }
@@ -132,30 +144,59 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
+        //外挂丝袜哥。外挂验证码。蚂蚁路径请求匹配器。指定任何人都允许使用此URL。
         http.authorizeRequests()
-            //外挂丝袜哥。蚂蚁路径请求匹配器。指定任何人都允许使用此URL。
             .antMatchers("/swagger-ui.html").permitAll()
             .antMatchers("/webjars/**").permitAll()
             .antMatchers("/swagger-resources/**").permitAll()
             .antMatchers("/v2/*").permitAll()
             .antMatchers("/csrf").permitAll()
             .antMatchers("/").permitAll()
-            //外挂验证码。蚂蚁路径请求匹配器。指定任何人都允许使用此URL。
+            .antMatchers("/login").permitAll()
+            .antMatchers("/user/login").permitAll()
             .antMatchers("/getVerifyCode").permitAll()
             .antMatchers("/login/invalid").permitAll()
-            .anyRequest().authenticated()
-            //外挂过滤器。
-            .and().addFilterBefore(new VerifyCodeFilter(), UsernamePasswordAuthenticationFilter.class)
-            //TODO -> 登录功能。
-            .formLogin().loginPage("/loginPage").loginProcessingUrl("/authentication/form").successForwardUrl("/successPage").failureForwardUrl("/failurePage").permitAll()
-            //TODO -> 记住我功能。记住我参数。始终记得。令牌有效期秒数。持久令牌存储数据库。记住我功能整合{Authentication}身份验证功能必须加载用户详细信息服务。提示：会再次调用UserDetailsService。
-            .and().rememberMe().rememberMeParameter("remember-me").alwaysRemember(true).tokenValiditySeconds(60).userDetailsService(userDetailsService())
-            //TODO -> 会话功能。会话过期跳转Url。会话最大值(1)。会话最大值是否保留登录(否)。会话已过期重定向到Url。
-            .and().sessionManagement().invalidSessionUrl("/login/invalid").maximumSessions(1).maxSessionsPreventsLogin(false).expiredUrl("/index").and()
-            //TODO -> 退出功能。登出后跳转Url。删除饼干(JSESSIONID)。清除身份验证。失效Http会话。登出成功跳转Url。
-            .and().logout().logoutUrl("/logout").deleteCookies("JSESSIONID").clearAuthentication(true).invalidateHttpSession(true).logoutSuccessUrl("/index")
-            //TODO -> 异常功能。
-            .and().exceptionHandling().accessDeniedPage("/errorPage")
-            .and().csrf().disable().headers().frameOptions().disable();
+            .anyRequest().authenticated();
+
+        //外挂过滤器。
+        http.addFilterBefore(new VerifyCodeFilter(), UsernamePasswordAuthenticationFilter.class);
+
+        //TODO -> 登录功能。
+        String options = "first";
+        switch (options) {
+            case "first":
+                //1-默认登录页面
+                http.formLogin().successForwardUrl("/success").failureForwardUrl("/failure");
+                break;
+            case "second":
+                //2-自定义登录页面
+                http.formLogin().loginPage("/login").successForwardUrl("/success").failureForwardUrl("/failure");
+                break;
+            case "third":
+                //3-默认登录页面
+                http.formLogin().loginProcessingUrl("/authentication/form").successForwardUrl("/success").failureForwardUrl("/failure");
+                break;
+            case "fourth":
+                //4-自定义登录页面
+                http.formLogin().loginPage("/login").loginProcessingUrl("/authentication/form").successForwardUrl("/success").failureForwardUrl("/failure");
+                break;
+            default:
+                break;
+        }
+
+        //TODO -> 记住我功能。记住我参数。始终记得。令牌有效期秒数。持久令牌存储数据库。记住我功能整合{Authentication}身份验证功能必须加载用户详细信息服务。提示：会再次调用UserDetailsService。
+        http.rememberMe().rememberMeParameter("remember-me").alwaysRemember(true).tokenValiditySeconds(60).userDetailsService(userDetailsService());
+
+        //TODO -> 会话功能。会话过期跳转Url。会话最大值(1)。会话最大值是否保留登录(否)。会话已过期重定向到Url。
+        http.sessionManagement().invalidSessionUrl("/login/invalid").maximumSessions(1).maxSessionsPreventsLogin(false).expiredUrl("/index");
+
+        //TODO -> 退出功能。登出后跳转Url。删除饼干(JSESSIONID)。清除身份验证。失效Http会话。登出成功跳转Url。
+        http.logout().logoutUrl("/logout").deleteCookies("JSESSIONID").clearAuthentication(true).invalidateHttpSession(true).logoutSuccessUrl("/index");
+
+        //TODO -> 异常功能。
+        http.exceptionHandling().accessDeniedPage("/errorPage");
+
+        //关闭跨域等一些功能
+        http.csrf().disable().headers().frameOptions().disable();
     }
 }

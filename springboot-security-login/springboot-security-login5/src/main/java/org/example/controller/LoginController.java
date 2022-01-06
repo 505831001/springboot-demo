@@ -1,6 +1,5 @@
 package org.example.controller;
 
-
 import io.swagger.annotations.Api;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
@@ -30,26 +29,35 @@ public class LoginController {
         return "200";
     }
 
+    @GetMapping(value = "/login")
+    private String loginPage() {
+        System.out.println("[step 00] -> 登录方法loginPage()...");
+        return "login";
+    }
+
+    @GetMapping(value = "/user/login")
+    private String loginUserPage() {
+        System.out.println("[step 00] -> 登录方法loginUserPage()...");
+        return "login";
+    }
+
     /**
      * Request method 'POST' not supported
+     *
      * @return
      */
     @PostMapping("/success")
-    public String successPage(){
+    public String successPage() {
         return "success";
     }
 
     /**
      * Request method 'POST' not supported
+     *
      * @return
      */
     @PostMapping("/failure")
-    public String failurePage(){
+    public String failurePage() {
         return "failure";
-    }
-
-    @GetMapping(value = "/user/login")
-    private String loginPage(){
-        return "login";
     }
 }

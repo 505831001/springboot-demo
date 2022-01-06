@@ -35,18 +35,32 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/500").permitAll()
                 .antMatchers("/404").permitAll()
                 .antMatchers("/200").permitAll()
+                .antMatchers("/login").permitAll()
                 .antMatchers("/user/login").permitAll()
-                .anyRequest()
-                .authenticated()
+                .anyRequest().authenticated();
 
-                .and()
-                .formLogin()
-                .loginProcessingUrl("/authentication/form")
-                .successForwardUrl("/success")
-                .failureForwardUrl("/failure")
+        String options = "first";
+        switch (options) {
+            case "first":
+                //1-默认登录页面
+                http.formLogin().successForwardUrl("/success").failureForwardUrl("/failure");
+                break;
+            case "second":
+                //2-自定义登录页面
+                http.formLogin().loginPage("/login").successForwardUrl("/success").failureForwardUrl("/failure");
+                break;
+            case "third":
+                //3-默认登录页面
+                http.formLogin().loginProcessingUrl("/authentication/form").successForwardUrl("/success").failureForwardUrl("/failure");
+                break;
+            case "fourth":
+                //4-自定义登录页面
+                http.formLogin().loginPage("/login").loginProcessingUrl("/authentication/form").successForwardUrl("/success").failureForwardUrl("/failure");
+                break;
+            default:
+                break;
+        }
 
-                .and()
-                .csrf()
-                .disable();
+        http.csrf().disable();
     }
 }
