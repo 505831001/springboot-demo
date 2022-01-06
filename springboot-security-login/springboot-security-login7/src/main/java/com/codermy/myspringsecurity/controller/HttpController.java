@@ -18,6 +18,14 @@ public class HttpController {
     @GetMapping(value = "/login.html")
     @ApiOperation(value = "登录界面")
     public String login() {
+        System.out.println("[step 00] -> 登录自定义页面");
+        return "login";
+    }
+
+    @GetMapping(value = "/login")
+    @ApiOperation(value = "登录界面")
+    public String loginDefault() {
+        System.out.println("[step 00] -> 登录默认页面");
         return "login";
     }
 

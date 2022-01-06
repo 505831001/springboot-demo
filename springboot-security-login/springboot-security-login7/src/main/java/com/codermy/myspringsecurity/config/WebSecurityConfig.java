@@ -116,25 +116,21 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
         http.headers().frameOptions().sameOrigin();
 
-        http.authorizeRequests().antMatchers("/login.html", "/xadmin/**", "/treetable-lay/**", "/static/**").permitAll().anyRequest().authenticated();
+        http.authorizeRequests().antMatchers("/login", "/login.html", "/xadmin/**", "/treetable-lay/**", "/static/**").permitAll().anyRequest().authenticated();
 
-        String options = "fourth";
+        String options = "first";
         switch (options) {
             case "first":
-                //1-自己对loginPage()方法和loginProcessingUrl()方法做了如下测试：两者都不配置：默认页面
                 http.formLogin().successHandler(myAuthenticationSuccessHandler);
                 break;
             case "second":
-                //2-自己对loginPage()方法和loginProcessingUrl()方法做了如下测试：只配置loginPage()方法：自定义页面
                 http.formLogin().loginPage("/login.html").successHandler(myAuthenticationSuccessHandler);
                 break;
             case "third":
-                //3-自己对loginPage()方法和loginProcessingUrl()方法做了如下测试：只配置loginProcessingUrl()方法：默认页面
-                http.formLogin().loginProcessingUrl("/login").successHandler(myAuthenticationSuccessHandler);
+                http.formLogin().loginProcessingUrl("/authentication/form").successHandler(myAuthenticationSuccessHandler);
                 break;
             case "fourth":
-                //1-自己对loginPage()方法和loginProcessingUrl()方法做了如下测试：两者都配置：自定义页面
-                http.formLogin().loginPage("/login.html").loginProcessingUrl("/login").successHandler(myAuthenticationSuccessHandler);
+                http.formLogin().loginPage("/login.html").loginProcessingUrl("/authentication/form").successHandler(myAuthenticationSuccessHandler);
                 break;
             default:
                 break;

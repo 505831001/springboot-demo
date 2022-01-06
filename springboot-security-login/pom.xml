@@ -15,6 +15,7 @@
         <module>springboot-security-login4</module>
         <module>springboot-security-login5</module>
         <module>springboot-security-login6</module>
+        <module>springboot-security-login7</module>
     </modules>
 
 </project>
