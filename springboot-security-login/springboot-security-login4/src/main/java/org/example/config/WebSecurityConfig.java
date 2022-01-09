@@ -34,6 +34,14 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 //1-将内存内身份验证添加到并返回以允许自定义内存内身份验证。
                 auth.inMemoryAuthentication().withUser("user").password(bCryptPasswordEncoder().encode("123456")).roles("ROLE_USER");
                 break;
+            case "jdbc":
+                //2-将【JDBC身份】验证添加到{}并返回{}以允许自定义JDBC身份验证。
+                auth.jdbcAuthentication();
+                break;
+            case "ldap":
+                //3-将【LDAP身份】验证添加到{}并返回{}以允许自定义LDAP身份验证。
+                auth.ldapAuthentication();
+                break;
             default:
                 break;
         }

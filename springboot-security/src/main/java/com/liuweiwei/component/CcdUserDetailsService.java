@@ -41,9 +41,14 @@ public class CcdUserDetailsService implements UserDetailsService {
         List<GrantedAuthority> dbAuthorities = AuthorityUtils.commaSeparatedStringToAuthorityList("ADMIN");
         log.info("【第五步】获取页面用户名称获取数据库用户权限：" + dbAuthorities);
         if (!StringUtils.isEmpty(dbUsername) && !StringUtils.isEmpty(dbPassword)) {
-            User user = new User(dbUsername, dbPassword, dbAuthorities);
-            log.info("【第五步】把页面用户名称和数据库用户密码设到安全框架User对象：" + user.toString());
-            return new AaaUser(dbUsername, dbPassword, dbAuthorities);
+            String other = "user";
+            if ("user".equals(other)) {
+                return new User(dbUsername, dbPassword, dbAuthorities);
+            } else if ("userDto".equals(other)) {
+                return new AaaUser(dbUsername, dbPassword, dbAuthorities);
+            } else if ("userDetailsDto".equals(other)) {
+                return BbcUserDetails.builder().username(dbUsername).password(dbPassword).authorities(dbAuthorities).build();
+            }
         }
         return null;
     }

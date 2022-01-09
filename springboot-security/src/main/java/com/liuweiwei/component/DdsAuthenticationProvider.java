@@ -7,17 +7,13 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.util.StringUtils;
+import org.springframework.util.Base64Utils;
+import org.springframework.util.DigestUtils;
 
 import java.util.Collection;
-import java.util.List;
 import java.util.Objects;
 
 /**
@@ -29,6 +25,8 @@ public class DdsAuthenticationProvider implements AuthenticationProvider {
 
     @Autowired
     private BCryptPasswordEncoder bCryptPasswordEncoder;
+    @Autowired
+    private CcdUserDetailsService ccdUserDetailsService;
 
     /**
      * //TODO->5-根据传入的【自定义身份】{AuthenticationProvider}添加验证。由于{AuthenticationProvider}实现未知，因此必须在外部完成所有自定义，并立即返回{AuthenticationManagerBuilder}。
@@ -39,31 +37,16 @@ public class DdsAuthenticationProvider implements AuthenticationProvider {
      */
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
-        //TODO->4-根据传入的【自定义身份】{UserDetailsService}添加验证。然后返回一个{DaoAuthenticationConfigurer}，以允许自定义身份验证。根据传入的自定义添加身份验证。
-        UserDetailsService userDetailsService = new UserDetailsService() {
-            @Override
-            public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-                String dbUsername = username;
-                log.info("【第三步】获取页面用户名称获取数据库用户对象：" + dbUsername);
-                String dbPassword = bCryptPasswordEncoder.encode("123456");
-                log.info("【第四步】通过页面用户名称查询数据库用户密码：" + dbPassword);
-                List<GrantedAuthority> dbAuthorities = AuthorityUtils.commaSeparatedStringToAuthorityList("ADMIN");
-                log.info("【第五步】获取页面用户名称获取数据库用户权限：" + dbAuthorities);
-                if (!StringUtils.isEmpty(dbUsername) && !StringUtils.isEmpty(dbPassword)) {
-                    User user = new User(dbUsername, dbPassword, dbAuthorities);
-                    log.info("【第五步】把页面用户名称和数据库用户密码设到安全框架User对象：" + user.toString());
-                    return user;
-                }
-                return null;
-            }
-        };
-
         String httpUsername = (String) authentication.getPrincipal();
         log.info("【第一步】获取页面用户名称<principal>：" + httpUsername);
         String httpPassword = (String) authentication.getCredentials();
         log.info("【第二步】获取页面用户密码<credentials>：" + httpPassword);
+        String md5Password = DigestUtils.md5DigestAsHex(httpPassword.getBytes());
+        log.info("【第二步】使用页面用户秘密之MD5加密<md-5>：" + md5Password);
+        String base64Password = Base64Utils.encodeToString(httpPassword.getBytes());
+        log.info("【第二步】使用页面用户密码之BASE64加密<base-64>：" + base64Password);
 
-        UserDetails details = userDetailsService.loadUserByUsername(httpUsername);
+        UserDetails details = ccdUserDetailsService.loadUserByUsername(httpUsername);
         if (Objects.nonNull(details)) {
             String dataUsername = details.getUsername();
             log.info("【第六步】获取安全框架User对象用户：" + dataUsername);
