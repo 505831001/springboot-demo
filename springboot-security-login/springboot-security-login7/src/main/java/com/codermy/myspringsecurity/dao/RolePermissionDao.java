@@ -7,8 +7,8 @@ import org.apache.ibatis.annotations.Param;
 import java.util.List;
 
 /**
- * @author codermy
- * @createTime 2020/6/30
+ * @author LiuWeiWei
+ * @since 2022-01-06
  */
 @Mapper
 public interface RolePermissionDao {

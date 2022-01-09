@@ -5,8 +5,8 @@ import lombok.Data;
 import java.io.Serializable;
 
 /**
- * @author codermy
- * @createTime 2020/6/28
+ * @author LiuWeiWei
+ * @since 2022-01-06
  */
 @Data
 public class PermissionDto implements Serializable {

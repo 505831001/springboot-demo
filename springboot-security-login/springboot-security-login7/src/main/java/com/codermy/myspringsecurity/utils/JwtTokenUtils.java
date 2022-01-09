@@ -7,8 +7,8 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import java.util.Date;
 
 /**
- * @author codermy
- * @createTime 2020/7/4
+ * @author LiuWeiWei
+ * @since 2022-01-06
  */
 public class JwtTokenUtils {
     public static final String TOKEN_HEADER = "Authorization";

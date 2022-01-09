@@ -11,8 +11,8 @@ import springfox.documentation.spring.web.plugins.Docket;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 /**
- * @author codermy
- * @createTime 2020/6/25
+ * @author LiuWeiWei
+ * @since 2022-01-06
  */
 @EnableSwagger2
 @Configuration
@@ -31,9 +31,9 @@ public class Swagger2Config {
 
     private ApiInfo webApiInfo(){
         return new ApiInfoBuilder()
-                .title("my-spring-security-API文档")
-                .description("本文档描述了my-spring-security接口定义")
-                .version("1.0")
+                .title("SPRING-SECURITY-API文档")
+                .description("本文档描述了SPRING-SECURITY接口定义")
+                .version("2.9.2")
                 .build();
     }
 }

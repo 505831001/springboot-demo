@@ -5,8 +5,8 @@ import com.codermy.myspringsecurity.eneity.TbRole;
 import com.codermy.myspringsecurity.utils.Result;
 
 /**
- * @author codermy
- * @createTime 2020/6/26
+ * @author LiuWeiWei
+ * @since 2022-01-06
  */
 public interface RoleService {
 

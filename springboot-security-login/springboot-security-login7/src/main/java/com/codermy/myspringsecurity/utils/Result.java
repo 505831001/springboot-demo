@@ -8,8 +8,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * @author codermy
- * @createTime 2020/5/15
+ * @author LiuWeiWei
+ * @since 2022-01-06
  */
 //统一返回结果的类
 @Data

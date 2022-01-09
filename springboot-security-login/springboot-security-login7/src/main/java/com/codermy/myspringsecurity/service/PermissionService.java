@@ -7,8 +7,8 @@ import com.codermy.myspringsecurity.utils.Result;
 import java.util.List;
 
 /**
- * @author codermy
- * @createTime 2020/6/26
+ * @author LiuWeiWei
+ * @since 2022-01-06
  */
 public interface PermissionService {
 

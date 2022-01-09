@@ -1,6 +1,5 @@
 package com.codermy.myspringsecurity.dto;
 
-
 import com.codermy.myspringsecurity.eneity.TbUser;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
@@ -11,10 +10,14 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.util.List;
 import java.util.stream.Collectors;
 
-
+/**
+ * @author LiuWeiWei
+ * @since 2022-01-06
+ */
 @Getter
 @AllArgsConstructor
 public class JwtUser extends TbUser implements UserDetails {
+    private static final long serialVersionUID = -5704310065258767331L;
 
     private TbUser user;
 

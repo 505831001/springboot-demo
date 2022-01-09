@@ -7,7 +7,7 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.env.ConfigurableEnvironment;
 
 /**
- * @author Liuweiwei
+ * @author LiuWeiWei
  * @since 2022-01-06
  */
 @SpringBootApplication

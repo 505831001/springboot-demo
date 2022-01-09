@@ -7,10 +7,9 @@ import java.io.Serializable;
 import java.util.Date;
 
 /**
- * @author codermy
- * @createTime 2020/6/21
+ * @author LiuWeiWei
+ * @since 2022-01-06
  */
-
 @Data
 public abstract class BaseEntity<ID extends Serializable> implements Serializable {
     private static final long serialVersionUID = 8925514045582235838L;

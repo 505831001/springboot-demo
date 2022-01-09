@@ -6,6 +6,10 @@ import com.codermy.myspringsecurity.eneity.TbPermission;
 
 import java.util.List;
 
+/**
+ * @author LiuWeiWei
+ * @since 2022-01-06
+ */
 public class TreeUtils {
 
     /**

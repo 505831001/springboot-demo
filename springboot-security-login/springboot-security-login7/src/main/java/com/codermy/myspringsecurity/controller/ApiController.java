@@ -6,8 +6,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 
 /**
- * @author codermy
- * @createTime 2020/6/21
+ * @author LiuWeiWei
+ * @since 2022-01-06
  */
 @Controller
 @RequestMapping("${api-url}")

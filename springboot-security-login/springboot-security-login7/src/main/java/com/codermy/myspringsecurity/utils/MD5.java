@@ -14,7 +14,8 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
 /**
- * MD5加密
+ * @author LiuWeiWei
+ * @since 2022-01-06
  */
 public class MD5 {
 

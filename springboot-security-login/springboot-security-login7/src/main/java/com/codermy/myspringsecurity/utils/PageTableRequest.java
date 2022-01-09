@@ -4,6 +4,10 @@ import lombok.Data;
 
 import java.io.Serializable;
 
+/**
+ * @author LiuWeiWei
+ * @since 2022-01-06
+ */
 @Data
 public class PageTableRequest implements Serializable {
 

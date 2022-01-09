@@ -6,8 +6,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * @author codermy
- * @createTime 2020/7/2
+ * @author LiuWeiWei
+ * @since 2022-01-06
  */
 public class TreeUtil {
     //todo 判断list是否为空

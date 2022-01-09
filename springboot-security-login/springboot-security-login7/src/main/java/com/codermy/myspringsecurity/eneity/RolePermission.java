@@ -4,8 +4,8 @@ import io.swagger.annotations.ApiModel;
 import lombok.Data;
 
 /**
- * @author codermy
- * @createTime 2020/6/30
+ * @author LiuWeiWei
+ * @since 2022-01-06
  */
 @Data
 @ApiModel(value = "RolePermission对象", description = "角色菜单关联表")

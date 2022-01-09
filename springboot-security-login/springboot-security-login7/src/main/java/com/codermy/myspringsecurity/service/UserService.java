@@ -4,8 +4,8 @@ import com.codermy.myspringsecurity.eneity.TbUser;
 import com.codermy.myspringsecurity.utils.Result;
 
 /**
- * @author codermy
- * @createTime 2020/6/25
+ * @author LiuWeiWei
+ * @since 2022-01-06
  */
 public interface UserService {
     TbUser getUser(String userName);

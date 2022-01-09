@@ -9,8 +9,8 @@ import org.apache.ibatis.annotations.Select;
 import java.util.List;
 
 /**
- * @author codermy
- * @createTime 2020/6/26
+ * @author LiuWeiWei
+ * @since 2022-01-06
  */
 @Mapper
 public interface RoleUserDao {
