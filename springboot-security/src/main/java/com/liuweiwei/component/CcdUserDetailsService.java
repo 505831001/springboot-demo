@@ -20,7 +20,7 @@ import java.util.List;
  * @since 2020-05-20
  */
 @Slf4j
-public class BbcUserDetailsService implements UserDetailsService {
+public class CcdUserDetailsService implements UserDetailsService {
 
     @Autowired
     private BCryptPasswordEncoder bCryptPasswordEncoder;

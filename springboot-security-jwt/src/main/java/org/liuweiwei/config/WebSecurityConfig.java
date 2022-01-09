@@ -120,10 +120,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         String options = "";
         switch (options) {
             case "inMemory":
-                String dbUsername = "admin";
-                String dbPassword = bCryptPasswordEncoder().encode("123456");
-                String dbRoles    = "ADMIN,GUEST";
-                auth.inMemoryAuthentication().withUser(dbUsername).password(dbPassword).roles(dbRoles);
+                auth.inMemoryAuthentication().withUser("user").password(bCryptPasswordEncoder().encode("123456")).roles("USER");
                 break;
             case "jdbc":
                 auth.jdbcAuthentication();
@@ -138,9 +135,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                         log.info("[step 03] Http request username - {}", username);
                         String password = bCryptPasswordEncoder().encode("438438");
                         log.info("[step 04] Http request username from DB password - {}", password);
-                        String dbRoles  = "ADMIN,GUEST";
                         if (!org.springframework.util.StringUtils.isEmpty(username) && !StringUtils.isEmpty(password)) {
-                            User user = new User(username, password, AuthorityUtils.commaSeparatedStringToAuthorityList(dbRoles));
+                            User user = new User(username, password, AuthorityUtils.commaSeparatedStringToAuthorityList("GUEST"));
                             log.info("[step 05] Spring security convert username - {}", user.getUsername());
                             log.info("[step 05] Spring security convert password - {}", user.getPassword());
                             log.info("[step 05] Spring security convert authored - {}", user.getAuthorities());
@@ -155,11 +151,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                     @Override
                     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
                         log.info("[step 03] Http request username - {}", username);
-                        String password = bCryptPasswordEncoder().encode("438438");
+                        String password = bCryptPasswordEncoder().encode("123456");
                         log.info("[step 04] Http request username from DB password - {}", password);
-                        String dbRoles = "ADMIN,GUEST";
                         if (!StringUtils.isEmpty(username) && !StringUtils.isEmpty(password)) {
-                            User user = new User(username, password, AuthorityUtils.commaSeparatedStringToAuthorityList(dbRoles));
+                            User user = new User(username, password, AuthorityUtils.commaSeparatedStringToAuthorityList("ADMIN"));
                             log.info("[step 05] Spring security convert username - {}", user.getUsername());
                             log.info("[step 05] Spring security convert password - {}", user.getPassword());
                             log.info("[step 05] Spring security convert authored - {}", user.getAuthorities());

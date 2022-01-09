@@ -9,16 +9,16 @@ import java.util.Collection;
  * @author LiuWeiWei
  * @since 2022-01-06
  */
-public class UserDto extends User {
+public class AaaUser extends User {
 
     private Long id;
     private String nickName;
 
-    public UserDto(String username, String password, Collection<? extends GrantedAuthority> authorities) {
+    public AaaUser(String username, String password, Collection<? extends GrantedAuthority> authorities) {
         super(username, password, authorities);
     }
 
-    public UserDto(String username, String password, boolean enabled, boolean accountNonExpired, boolean credentialsNonExpired, boolean accountNonLocked, Collection<? extends GrantedAuthority> authorities) {
+    public AaaUser(String username, String password, boolean enabled, boolean accountNonExpired, boolean credentialsNonExpired, boolean accountNonLocked, Collection<? extends GrantedAuthority> authorities) {
         super(username, password, enabled, accountNonExpired, credentialsNonExpired, accountNonLocked, authorities);
     }
 

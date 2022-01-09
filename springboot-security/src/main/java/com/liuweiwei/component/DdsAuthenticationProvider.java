@@ -25,7 +25,7 @@ import java.util.Objects;
  * @since 2020-05-20
  */
 @Slf4j
-public class CcdAuthenticationProvider implements AuthenticationProvider {
+public class DdsAuthenticationProvider implements AuthenticationProvider {
 
     @Autowired
     private BCryptPasswordEncoder bCryptPasswordEncoder;

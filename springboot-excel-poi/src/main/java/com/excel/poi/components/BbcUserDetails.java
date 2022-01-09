@@ -16,7 +16,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-public class UserDetailsDto implements UserDetails {
+public class BbcUserDetails implements UserDetails {
 
     private Long id;
     private String nickName;

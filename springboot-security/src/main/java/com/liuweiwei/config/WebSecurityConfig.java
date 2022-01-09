@@ -88,9 +88,11 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Resource
     private AaaUser aaaUser;
     @Resource
-    private BbcUserDetailsService bbcUserDetailsService;
+    private BbcUserDetails bbcUserDetails;
     @Resource
-    private CcdAuthenticationProvider ccdAuthenticationProvider;
+    private CcdUserDetailsService ccdUserDetailsService;
+    @Resource
+    private DdsAuthenticationProvider ddsAuthenticationProvider;
 
     @Resource
     private My00PasswordEncoder my00PasswordEncoder;
@@ -127,10 +129,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         switch (options) {
             case "inMemory":
                 //TODO->1-将【内存内身份】验证添加到{AuthenticationManagerBuilder}并返回{InMemoryUserDetailsManagerConfigurer}以允许自定义内存内身份验证。
-                String dbUsername = "admin";
-                String dbPassword = bCryptPasswordEncoder().encode("123456");
-                String dbRoles    = "ADMIN";
-                auth.inMemoryAuthentication().withUser(dbUsername).password(dbPassword).roles(dbRoles);
+                auth.inMemoryAuthentication().withUser("user").password(bCryptPasswordEncoder().encode("123456")).roles("USER");
                 break;
             case "jdbc":
                 //TODO->2-将【JDBC身份】验证添加到{AuthenticationManagerBuilder}并返回{JdbcUserDetailsManagerConfigurer}以允许自定义JDBC身份验证。
@@ -147,9 +146,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
                         String dbUsername = username;
                         log.info("【第三步】获取页面用户名称获取数据库用户对象：" + dbUsername);
-                        String dbPassword = bCryptPasswordEncoder().encode("123456");
+                        String dbPassword = bCryptPasswordEncoder().encode("438438");
                         log.info("【第四步】通过页面用户名称查询数据库用户密码：" + dbPassword);
-                        List<GrantedAuthority> dbAuthorities = AuthorityUtils.commaSeparatedStringToAuthorityList("ADMIN");
+                        List<GrantedAuthority> dbAuthorities = AuthorityUtils.commaSeparatedStringToAuthorityList("GUEST");
                         log.info("【第五步】获取页面用户名称获取数据库用户权限：" + dbAuthorities);
                         if (!StringUtils.isEmpty(dbUsername) && !StringUtils.isEmpty(dbPassword)) {
                             User user = new User(dbUsername, dbPassword, dbAuthorities);

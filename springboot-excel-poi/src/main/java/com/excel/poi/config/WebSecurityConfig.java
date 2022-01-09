@@ -1,7 +1,7 @@
 package com.excel.poi.config;
 
-import com.excel.poi.components.UserDetailsDto;
-import com.excel.poi.components.UserDto;
+import com.excel.poi.components.BbcUserDetails;
+import com.excel.poi.components.AaaUser;
 import com.excel.poi.web.VerifyCodeFilter;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.context.annotation.Bean;
@@ -26,7 +26,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.util.Base64Utils;
 import org.springframework.util.DigestUtils;
-import org.springframework.util.StringUtils;
 
 import java.util.Collection;
 import java.util.List;
@@ -52,13 +51,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        String dbUsername = "admin";
-        String dbPassword = bCryptPasswordEncoder().encode("123456");
-        String dbRoles    = "ADMIN";
-        String options    = "AUTHENTIC_PROVIDER";
+        String options = "AUTHENTIC_PROVIDER";
         switch (options) {
             case "IN_MEMORY":
-                auth.inMemoryAuthentication().withUser(dbUsername).password(dbPassword).roles(dbRoles);
+                auth.inMemoryAuthentication().withUser("user").password(bCryptPasswordEncoder().encode("123456")).roles("USER");
                 break;
             case "USER_DETAILS":
                 auth.userDetailsService(new UserDetailsService() {
@@ -66,17 +62,17 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
                         String dbUsername = username;
                         log.info("[step 03] Http request username - {}", dbUsername);
-                        String dbPassword = bCryptPasswordEncoder().encode("123456");
+                        String dbPassword = bCryptPasswordEncoder().encode("438438");
                         log.info("[step 04] Http request username from DB password - {}", dbPassword);
-                        List<GrantedAuthority> dbAuthorities = AuthorityUtils.commaSeparatedStringToAuthorityList("ADMIN");
+                        List<GrantedAuthority> dbAuthorities = AuthorityUtils.commaSeparatedStringToAuthorityList("GUEST");
                         log.info("[step 05] Http request username from DB authorities - {}", dbAuthorities);
                         String other = "user";
                         if ("user".equals(other)) {
                             return new User(dbUsername, dbPassword, dbAuthorities);
                         } else if ("userDto".equals(other)) {
-                            return new UserDto(dbUsername, dbPassword, dbAuthorities);
+                            return new AaaUser(dbUsername, dbPassword, dbAuthorities);
                         } else if ("userDetailsDto".equals(other)) {
-                            return UserDetailsDto.builder().username(dbUsername).password(dbPassword).authorities(dbAuthorities).build();
+                            return BbcUserDetails.builder().username(dbUsername).password(dbPassword).authorities(dbAuthorities).build();
                         }
                         return null;
                     }
@@ -96,9 +92,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                         if ("user".equals(other)) {
                             return new User(dbUsername, dbPassword, dbAuthorities);
                         } else if ("userDto".equals(other)) {
-                            return new UserDto(dbUsername, dbPassword, dbAuthorities);
+                            return new AaaUser(dbUsername, dbPassword, dbAuthorities);
                         } else if ("userDetailsDto".equals(other)) {
-                            return UserDetailsDto.builder().username(dbUsername).password(dbPassword).authorities(dbAuthorities).build();
+                            return BbcUserDetails.builder().username(dbUsername).password(dbPassword).authorities(dbAuthorities).build();
                         }
                         return null;
                     }
