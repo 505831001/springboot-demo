@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.codermy.myspringsecurity.dao.RoleUserDao">
+<mapper namespace="com.coder.springsecurity.dao.RoleUserDao">
 
     <update id="updateTbRoleUser">
         update tb_role_user t
