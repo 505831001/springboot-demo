@@ -22,7 +22,6 @@ import java.util.Objects;
  */
 @Slf4j
 public class DdsAuthenticationProvider implements AuthenticationProvider {
-
     @Autowired
     private BCryptPasswordEncoder bCryptPasswordEncoder;
     @Autowired

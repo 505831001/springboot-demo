@@ -21,7 +21,6 @@ import java.util.List;
  */
 @Slf4j
 public class CcdUserDetailsService implements UserDetailsService {
-
     @Autowired
     private BCryptPasswordEncoder bCryptPasswordEncoder;
 

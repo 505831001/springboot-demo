@@ -1,4 +1,4 @@
-package org.example.component;
+package org.example.auth;
 
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;

@@ -212,29 +212,147 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
      */
     @Override
     protected void configure(HttpSecurity http) throws Exception {
+        AuthenticationSuccessHandler authenticationSuccessHandler = new AuthenticationSuccessHandler() {
+            @Override
+            public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
+                log.info("Login succeeded.");
+                response.setStatus(HttpStatus.OK.value());
+                response.setContentType("application/json;charset=utf-8");
+                response.getWriter().write(new ObjectMapper().writeValueAsString(authentication));
+                new DefaultRedirectStrategy().sendRedirect(request, response, "indexPage");
+            }
+        };
+        AuthenticationFailureHandler authenticationFailureHandler = new AuthenticationFailureHandler() {
+            @Override
+            public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException, ServletException {
+                log.info("Login failed.");
+                response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+                response.setContentType("application/json;charset=utf-8");
+                response.getWriter().write(new ObjectMapper().writeValueAsString(exception.getMessage()));
+                new DefaultRedirectStrategy().sendRedirect(request, response, "failurePage");
+            }
+        };
+
+        AuthenticationSuccessHandler authenticationSuccessHandler2 = new AuthenticationSuccessHandler() {
+            @Override
+            public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
+                //校验通过后设置OAuth到请求头中
+                String oauth = "712238f4321ea0ea5bfa3db0ca73a25e";
+                request.setAttribute("AuthorizationA", oauth);
+                request.getSession().setAttribute("AuthorizationB", oauth);
+                //校验通过后设置Token到响应头后再在控制器中从请求域中获取Token
+                String token = "712238f4321ea0ea5bfa3db0ca73a25e";
+                String startsWith = "Bearer" + " ";
+                response.setHeader("AuthorizationX", startsWith + token);
+                response.addHeader("AuthorizationY", token);
+                //校验通过后设置Token到饼干中后再在控制器中从请求域中获取Token
+                response.addCookie(new Cookie("AuthorizationZ", token));
+                log.info("Login succeeded.");
+                response.setStatus(HttpStatus.OK.value());
+                response.setStatus(HttpServletResponse.SC_OK);
+                response.setContentType("application/json;charset=utf-8");
+                response.getWriter().write(new ObjectMapper().writeValueAsString(authentication));
+                new DefaultRedirectStrategy().sendRedirect(request, response, "/successPage");
+            }
+        };
+        AuthenticationFailureHandler authenticationFailureHandler2 = new AuthenticationFailureHandler() {
+            @Override
+            public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException, ServletException {
+                log.info("Login failed.");
+                response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+                response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                response.setContentType("application/json;charset=utf-8");
+                response.getWriter().write(new ObjectMapper().writeValueAsString(exception.getMessage()));
+                new DefaultRedirectStrategy().sendRedirect(request, response, "/failurePage");
+            }
+        };
+        InvalidSessionStrategy invalidSessionStrategy2 = new InvalidSessionStrategy() {
+            @Override
+            public void onInvalidSessionDetected(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+                log.info("失效的会话策略...");
+                RequestDispatcher dispatcher = request.getRequestDispatcher(request.getServletPath());
+                dispatcher.forward(request, response);
+            }
+        };
+        SessionInformationExpiredStrategy sessionInformationExpiredStrategy2 = new SessionInformationExpiredStrategy() {
+            @Override
+            public void onExpiredSessionDetected(SessionInformationExpiredEvent event) throws IOException, ServletException {
+                log.info("过期的会话策略...");
+                HttpServletRequest request = event.getRequest();
+                HttpServletResponse response = event.getResponse();
+                SessionInformation information = event.getSessionInformation();
+                Map<String, Object> map = new HashMap<>();
+                map.put("code", 500);
+                map.put("message", "此账号在另一台设备上已登录，您被迫下线。");
+                map.put("x", information.isExpired());
+                map.put("a", information.getLastRequest());
+                map.put("b", information.getPrincipal());
+                map.put("c", information.getSessionId());
+                String json = new ObjectMapper().writeValueAsString(map);
+                response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+                response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                response.setContentType("application/json;charset=utf-8");
+                response.getWriter().write(json);
+            }
+        };
+        LogoutHandler logoutHandler2 = new LogoutHandler() {
+            @Override
+            public void logout(HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
+                response.setContentType("application/json;charset=UTF-8");
+                log.info("Log in and out A.");
+            }
+        };
+        LogoutSuccessHandler logoutSuccessHandler2 = new LogoutSuccessHandler() {
+            @Override
+            public void onLogoutSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
+                String username = ((User) authentication.getPrincipal()).getUsername();
+                log.info(username + "Log in and out B.");
+                response.setStatus(HttpStatus.OK.value());
+                response.setStatus(HttpServletResponse.SC_OK);
+                response.setContentType("application/json;charset=utf-8");
+                PrintWriter out = response.getWriter();
+                out.write(new ObjectMapper().writeValueAsString(authentication));
+                out.flush();
+                out.close();
+                response.sendRedirect("/index");
+            }
+        };
+        AccessDeniedHandler accessDeniedHandler2 = new AccessDeniedHandler() {
+            @Override
+            public void handle(HttpServletRequest request, HttpServletResponse response, AccessDeniedException accessDeniedException) throws IOException, ServletException {
+                response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+                response.setContentType("application/json;charset=utf-8");
+                PrintWriter out = response.getWriter();
+                out.write(new ObjectMapper().writeValueAsString("权限不足，请联系管理员。"));
+                out.flush();
+                out.close();
+            }
+        };
+
         String url = "fourth";
         switch (url) {
             case "first":
-                http.authorizeRequests().anyRequest().authenticated().and().formLogin()
+                http.authorizeRequests()
+                        .anyRequest().authenticated()
+                        .and()
+                        .formLogin()
                         .loginPage("/loginPage")
                         .loginProcessingUrl("/authentication/form")
                         .defaultSuccessUrl("/successPage")
                         .failureUrl("/failurePage")
-                        .permitAll()
-                        .and().csrf().disable();
+                        .permitAll();
                 break;
             case "second":
                 http.authorizeRequests()
-                        .antMatchers("/200").permitAll()
-                        .antMatchers("/400").permitAll()
-                        .antMatchers("/index").permitAll()
-                        .anyRequest().authenticated().and().formLogin()
+                        .antMatchers("/200", "/400", "/index").permitAll()
+                        .anyRequest().authenticated()
+                        .and()
+                        .formLogin()
                         .loginPage("/loginPage")
                         .loginProcessingUrl("/authentication/form")
                         .successForwardUrl("/successPage")
                         .failureForwardUrl("/failurePage")
-                        .permitAll()
-                        .and().csrf().disable().headers().frameOptions().disable();
+                        .permitAll();
                 break;
             case "third":
                 http.authorizeRequests()
@@ -244,27 +362,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                         .anyRequest().authenticated().and().formLogin()
                         .loginPage("/loginPage")
                         .loginProcessingUrl("/authentication/form")
-                        .successHandler(new AuthenticationSuccessHandler() {
-                            @Override
-                            public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
-                                log.info("Login succeeded.");
-                                response.setStatus(HttpStatus.OK.value());
-                                response.setContentType("application/json;charset=utf-8");
-                                response.getWriter().write(new ObjectMapper().writeValueAsString(authentication));
-                                new DefaultRedirectStrategy().sendRedirect(request, response, "indexPage");
-                            }
-                        })
-                        .failureHandler(new AuthenticationFailureHandler() {
-                            @Override
-                            public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException, ServletException {
-                                log.info("Login failed.");
-                                response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
-                                response.setContentType("application/json;charset=utf-8");
-                                response.getWriter().write(new ObjectMapper().writeValueAsString(exception.getMessage()));
-                                new DefaultRedirectStrategy().sendRedirect(request, response, "failurePage");
-                            }
-                        }).permitAll()
-                        .and().csrf().disable().headers().frameOptions().disable();
+                        .successHandler(authenticationSuccessHandler)
+                        .failureHandler(authenticationFailureHandler).permitAll();
                 break;
             case "fourth":
                 http.authorizeRequests()
@@ -276,53 +375,15 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                         .antMatchers("/guest/css").hasAnyRole("ADMIN", "GUEST")
                         .anyRequest().authenticated()
                         //外挂过滤器。
-                        .and()
-                        .addFilterBefore(new VerifyCodeFilter(), UsernamePasswordAuthenticationFilter.class)
+                        .and().addFilterBefore(new VerifyCodeFilter(), UsernamePasswordAuthenticationFilter.class)
                         //TODO -> 指定支持基于表单的身份验证。如果未指定{@link loginPage(String)}，将生成默认登录页面。
-                        .formLogin()
-                        .loginPage("/loginPage")
-                        .loginProcessingUrl("/authentication/form")
+                        .formLogin().loginPage("/loginPage").loginProcessingUrl("/authentication/form")
                         //.successForwardUrl("/successPage")
-                        .successHandler(new AuthenticationSuccessHandler() {
-                            @Override
-                            public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
-                                //校验通过后设置OAuth到请求头中
-                                String oauth = "712238f4321ea0ea5bfa3db0ca73a25e";
-                                request.setAttribute("AuthorizationA", oauth);
-                                request.getSession().setAttribute("AuthorizationB", oauth);
-                                //校验通过后设置Token到响应头后再在控制器中从请求域中获取Token
-                                String token = "712238f4321ea0ea5bfa3db0ca73a25e";
-                                String startsWith = "Bearer" + " ";
-                                response.setHeader("AuthorizationX", startsWith + token);
-                                response.addHeader("AuthorizationY", token);
-                                //校验通过后设置Token到饼干中后再在控制器中从请求域中获取Token
-                                response.addCookie(new Cookie("AuthorizationZ", token));
-                                log.info("Login succeeded.");
-                                response.setStatus(HttpStatus.OK.value());
-                                response.setStatus(HttpServletResponse.SC_OK);
-                                response.setContentType("application/json;charset=utf-8");
-                                response.getWriter().write(new ObjectMapper().writeValueAsString(authentication));
-                                new DefaultRedirectStrategy().sendRedirect(request, response, "/successPage");
-                            }
-                        })
+                        .successHandler(authenticationSuccessHandler2)
                         //.failureForwardUrl("/failurePage")
-                        .failureHandler(new AuthenticationFailureHandler() {
-                            @Override
-                            public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException, ServletException {
-                                log.info("Login failed.");
-                                response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
-                                response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-                                response.setContentType("application/json;charset=utf-8");
-                                response.getWriter().write(new ObjectMapper().writeValueAsString(exception.getMessage()));
-                                new DefaultRedirectStrategy().sendRedirect(request, response, "/failurePage");
-                            }
-                        }).permitAll()
+                        .failureHandler(authenticationFailureHandler2).permitAll()
                         //TODO -> 允许配置"记住我"身份验证。
-                        .and()
-                        .rememberMe()
-                        .rememberMeParameter("remember-me")
-                        .alwaysRemember(true)
-                        .userDetailsService(userDetailsService())
+                        .and().rememberMe().rememberMeParameter("remember-me").alwaysRemember(true).userDetailsService(userDetailsService())
                         //.tokenRepository(persistentTokenRepository())
                         .tokenValiditySeconds(60)
                         //TODO -> 允许配置会话管理。面的配置演示如何强制一次仅对用户的单个实例进行身份验证。
@@ -331,92 +392,28 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                         .and()
                         .sessionManagement()
                         //.invalidSessionUrl("/login/invalid")
-                        .invalidSessionStrategy(new InvalidSessionStrategy() {
-                            @Override
-                            public void onInvalidSessionDetected(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
-                                log.info("失效的会话策略...");
-                                RequestDispatcher dispatcher = request.getRequestDispatcher(request.getServletPath());
-                                dispatcher.forward(request, response);
-                            }
-                        })
-                        .maximumSessions(1)
-                        .maxSessionsPreventsLogin(false)
+                        .invalidSessionStrategy(invalidSessionStrategy2).maximumSessions(1).maxSessionsPreventsLogin(false)
                         //.expiredUrl("/indexPage")
-                        .expiredSessionStrategy(new SessionInformationExpiredStrategy() {
-                            @Override
-                            public void onExpiredSessionDetected(SessionInformationExpiredEvent event) throws IOException, ServletException {
-                                log.info("过期的会话策略...");
-                                HttpServletRequest request = event.getRequest();
-                                HttpServletResponse response = event.getResponse();
-                                SessionInformation information = event.getSessionInformation();
-                                Map<String, Object> map = new HashMap<>();
-                                map.put("code", 500);
-                                map.put("message", "此账号在另一台设备上已登录，您被迫下线。");
-                                map.put("x", information.isExpired());
-                                map.put("a", information.getLastRequest());
-                                map.put("b", information.getPrincipal());
-                                map.put("c", information.getSessionId());
-                                String json = new ObjectMapper().writeValueAsString(map);
-                                response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
-                                response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-                                response.setContentType("application/json;charset=utf-8");
-                                response.getWriter().write(json);
-                            }
-                        })
-                        .sessionRegistry(new SessionRegistryImpl())
+                        .expiredSessionStrategy(sessionInformationExpiredStrategy2).sessionRegistry(new SessionRegistryImpl())
                         //TODO -> 提供注销支持。这在使用时自动应用{@link WebSecurityConfigurerAdapter}。默认情况下，访问URL"/logout"将通过使HTTP会话无效而注销用户，
                         //清理任何{@link rememberMe()}已配置的身份验证，
                         //清理任何{@link SecurityContextHolder}，然后重定向到"/login"登录页面。
                         .and()
                         .and()
-                        .logout()
-                        .logoutUrl("/logout")
-                        .deleteCookies("JSESSIONID")
-                        .clearAuthentication(true)
-                        .invalidateHttpSession(true)
+                        .logout().logoutUrl("/logout").deleteCookies("JSESSIONID").clearAuthentication(true).invalidateHttpSession(true)
                         //.logoutSuccessUrl("/indexPage")
-                        .addLogoutHandler(new LogoutHandler() {
-                            @Override
-                            public void logout(HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
-                                response.setContentType("application/json;charset=UTF-8");
-                                log.info("Log in and out A.");
-                            }
-                        })
-                        .logoutSuccessHandler(new LogoutSuccessHandler() {
-                            @Override
-                            public void onLogoutSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
-                                String username = ((User) authentication.getPrincipal()).getUsername();
-                                log.info(username + "Log in and out B.");
-                                response.setStatus(HttpStatus.OK.value());
-                                response.setStatus(HttpServletResponse.SC_OK);
-                                response.setContentType("application/json;charset=utf-8");
-                                PrintWriter out = response.getWriter();
-                                out.write(new ObjectMapper().writeValueAsString(authentication));
-                                out.flush();
-                                out.close();
-                                response.sendRedirect("/index");
-                            }
-                        })
+                        .addLogoutHandler(logoutHandler2).logoutSuccessHandler(logoutSuccessHandler2)
                         //TODO -> 允许配置异常处理。这在使用{@link WebSecurityConfigurerAdapter}时自动应用。
-                        .and()
-                        .exceptionHandling()
-                        .accessDeniedHandler(new AccessDeniedHandler() {
-                            @Override
-                            public void handle(HttpServletRequest request, HttpServletResponse response, AccessDeniedException accessDeniedException) throws IOException, ServletException {
-                                response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-                                response.setContentType("application/json;charset=utf-8");
-                                PrintWriter out = response.getWriter();
-                                out.write(new ObjectMapper().writeValueAsString("权限不足，请联系管理员。"));
-                                out.flush();
-                                out.close();
-                            }
-                        })
-                        //TODO -> 关闭一些乱七八糟的东西。
-                        .and().csrf().disable().headers().frameOptions().disable();
+                        .and().exceptionHandling().accessDeniedHandler(accessDeniedHandler2);
                 break;
             default:
                 break;
         }
+
+        //TODO -> 关闭一些乱七八糟的东西。
+        http.csrf().disable().headers().frameOptions().disable();
+        http.csrf().disable().headers().frameOptions().disable();
+        http.csrf().disable().headers().frameOptions().disable();
         //super.configure(http);
     }
 }

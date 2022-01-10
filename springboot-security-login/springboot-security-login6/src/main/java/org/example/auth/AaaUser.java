@@ -1,4 +1,4 @@
-package org.example.component;
+package org.example.auth;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.User;
@@ -10,7 +10,6 @@ import java.util.Collection;
  * @since 2022-01-06
  */
 public class AaaUser extends User {
-
     private Long id;
     private String nickName;
 

@@ -24,7 +24,7 @@ public class HtmlPageController {
         return "200";
     }
 
-    @GetMapping("/403")
+    @GetMapping("/403.html")
     public String page403() {
         System.out.println("[step 00] -> 请求异常页面方法page403()...");
         return "403";

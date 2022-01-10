@@ -1,4 +1,4 @@
-package org.example.component;
+package org.example.auth;
 
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
@@ -17,7 +17,6 @@ import java.util.List;
 @AllArgsConstructor
 @ToString
 public class BbcUserDetails implements UserDetails {
-
     private Long id;
     private String nickName;
 

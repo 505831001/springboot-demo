@@ -44,7 +44,7 @@ public class Swagger2Config {
         return new ApiInfoBuilder()
                 .title("SpringBoot API Doc")
                 .description("This is a restful api document of Spring Boot.")
-                .version("1.0")
+                .version("2.9.2")
                 .build();
     }
 }

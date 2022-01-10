@@ -14,7 +14,6 @@ import java.util.Collection;
  */
 @Slf4j
 public class AaaUser extends User {
-
     private Long id;
     private String nickName;
 

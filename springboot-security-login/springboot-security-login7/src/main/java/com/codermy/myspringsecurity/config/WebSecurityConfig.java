@@ -145,8 +145,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
         //-------------------- 华丽的分割线 --------------------
 
-        //关闭跨域等其它
-        http.csrf().disable().sessionManagement().and().headers().frameOptions().sameOrigin();
         //请求拦截处理机制
         http.authorizeRequests().antMatchers("/login", "/login.html", "/xadmin/**", "/treetable-lay/**", "/static/**").permitAll().anyRequest().authenticated();
         //登录跳转处理机制
@@ -176,9 +174,14 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
             default:
                 break;
         }
+
         //退出登录处理机制
         http.logout().permitAll().invalidateHttpSession(true).deleteCookies("JSESSIONID").logoutSuccessHandler(logoutSuccessHandler);
+
         //异常登录处理机制
         http.exceptionHandling().accessDeniedHandler(accessDeniedHandler);
+
+        //关闭跨域等其它
+        http.csrf().disable().sessionManagement().and().headers().frameOptions().sameOrigin();
     }
 }

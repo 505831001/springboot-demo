@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 
 /**
- * @author Administrator
+ * @author LiuWeiWei
  * @since 2021-12-29
  */
 @Controller
@@ -18,13 +18,13 @@ public class HtmlPageController {
 
     //-------------------- 无限制访问页面 --------------------
 
-    @GetMapping("/200")
+    @GetMapping(value = "/200")
     public String page200() {
         System.out.println("[step 00] -> 无限制页面方法page200()...");
         return "200";
     }
 
-    @GetMapping("/403")
+    @GetMapping(value = "/403.html")
     public String page403() {
         System.out.println("[step 00] -> 请求异常页面方法page403()...");
         return "403";
@@ -74,7 +74,7 @@ public class HtmlPageController {
      *
      * @return
      */
-    @PostMapping("/success")
+    @PostMapping(value = "/success")
     public String successPage() {
         System.out.println("[step 00] -> 登录成功方法successPage()...");
         return "success";
@@ -85,7 +85,7 @@ public class HtmlPageController {
      *
      * @return
      */
-    @PostMapping("/failure")
+    @PostMapping(value = "/failure")
     public String failurePage() {
         System.out.println("[step 00] -> 登录失败方法failurePage()...");
         return "failure";

@@ -1,4 +1,4 @@
-package org.example.component;
+package org.example.auth;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.User;

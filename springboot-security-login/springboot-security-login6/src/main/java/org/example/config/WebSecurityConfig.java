@@ -1,11 +1,13 @@
 package org.example.config;
 
-import lombok.extern.log4j.Log4j2;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.example.component.BbcUserDetails;
-import org.example.component.AaaUser;
+import org.example.auth.AaaUser;
+import org.example.auth.BbcUserDetails;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -23,7 +25,18 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.web.access.AccessDeniedHandler;
+import org.springframework.security.web.authentication.AuthenticationFailureHandler;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
+import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
 
+import javax.annotation.Resource;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -33,7 +46,7 @@ import java.util.List;
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 @Configuration
-@Log4j2
+@Slf4j
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Bean
@@ -63,11 +76,12 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                     @Override
                     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
                         String dbUsername = username;
-                        System.out.println("用户详细信息服务<username>：" + dbUsername);
+                        System.out.println("Data身份验证提供者账号<username>：" + dbUsername);
                         String dbPassword = bCryptPasswordEncoder().encode("438438");
-                        System.out.println("用户详细信息服务<password>：" + dbPassword);
+                        System.out.println("Data身份验证提供者密码<password>：" + dbPassword);
                         List<GrantedAuthority> dbAuthorities = AuthorityUtils.commaSeparatedStringToAuthorityList("GUEST");
-                        System.out.println("用户详细信息服务<authorities>：" + dbAuthorities);
+                        System.out.println("Data身份验证提供者权限<authorities>：" + dbAuthorities);
+
                         String other = "user";
                         if ("user".equals(other)) {
                             return new User(dbUsername, dbPassword, dbAuthorities);
@@ -86,11 +100,12 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                     @Override
                     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
                         String dbUsername = username;
-                        System.out.println("用户详细信息服务<username>：" + dbUsername);
+                        System.out.println("Data身份验证提供者账号<username>：" + dbUsername);
                         String dbPassword = bCryptPasswordEncoder().encode("12345678");
-                        System.out.println("用户详细信息服务<password>：" + dbPassword);
+                        System.out.println("Data身份验证提供者密码<password>：" + dbPassword);
                         List<GrantedAuthority> dbAuthorities = AuthorityUtils.commaSeparatedStringToAuthorityList("ROLE_ADMIN");
-                        System.out.println("用户详细信息服务<authorities>：" + dbAuthorities);
+                        System.out.println("Data身份验证提供者权限<authorities>：" + dbAuthorities);
+
                         String other = "user";
                         if ("user".equals(other)) {
                             return new User(dbUsername, dbPassword, dbAuthorities);
@@ -106,25 +121,28 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                     @Override
                     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
                         Object principal = authentication.getPrincipal();
-                        System.out.println("Http身份验证提供者姓名<principal>：" + principal);
+                        System.out.println("Http身份验证提供者账号<principal>：" + principal);
                         Object credentials = authentication.getCredentials();
                         System.out.println("Http身份验证提供者密码<credentials>：" + credentials);
 
                         UserDetails userDetails = userDetailsService.loadUserByUsername((String) principal);
                         String dbUsername = userDetails.getUsername();
-                        System.out.println("Data身份验证提供者姓名<username>：" + dbUsername);
+                        System.out.println("Data身份验证提供者账号<username>：" + dbUsername);
                         String dbPassword = userDetails.getPassword();
                         System.out.println("Data身份验证提供者密码<password>：" + dbPassword);
+                        Collection<? extends GrantedAuthority> dbAuthorities = userDetails.getAuthorities();
+                        System.out.println("Data身份验证提供者权限<authorities>：" + dbAuthorities);
 
                         if (StringUtils.isNotEmpty((String) credentials)) {
                             boolean matches = bCryptPasswordEncoder().matches((String) credentials, dbPassword);
                             System.out.println("比较前端传入的明文密码和数据库中存储的密文密码是否相等：" + matches);
                             if (matches) {
-                                return new UsernamePasswordAuthenticationToken(dbUsername, dbPassword);
+                                return new UsernamePasswordAuthenticationToken(dbUsername, dbPassword, dbAuthorities);
                             }
                         }
                         return null;
                     }
+
                     @Override
                     public boolean supports(Class<?> authentication) {
                         return authentication.equals(UsernamePasswordAuthenticationToken.class);
@@ -141,8 +159,49 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         super.configure(web);
     }
 
+    @Resource
+    private ObjectMapper objectMapper;
+
     @Override
     protected void configure(HttpSecurity http) throws Exception {
+        AuthenticationSuccessHandler authenticationSuccessHandler = new AuthenticationSuccessHandler() {
+            @Override
+            public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
+                response.setContentType("application/json;charset=UTF-8");
+                log.info("登录成功");
+                PrintWriter out = response.getWriter();
+                out.write(objectMapper.writeValueAsString("登录成功"));
+                out.flush();
+                out.close();
+            }
+        };
+        AuthenticationFailureHandler authenticationFailureHandler = new AuthenticationFailureHandler() {
+            @Override
+            public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException, ServletException {
+                response.setContentType("application/json;charset=UTF-8");
+                log.info("登录失败");
+                PrintWriter out = response.getWriter();
+                out.write(objectMapper.writeValueAsString("登录失败"));
+                out.flush();
+                out.close();
+            }
+        };
+        LogoutSuccessHandler logoutSuccessHandler = new LogoutSuccessHandler() {
+            @Override
+            public void onLogoutSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
+                response.sendRedirect("/login");
+            }
+        };
+        AccessDeniedHandler accessDeniedHandler = new AccessDeniedHandler() {
+            @Override
+            public void handle(HttpServletRequest request, HttpServletResponse response, AccessDeniedException e) throws IOException, ServletException {
+                response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+                response.setCharacterEncoding("utf-8");
+                response.sendRedirect("/403.html");
+                response.getWriter().println("您无此权限");
+            }
+        };
+
         /**
          * 1-配置模式：hasAnyRole(),hasRole(),hasAnyAuthority(),hasAuthority()
          * 2-注解方式：@EnableGlobalMethodSecurity(prePostEnabled = true) + @PreAuthorize(value = "hasAnyAuthority('ROLE_USER')")
@@ -193,6 +252,13 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 break;
         }
 
-        http.csrf().disable();
+        //退出登录处理机制
+        http.logout().permitAll().invalidateHttpSession(true).deleteCookies("JSESSIONID").logoutSuccessHandler(logoutSuccessHandler);
+
+        //异常登录处理机制
+        http.exceptionHandling().accessDeniedHandler(accessDeniedHandler);
+
+        //关闭跨域
+        http.csrf().disable().sessionManagement().and().headers().frameOptions().sameOrigin();
     }
 }
