@@ -54,7 +54,7 @@ public class Swagger2Config {
         return new ApiInfoBuilder()
                 .title("SpringBoot 整合 Swagger2 API Doc")
                 .description("This is a restful api document of Swagger.")
-                .version("1.0")
+                .version("2.9.2")
                 .contact(new Contact("abc", "xyz", "123"))
                 .license("license")
                 .licenseUrl("licenseURL")

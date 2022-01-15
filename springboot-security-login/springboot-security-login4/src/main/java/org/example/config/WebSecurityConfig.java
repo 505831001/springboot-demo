@@ -28,6 +28,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+        /**
+         * 0-[登录认证]请求
+         */
         String options = "inMemory";
         switch (options) {
             case "inMemory":
@@ -55,6 +58,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         /**
+         * 0-[登录过滤]请求
          * 1-配置模式：hasAnyRole(),hasRole(),hasAnyAuthority(),hasAuthority()
          * 2-注解方式：@EnableGlobalMethodSecurity(prePostEnabled = true) + @PreAuthorize(value = "hasAnyAuthority('ROLE_USER')")
          */
@@ -78,27 +82,28 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         }
 
         /**
+         * 0-[登录跳转]请求
          * 1-默认页面请求："/login<GET>",默认login
          * 2-定义页面请求："/login.html<GET>",接收loginPage("/login.html")
          * 3-表单页面请求："/authentication/form<POST>",接收loginProcessingUrl("/authentication/form")
          */
-        String options = "first";
-        switch (options) {
+        String requestJump = "first";
+        switch (requestJump) {
             case "first":
                 //1-两者都不配置：默认页面(login有效(包含其它路径),login.html有效),无表单形式
-                http.formLogin().successForwardUrl("/success").failureForwardUrl("/failure");
+                http.formLogin().successForwardUrl("/success.html").failureForwardUrl("/failure.html");
                 break;
             case "second":
                 //2-只配置loginPage：定义页面(login无效,login.html有效(包含其它路径)),无表单形式
-                http.formLogin().loginPage("/login").successForwardUrl("/success").failureForwardUrl("/failure");
+                http.formLogin().loginPage("/login.html").successForwardUrl("/success.html").failureForwardUrl("/failure.html");
                 break;
             case "third":
                 //3-只配置loginProcessingUrl：默认页面(login有效(包含其它路径),login.html有效),有表单形式
-                http.formLogin().loginProcessingUrl("/authentication/form").successForwardUrl("/success").failureForwardUrl("/failure");
+                http.formLogin().loginProcessingUrl("/authentication/form").successForwardUrl("/success.html").failureForwardUrl("/failure.html");
                 break;
             case "fourth":
                 //4-两者都配置：定义页面(login无效,login.html有效(包含其它路径)),有表单形式
-                http.formLogin().loginPage("/login").loginProcessingUrl("/authentication/form").successForwardUrl("/success").failureForwardUrl("/failure");
+                http.formLogin().loginPage("/login.html").loginProcessingUrl("/authentication/form").successForwardUrl("/success.html").failureForwardUrl("/failure.html");
                 break;
             default:
                 break;

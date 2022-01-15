@@ -1,4 +1,4 @@
-package org.example.component;
+package org.example.config;
 
 import org.springframework.boot.web.server.ConfigurableWebServerFactory;
 import org.springframework.boot.web.server.ErrorPage;
@@ -11,7 +11,7 @@ import org.springframework.http.HttpStatus;
  * @author LiuWeiWei
  * @since 2022-01-10
  */
-//@Configuration
+@Configuration
 public class GlobalExceptionConfig {
     @Bean
     public WebServerFactoryCustomizer<ConfigurableWebServerFactory> webServerFactoryWebServerFactoryCustomizer() {

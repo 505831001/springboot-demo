@@ -1,4 +1,4 @@
-package org.example.component;
+package org.example.config;
 
 import org.springframework.boot.web.server.ConfigurableWebServerFactory;
 import org.springframework.boot.web.server.ErrorPage;

@@ -17,7 +17,6 @@ import java.util.List;
 @AllArgsConstructor
 @ToString
 public class BbcUserDetails implements UserDetails {
-
     private Long id;
     private String nickName;
 

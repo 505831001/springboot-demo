@@ -1,5 +1,6 @@
 package org.example.config;
 
+import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -9,6 +10,7 @@ import springfox.documentation.builders.PathSelectors;
 import springfox.documentation.builders.RequestHandlerSelectors;
 import springfox.documentation.schema.ModelRef;
 import springfox.documentation.service.ApiInfo;
+import springfox.documentation.service.Contact;
 import springfox.documentation.service.Parameter;
 import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spring.web.plugins.Docket;
@@ -32,9 +34,11 @@ public class Swagger2Config {
         parameters.add(new ParameterBuilder().name("Authorization").description("Token").modelRef(new ModelRef("string")).parameterType("header").required(false).build());
 
         return new Docket(DocumentationType.SWAGGER_2)
+                .enable(true)
                 .apiInfo(apiInfo())
                 .select()
-                .apis(RequestHandlerSelectors.any())
+                .apis(RequestHandlerSelectors.withMethodAnnotation(ApiOperation.class))
+                .apis(RequestHandlerSelectors.basePackage("org.example.controller"))
                 .paths(PathSelectors.any())
                 .build()
                 .globalOperationParameters(parameters);
@@ -42,9 +46,12 @@ public class Swagger2Config {
 
     private ApiInfo apiInfo() {
         return new ApiInfoBuilder()
-                .title("SpringBoot API Doc")
-                .description("This is a restful api document of Spring Boot.")
-                .version("1.0")
+                .title("SpringBoot 整合 Swagger2 API Doc")
+                .description("This is a restful api document of Swagger.")
+                .version("2.9.2")
+                .contact(new Contact("abc", "xyz", "123"))
+                .license("license")
+                .licenseUrl("licenseURL")
                 .build();
     }
 }

@@ -74,7 +74,7 @@ public class HtmlPageController {
      *
      * @return
      */
-    @PostMapping("/success")
+    @PostMapping("/success.html")
     public String successPage() {
         System.out.println("[step 00] -> 登录成功方法successPage()...");
         return "success";
@@ -85,7 +85,7 @@ public class HtmlPageController {
      *
      * @return
      */
-    @PostMapping("/failure")
+    @PostMapping("/failure.html")
     public String failurePage() {
         System.out.println("[step 00] -> 登录失败方法failurePage()...");
         return "failure";

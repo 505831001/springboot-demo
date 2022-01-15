@@ -10,7 +10,6 @@ import java.util.Collection;
  * @since 2022-01-06
  */
 public class AaaUser extends User {
-
     private Long id;
     private String nickName;
 

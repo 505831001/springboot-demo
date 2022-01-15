@@ -2,7 +2,7 @@
 <html class="x-admin-sm" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>my-spring-security</title>
+    <title>操作系统会员中心</title>
     <header th:replace="header::html"></header>
 </head>
 <body class="index">
@@ -18,16 +18,12 @@
             <a href="javascript:;" id="nickName">admin</a>
             <dl class="layui-nav-child">
                 <!-- 二级菜单 -->
-                <dd>
-                    <a onclick="xadmin.open('个人信息','http://www.baidu.com')">个人信息</a></dd>
-                <dd>
-                    <a onclick="xadmin.open('切换帐号','http://www.baidu.com')">切换帐号</a></dd>
-                <dd>
-                    <a href="/logout">退出</a></dd>
+                <dd><a onclick="xadmin.open('个人信息','http://www.baidu.com')">个人信息</a></dd>
+                <dd><a onclick="xadmin.open('切换帐号','http://www.baidu.com')">切换帐号</a></dd>
+                <dd><a href="/logout">退出</a></dd>
             </dl>
         </li>
-        <li class="layui-nav-item to-index">
-            <a href="/">前台首页</a></li>
+        <li class="layui-nav-item to-index"><a href="/">前台首页</a></li>
     </ul>
 </div>
 <!-- 顶部结束 -->
@@ -44,9 +40,7 @@
 <div class="page-content">
     <div class="layui-tab tab" lay-filter="xbs_tab" lay-allowclose="false">
         <ul class="layui-tab-title">
-            <li class="home">
-                <i class="layui-icon">&#xe68e;</i>我的桌面
-            </li>
+            <li class="home"><i class="layui-icon">&#xe68e;</i>我的桌面</li>
         </ul>
         <div class="layui-unselect layui-form-select layui-form-selected" id="tab_right">
             <dl>
@@ -57,8 +51,7 @@
         </div>
         <div class="layui-tab-content">
             <div class="layui-tab-item layui-show">
-                <iframe src='/api/getPage?pageName=/system/user/user-list' frameborder="0" scrolling="yes"
-                        class="x-iframe"></iframe>
+                <iframe src='/api/getPage?pageName=/system/user/user-list' frameborder="0" scrolling="yes" class="x-iframe"></iframe>
             </div>
         </div>
         <div id="tab_show"></div>

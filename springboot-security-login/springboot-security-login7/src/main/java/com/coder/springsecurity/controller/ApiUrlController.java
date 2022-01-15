@@ -10,11 +10,11 @@ import org.springframework.web.servlet.ModelAndView;
  * @since 2022-01-06
  */
 @Controller
-@RequestMapping("${api-url}")
-@Api(tags = "转发")
-public class ApiController {
-    @RequestMapping("/getPage")
-    public ModelAndView getPage(ModelAndView modelAndView, String pageName) {
+@RequestMapping(value = "${api-url}")
+@Api(tags = "转发请求控制器")
+public class ApiUrlController {
+    @RequestMapping(value = "/getPage")
+    public ModelAndView getPage(ModelAndView modelAndView,String pageName){
         modelAndView.setViewName(pageName);
         return modelAndView;
     }
