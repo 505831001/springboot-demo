@@ -1,14 +1,18 @@
-package com.coder.springsecurity.config;
+package com.coder.springsecurity.plus.config;
 
-import com.coder.springsecurity.auth.AaaUser;
-import com.coder.springsecurity.auth.BbcUserDetails;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import cn.hutool.core.util.StrUtil;
+import com.alibaba.druid.support.json.JSONUtils;
+import com.alibaba.fastjson.JSON;
+import com.coder.springsecurity.plus.auth.AaaUser;
+import com.coder.springsecurity.plus.auth.BbcUserDetails;
+import com.coder.springsecurity.plus.utils.Result;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
@@ -25,14 +29,18 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.access.AccessDeniedHandler;
+import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
-import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.filter.OncePerRequestFilter;
 
-import javax.annotation.Resource;
+import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
@@ -48,7 +56,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Bean
     public BCryptPasswordEncoder bCryptPasswordEncoder() {
-        return new BCryptPasswordEncoder(4);
+        return new BCryptPasswordEncoder(31);
     }
 
     @Override
@@ -159,59 +167,128 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     public void configure(WebSecurity web) throws Exception {
-        super.configure(web);
+        //放行静态资源
+        web.ignoring()
+                .antMatchers(HttpMethod.GET,
+                        "/swagger-resources/**",
+                        "/PearAdmin/**",
+                        "/component/**",
+                        "/admin/**",
+                        "/**/*.html",
+                        "/**/*.css",
+                        "/**/*.js",
+                        "/swagger-ui.html",
+                        "/webjars/**",
+                        "/v2/**",
+                        "/druid/**");
     }
 
     //-------------------- 华丽的分割线 --------------------
 
-    @Resource
-    private ObjectMapper objectMapper;
+    private String defaultFilterProcessUrl = "/login";
+    private String method = "POST";
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        //登录过滤处理机制
-        http.authorizeRequests()
-                .antMatchers( "/login.html","/xadmin/**","/treetable-lay/**","/static/**")
-                .permitAll()
-                .anyRequest()
-                .authenticated();
-
-        //登录跳转处理机制
-        http.formLogin()
-                .loginPage("/login.html")
-                .loginProcessingUrl("/login")
-                .successHandler(new AuthenticationSuccessHandler() {
-                    @Override
-                    public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
-                        response.setHeader("Access-Controller-Allow-Origin","*");
-                        response.setHeader("Access-Controller-Allow-Methods","*");
-                        response.setContentType("application/json;charset=UTF-8");
-                        response.setStatus(HttpStatus.OK.value());
-                        response.getWriter().write(objectMapper.writeValueAsString(authentication));
+        OncePerRequestFilter oncePerRequestFilter = new OncePerRequestFilter() {
+            @Override
+            protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+                if (method.equalsIgnoreCase(request.getMethod()) && defaultFilterProcessUrl.equals(request.getServletPath())) {
+                    // 登录请求校验验证码，非登录请求不用校验
+                    HttpSession session = request.getSession();
+                    String requestCaptcha = request.getParameter("captcha");
+                    //验证码的信息存放在seesion种，具体看EasyCaptcha官方解释
+                    String genCaptcha = (String) request.getSession().getAttribute("captcha");
+                    response.setContentType("application/json;charset=UTF-8");
+                    if (StrUtil.isEmpty(requestCaptcha)) {
+                        //删除缓存里的验证码信息
+                        session.removeAttribute("captcha");
+                        response.getWriter().write(JSON.toJSONString(Result.error().message("验证码不能为空!")));
+                        return;
                     }
-                })
-                .and().logout()
-                .permitAll()
-                .invalidateHttpSession(true)
-                .deleteCookies("JSESSIONID")
-                .logoutSuccessHandler(new LogoutSuccessHandler() {
-                    @Override
-                    public void onLogoutSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
-                        response.sendRedirect("/login");
+                    if (StrUtil.isEmpty(genCaptcha)) {
+                        response.getWriter().write(JSON.toJSONString(Result.error().message("验证码已失效!")));
+                        return;
                     }
-                });
-
-        //登录异常处理机制
-        http.exceptionHandling().accessDeniedHandler(new AccessDeniedHandler() {
+                    if (!StrUtil.equalsIgnoreCase(genCaptcha, requestCaptcha)) {
+                        session.removeAttribute("captcha");
+                        response.getWriter().write(JSON.toJSONString(Result.error().message("验证码错误!")));
+                        return;
+                    }
+                }
+                filterChain.doFilter(request, response);
+            }
+        };
+        AuthenticationEntryPoint authenticationEntryPoint = new AuthenticationEntryPoint() {
+            @Override
+            public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException {
+                response.setCharacterEncoding("UTF-8");
+                response.setContentType("application/json");
+                response.getWriter().println(JSON.toJSONString(Result.error().message("尚未登录，或者登录过期   " + authException.getMessage())));
+                response.getWriter().flush();
+            }
+        };
+        AuthenticationSuccessHandler authenticationSuccessHandler = new AuthenticationSuccessHandler() {
+            @Override
+            public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
+                HttpSession session = request.getSession();
+                //删除缓存里的验证码信息
+                session.removeAttribute("captcha");
+                Result result = Result.ok().message("登录成功");
+                //修改编码格式
+                response.setCharacterEncoding("utf-8");
+                response.setContentType("application/json");
+                //输出结果
+                response.getWriter().write(JSON.toJSONString(result));
+            }
+        };
+        AuthenticationFailureHandler authenticationFailureHandler = new AuthenticationFailureHandler() {
+            @Override
+            public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException, ServletException {
+                //修改编码格式
+                response.setCharacterEncoding("utf-8");
+                response.setContentType("application/json");
+                if (exception instanceof BadCredentialsException) {
+                    response.getWriter().write(JSON.toJSONString(Result.error().message("用户名或密码错误")));
+                } else {
+                    response.getWriter().write(JSON.toJSONString(Result.error().message(exception.getMessage())));
+                }
+            }
+        };
+        AccessDeniedHandler accessDeniedHandler = new AccessDeniedHandler() {
             @Override
             public void handle(HttpServletRequest request, HttpServletResponse response, AccessDeniedException e) throws IOException, ServletException {
-                response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-                response.setCharacterEncoding("utf-8");
-                response.sendRedirect("/403.html");
-                response.getWriter().println("您无权限");
+                response.setCharacterEncoding("UTF-8");
+                response.setContentType("application/json");
+                response.getWriter().println(JSONUtils.toJSONString(Result.error().message(e.getMessage())));
+                response.getWriter().flush();
             }
-        });
+        };
 
+        //验证码
+        http.addFilterBefore(oncePerRequestFilter, UsernamePasswordAuthenticationFilter.class);
+
+        //未登陆时返回 JSON 格式的数据给前端
+        http.httpBasic().authenticationEntryPoint(authenticationEntryPoint);
+
+        //任何人都能访问这个请求
+        http.authorizeRequests().antMatchers("/captcha").permitAll().anyRequest().authenticated();
+
+        //登录页面不设限访问
+        http.formLogin().loginPage("/login.html").loginProcessingUrl("/login").successHandler(authenticationSuccessHandler).failureHandler(authenticationFailureHandler).permitAll();
+
+        //记住我功能
+        http.rememberMe().rememberMeParameter("rememberme");
+
+        //无权访问 JSON 格式的数据
+        http.exceptionHandling().accessDeniedHandler(accessDeniedHandler);
+
+        //关闭csrf
+        http.csrf().disable();
+        //禁用缓存
+        http.headers().cacheControl();
+        //防止iframe造成跨域
+        http.headers().frameOptions().disable().and();
         //关闭跨站
         http.csrf().disable().sessionManagement().and().headers().frameOptions().sameOrigin();
     }
