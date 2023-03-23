@@ -1,0 +1,87 @@
+/* 基础：清除默认样式的代码。 */
+
+/* 作用：去除常见标签默认的外边距Margin和内边距Padding。 */
+body,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+ul,
+ol,
+li,
+dl,
+dt,
+dd,
+input {
+  margin: 0;
+  padding: 0;
+}
+
+/* 作用：內减模式（避免盒子模型扩张（撑开））。 */
+* {
+  box-sizing: border-box;
+}
+
+/* 作用：设置网页统一的字体大小、行高、字体系列相关属性。 */
+body {
+  font: 16px/1.5 "Helvetica Neue", Helvetica, Arial, "Microsoft Yahei",
+    "Hiragino Sans GB", "Heiti SC", "WenQuanYi Micro Hei", sans-serif;
+  color: #333;
+}
+
+/* 作用：去除列表（无序和有序与自定义）默认样式。 */
+ul,
+ol {
+  list-style: none;
+}
+
+/* 作用：去除默认的倾斜效果。 */
+em,
+i {
+  font-style: normal;
+}
+
+/* 作用：去除内联（行内）元素a标签默认下划线，并设置默认文字颜色。 */
+a {
+  text-decoration: none;
+  color: #333;
+}
+
+/* 作用：设置img标签的垂直对齐方式为居中对齐，去除img标签默认的下间隙。 */
+img {
+  vertical-align: middle;
+}
+
+/* 使用：去除input标签的默认样式。 */
+input {
+  border: none;
+  outline: none;
+  color: #333;
+}
+
+/* 作用：左浮动效果。 */
+.fl {
+  float: left;
+}
+
+/* 使用：右浮动效果。 */
+.fr {
+  float: right;
+}
+
+/* 使用：双伪元素清除法a+。 */
+.clearfix::before,
+.clearfix::after {
+  content: "";
+  display: table;
+}
+/* 使用：双伪元素清除法+b。 */
+.clearfix::after {
+  clear: both;
+}
+
+
+

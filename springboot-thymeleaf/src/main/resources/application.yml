@@ -1,0 +1,17 @@
+server:
+  port: 8848
+
+spring:
+  thymeleaf:
+    enabled: true
+    prefix: classpath:/templates/
+    encoding: UTF-8
+    cache: false
+    suffix: .html
+    servlet:
+      content-type: text/html
+  mvc:
+    static-path-pattern: /static/**
+
+
+

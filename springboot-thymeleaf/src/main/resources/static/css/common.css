@@ -1,0 +1,398 @@
+/* 核心：各个页面相同的样式表：头部、主体、尾部。 */
+* {
+    margin: 0;
+    padding: 0;
+}
+
+html {
+    height: 100%;
+}
+
+body {
+    height: 100%;
+}
+
+/* 第零步：全民出游（All-People） */
+.cloud {
+    height: 671px;
+    background-image: url("../images/quanminchuyou-1.jpg");
+    background-repeat: no-repeat;
+    background-position: center 0px;
+}
+.cloud img {
+    position: absolute;
+    left: 50%;
+    top: 0;
+}
+.cloud img:nth-child(1) {
+    margin-left: -300px;
+    top: 20px;
+    animation: cloud 1s infinite alternate;
+}
+.cloud img:nth-child(2) {
+    margin-left: 400px;
+    top: 100px;
+    animation: cloud 1s infinite alternate 0.2s;
+}
+.cloud img:nth-child(3) {
+    margin-left: -550px;
+    top: 200px;
+    animation: cloud 1s infinite alternate 0.4s;
+}
+/* 云彩动画 */
+@keyframes cloud {
+    from {
+        transform: translateX(0px);
+    }
+    to {
+        transform: translateX(20px);
+    }
+}
+.cloud img:nth-child(4) {
+    margin-left: -399px;
+    top: 450px;
+    animation: cloud-plus 1s infinite alternate;
+}
+.cloud img:nth-child(5) {
+    margin-left: -179px;
+    top: 450px;
+    animation: cloud-plus 1s infinite alternate 0.2s;
+}
+.cloud img:nth-child(6) {
+    margin-left: 46px;
+    top: 450px;
+    animation: cloud-plus 1s infinite alternate 0.4s;
+}
+.cloud img:nth-child(7) {
+    margin-left: 268px;
+    top: 450px;
+    animation: cloud-plus 1s infinite alternate 0.4s;
+}
+/* 促销动画 */
+@keyframes cloud-plus {
+    from {
+        transform: translateY(0px);
+    }
+    to {
+        transform: translateY(20px);
+    }
+}
+
+/* 第一步：版心 */
+.wrapper {
+    width: 1240px;
+    margin: 0 auto;
+}
+
+/* 第二步：快捷导航 */
+.shortcut {
+    height: 52px;
+    background-color: #008000;
+}
+
+.shortcut .wrapper {
+    height: 52px;
+}
+
+.shortcut .wrapper ul {
+    /* 目的: 让所有的文字内容居右侧对齐。 */
+    float: right;
+}
+
+.shortcut .wrapper li {
+    /* 目的: 让所有的文字内容在一行显示。 */
+    float: left;
+
+    line-height: 52px;
+}
+
+.shortcut .wrapper a {
+    padding: 0 16px;
+
+    border-right: 1px solid #666;
+    font-size: 14px;
+    color: #dcdcdc;
+}
+
+.shortcut .wrapper a:hover {
+    color: white;
+    font-size: 16px;
+}
+
+.shortcut .wrapper a span {
+    /* 作用：让内联元素（行内元素）span转换显示成为行内块级元素。 */
+    display: inline-block;
+
+    margin-right: 8px;
+
+    width: 11px;
+    height: 16px;
+    background-image: url(../images/sprites.png);
+    background-position: -160px -70px;
+    /* 作用：居中对齐。配合显示模式使用。 */
+    vertical-align: middle;
+}
+
+.shortcut .wrapper li:last-child a {
+    /* 作用：清除a标签的边框线，就是最后一个li标签里面的a标签。 */
+    border: 0;
+}
+
+/* 第二步：精灵动画（Spirit-Animation） */
+.spirit {
+    height: 140px;
+    overflow: hidden;
+}
+.wrapper .spirit-animation {
+    width: 140px;
+    height: 140px;
+    background-image: url("../images/spirit-animation.png");
+    animation: spirit-animation 2s steps(12) infinite, spirit-animation-run 10s infinite;
+}
+
+@keyframes spirit-animation {
+    from {
+        background-position: 0px 0px;
+    }
+    to {
+        background-position: -1680px 0px;
+    }
+}
+
+@keyframes spirit-animation-run {
+    from {
+        transform: translateX(-140px);
+    }
+    to {
+        transform: translateX(1240px);
+    }
+}
+
+/* 第三步：第一部分主体（First） */
+.navigate {
+    margin: 30px auto;
+    height: 70px;
+    /*background-color: #f5f5f5;*/
+}
+
+.navigate .wrapper .logo {
+    /* 作用：把这个块级元素浮动到最左边。 */
+    float: left;
+
+    width: 207px;
+    height: 70px;
+    /*background-color: #f0f9f4;*/
+}
+
+.navigate .wrapper .logo h1 {
+    width: 207px;
+    height: 70px;
+}
+
+.navigate .wrapper .logo h1 a {
+    display: block;
+    
+    width: 207px;
+    height: 70px;
+    background-image: url(../images/logo.png);
+    background-size: contain;
+    /* 作用：让原来a标签中的文字内容不可见。 */
+    font-size: 0;
+}
+
+.navigate .wrapper .menu {
+    /* 作用：把这个块级元素浮动到最右边。 */
+    float: left;
+
+    margin-left: 40px;
+    width: 600px;
+    height: 70px;
+    /*background-color: #dcdcdc;*/
+}
+
+.navigate .wrapper .menu li {
+    /* 第一步：定位中英文导航栏到一个位置上。（先重叠，后位移） */
+    position: relative;
+    /* 作用：把这个块级元素浮动到上面那个块级元素的最右边。第二层浮动。 */
+    float: left;
+    width: 120px;
+    height: 70px;
+    text-align: center;
+    line-height: 70px;
+    transition: all .5s;
+    transform-style: preserve-3d;
+    /* 作用：只是让它按X轴旋转30度，按Y轴旋转30度，给你视觉上更清楚的看到立体效果。 */
+    /*transform: rotateX(-30deg) rotateY(30deg);*/
+}
+
+.navigate .wrapper .menu li a {
+    /* 第一步：定位中英文导航栏到一个位置上。（先重叠，后位移） */
+    position: absolute;
+
+    width: 120px;
+    height: 70px;
+}
+
+.navigate .wrapper .menu li a:first-child {
+    /*background-color: green;*/
+    color: green;
+    /* 第三步：[中文版导航栏]其次移动20px像素（中心线Z轴往上）。 */
+    transform: translateZ(35px);
+}
+
+.navigate .wrapper .menu li a:last-child {
+    /*background-color: orange;*/
+    color: orange;
+    /* 第二步：[英文版导航栏]首先旋转90度（水平线X轴顺时针）。其次移动20px像素（中心线Z轴往上）。 */
+    transform: rotateX(90deg) translateZ(35px);
+}
+
+.navigate .wrapper .menu li:hover {
+    /* 第四步：旋转整个li标签-90度（水平线X轴逆时针）。 */
+    transform: rotateX(-90deg);
+}
+
+.navigate .wrapper .search {
+    /* 作用：定位子级为绝对定位，需要同时指定定位父级为相对或者绝对都行。 */
+    position: relative;
+    /* 作用：把这个块级元素浮动到最左边。 */
+    float: right;
+    margin-top: 24px;
+    margin-left: 34px;
+    width: 172px;
+    height: 30px;
+    border-bottom: 2px solid #e7e7e7;
+}
+
+.navigate .wrapper .search input {
+    padding-left: 30px;
+    width: 172px;
+    height: 28px;
+}
+
+.navigate .wrapper .search input::placeholder {
+    font-size: 14px;
+    color: #ccc;
+}
+
+.navigate .wrapper .search span {
+    position: absolute;
+    left: 2px;
+    top: 0;
+    /* display: inline-block; */
+    width: 18px;
+    height: 18px;
+    background-image: url(../images/sprites.png);
+    background-position: -79px -69px;
+}
+
+.navigate .wrapper .car {
+    /* 作用：绝对定位, 盒子具备行内块特点。 */
+    position: relative;
+
+    float: right;
+    margin-top: 28px;
+    margin-left: 15px;
+    width: 23px;
+    height: 23px;
+    background-image: url(../images/sprites.png);
+    background-position: -119px -69px;
+}
+
+.navigate .wrapper .car span {
+    /* 作用：绝对定位, 盒子具备行内块特点。 */
+    position: absolute;
+    right: -13px;
+    top: -6px;
+
+    width: 20px;
+    height: 15px;
+    background-color: #e26237;
+    border-radius: 8px;
+
+    font-size: 13px;
+    color: #fff;
+    text-align: center;
+    line-height: 15px;
+}
+
+/* 第四步：第二部分主体（轮播图Banner）在index.css样式文件中 */
+/* 第五步：第三部分主体（商品类型Goods）在index.css样式文件中 */
+/* 第六步：第四部分主体（生鲜品类Fresh）在index.css样式文件中 */
+
+/* 版权footer */
+.footer {
+    height: 342px;
+    background-color: #333;
+}
+
+.footer .wrapper {
+    width: 1393px;
+}
+
+.footer .top {
+    padding-top: 59px;
+    padding-left: 135px;
+    height: 175px;
+    border-bottom: 3px solid #434343;
+}
+
+.footer .top li {
+    position: relative;
+    float: left;
+    margin-right: 300px;
+    width: 195px;
+    height: 58px;
+
+    line-height: 58px;
+}
+
+.footer .top li:last-child {
+    margin-right: 0;
+}
+
+.footer .top li::before {
+    /* 伪元素添加的标签  行内 */
+    /* 如果行内块和行内文字无法通过vertical-align或行高对齐, 定位 */
+    position: absolute;
+    left: 0;
+    top: 0;
+    /* display: inline-block; */
+    content: '';
+    width: 58px;
+    height: 58px;
+    background-image: url(../images/sprites.png);
+    vertical-align: middle;
+}
+
+.footer .top li span {
+    margin-left: 77px;
+    font-size: 28px;
+    color: #fff;
+}
+
+.footer .top li:nth-child(2)::before {
+    /* 第二个li里面的berfore添加背景图位置属性 */
+    background-position: -130px 0;
+}
+
+.footer .top li:nth-child(3)::before {
+    /* 第二个li里面的berfore添加背景图位置属性 */
+    background-position: -64px 0;
+}
+
+.footer .bottom {
+    padding-top: 40px;
+    font-size: 14px;
+    color: #999;
+    text-align: center;
+}
+
+.footer .bottom a {
+    font-size: 14px;
+    color: #999;
+}
+
+.footer .bottom p {
+    margin-bottom: 20px;
+}

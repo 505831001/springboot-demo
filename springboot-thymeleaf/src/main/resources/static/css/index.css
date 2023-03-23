@@ -1,0 +1,452 @@
+/* 第四步：第二部分主体（轮播图：Banner）在index.css样式文件中 */
+.banner {
+    height: 500px;
+    background-color: #f5f5f5;
+}
+
+.banner .wrapper {
+    position: relative;
+    height: 500px;
+    background-color: pink;
+}
+
+.banner .wrapper .aside {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 250px;
+    height: 500px;
+    background-color: rgba(50, 100, 50, 0.5);
+}
+
+.banner .wrapper .aside li {
+    height: 50px;
+    line-height: 50px;
+}
+
+.banner .wrapper .aside a {
+    position: relative;
+    /* 宽度和父级一样 */
+    padding-left: 36px;
+    padding-right: 19px;
+    display: block;
+    height: 50px;
+
+    color: #fff;
+}
+
+.banner .wrapper .aside a span {
+    margin-left: 15px;
+    font-size: 14px;
+}
+
+.banner .wrapper .aside a:hover {
+    background-color: rgba(255, 255, 255, 0.4);
+    color: #27ba9b;
+}
+
+.banner .wrapper .aside a::after {
+    /* a的里面最后的位置添加箭头 */
+    position: absolute;
+    right: 19px;
+    top: 19px;
+
+    content: '';
+    width: 6px;
+    height: 11px;
+    background-image: url(../images/sprites.png);
+    background-position: -80px -110px;
+}
+
+.banner .wrapper .next,
+.banner .wrapper .prev {
+    position: absolute;
+    top: 228px;
+    width: 45px;
+    height: 45px;
+    background-color: rgba(0, 0, 0, .2);
+    background-image: url(../images/sprites.png);
+    border-radius: 50%;
+}
+
+/* 背景图位置负责2件事: 改变箭头在盒子里面的位置; 改变精灵图的位置 */
+/* 导致在精灵图中测量的尺寸不准确 */
+/* 解决方案有2种: 
+    1. 书写背景图位置属性, 借助谷歌的调试工具调试具体的位置数值
+    2. 书写标签的时候, a负责盒子,里面再添加一个span负责箭头
+*/
+.banner .wrapper .prev {
+    left: 260px;
+    background-position: 14px -60px;
+}
+
+.banner .wrapper .next {
+    right: 10px;
+    background-position: -23px -60px;
+}
+
+.banner .wrapper ol {
+    position: absolute;
+    left: 600px;
+    bottom: 30px;
+
+    height: 10px;
+}
+
+.banner .wrapper ol li {
+    float: left;
+    margin-right: 30px;
+    width: 20px;
+    height: 20px;
+    background-color: rgba(255, 255, 255, 0.4);
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+.banner .wrapper ol .current {
+    background-color: #fff;
+}
+
+/* 第五步：第三部分主体（商品类型Goods）在index.css样式文件中 */
+.goods .header {
+    height: 114px;
+    line-height: 114px;
+}
+
+.goods .header h2 {
+    /* 作用：让h2标签浮动到.header块级元素最左边。 */
+    float: left;
+
+    font-size: 29px;
+    font-weight: 400;
+
+    height: 114px;
+}
+
+.goods .header h2 span {
+    margin: 0px 20px;
+
+    font-size: 16px;
+    color: #999;
+}
+
+.goods .header a {
+    /* 作用：让a标签浮动到.header块级元素最右边。 */
+    float: right;
+    color: #999;
+}
+
+.goods .header a::after {
+    content: '';
+    display: inline-block;
+    margin-left: 13px;
+    width: 7px;
+    height: 13px;
+    background-image: url(../images/sprites.png);
+    background-position: 0 -110px;
+    vertical-align: middle;
+}
+
+.goods .body li {
+    position: relative;
+    float: left;
+    margin-right: 8px;
+    width: 304px;
+    height: 405px;
+    background-color: #f0f9f4;
+    text-align: center;
+    border: 1px dotted #f0f9f4;
+    overflow: hidden;
+}
+
+.goods .body li:hover {
+    border: 1px solid #27ba9b;
+}
+
+.goods .body li:first-child:hover::after,
+.goods .body li:nth-child(2):hover::after,
+.goods .body li:nth-child(3):hover::after,
+.goods .body li:last-child:hover::after {
+    position: absolute;
+    left: 0px;
+    top: 0px;
+
+    content: "";
+    width: 304px;
+    height: 405px;
+    background-image: linear-gradient(transparent, rgba(200, 250, 200, 0.6));
+}
+
+.goods .body li:last-child {
+    margin-right: 0;
+}
+
+.goods .body li img {
+    width: 302px;
+}
+
+.goods .body li .pic,
+.goods .body li .x-axis,
+.goods .body li .y-axis,
+.goods .body li .z-axis {
+    width: 100%;
+    height: 302px;
+    transition: all 2s;
+}
+
+.goods .body li:hover .pic {
+    transform: scale(1.2);
+}
+
+.goods .body li:hover .x-axis {
+    transform: rotateX(360deg);
+}
+
+.goods .body li:hover .y-axis {
+    transform: rotateY(360deg);
+}
+
+.goods .body li:hover .z-axis {
+    transform: rotateZ(360deg);
+}
+
+.goods .body li:first-child .txt {
+    margin-top: 50px;
+    transition: all 0.5s;
+}
+
+.goods .body li:first-child:hover .txt {
+    transform: translateY(-50px);
+}
+
+.goods .body li h3 {
+    margin-top: 20px;
+    margin-bottom: 10px;
+    font-size: 20px;
+    font-weight: 400;
+}
+
+.goods .body li div {
+    color: #9a2e1f;
+    font-size: 17px;
+}
+
+.goods .body li div span {
+    font-size: 23px;
+}
+
+.goods .body li b {
+    position: absolute;
+    left: 10px;
+    top: 10px;
+    width: 28px;
+    height: 51px;
+    border: 1px solid red;
+    border-radius: 5px;
+    font-size: 18px;
+    color: red;
+    font-weight: 400;
+    line-height: 24px;
+}
+
+/* 第五步：精灵动画主体（Spirit-Animation） */
+.lamps {
+    height: 300px;
+    background-color: #e7e7e7;
+}
+
+.lamps .wrapper {
+    /* 作用：使用版心宽度。 */
+    width: 1240px;
+    /* 作用：使用图片的高度。 */
+    height: 300px;
+    overflow: hidden;
+}
+
+.lamps .wrapper ul {
+    /* 作用：有多少张图片，就是所有图片的总宽度和。 */
+    width: 4200px;
+    animation-name: lamps-run;
+    animation-duration: 10s;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+}
+
+.lamps .wrapper ul:hover {
+    animation-play-state: paused;
+}
+
+.lamps .wrapper ul li {
+    float: left;
+    list-style-type: none;
+}
+
+.lamps .wrapper ul li img {
+    /* 作用：取图片宽度。 */
+    width: 300px;
+    height: 100%;
+}
+
+@keyframes lamps-run {
+    from {
+        transform: translateX(0px);
+    }
+    to {
+        /* 作用：取盒子宽度。 */
+        transform: translateX(-2100px);
+    }
+}
+
+/* 第六步：第四部分主体（生鲜品类Fresh）在index.css样式文件中 */
+.fresh .header {
+    height: 96px;
+    line-height: 96px;
+}
+
+.fresh .header h2 {
+    float: left;
+    font-size: 29px;
+    font-weight: 400;
+}
+
+.fresh .header .more {
+    float: right;
+    color: #999;
+}
+
+.fresh .header .more::after {
+    content: '';
+    display: inline-block;
+    margin-left: 13px;
+    width: 7px;
+    height: 13px;
+    background-image: url(../images/sprites.png);
+    background-position: 0 -110px;
+    vertical-align: middle;
+}
+
+.fresh .header ul {
+    float: right;
+    margin-right: 65px;
+}
+
+.fresh .header ul li {
+    float: left;
+}
+
+.fresh .header li a {
+    padding: 2px 7px;
+    margin-left: 6px;
+    color: #999;
+}
+
+.fresh .header li a:hover {
+    color: black;
+}
+
+.fresh .body .left {
+    float: left;
+
+    width: 240px;
+    height: 610px;
+    background-color: #9a2e1f;
+}
+
+.fresh .body .left img {
+    width: 240px;
+    height: 610px;
+}
+
+.fresh .body .right {
+    float: right;
+
+    width: 1000px;
+    height: 610px;
+}
+
+.fresh .body .right ul li {
+    float: right;
+
+    margin-left: 10px;
+    width: 232px;
+    height: 305px;
+    background-color: #f0f9f4;
+    border: 1px dotted #f0f9f4;
+}
+
+.fresh .body .right ul li:hover {
+    border: 1px solid #27ba9b;
+}
+
+.fresh .body .right ul li:nth-child(4n) {
+    margin-right: auto;
+}
+
+.fresh .body .right ul li img {
+    width: 230px;
+}
+
+.fresh .body .right ul li h3 {
+    padding-top: 10px;
+    text-align: center;
+    font-size: 16px;
+    font-weight: 400;
+}
+
+.fresh .body .right ul li div {
+    padding-top: 5px;
+    text-align: center;
+    color: #9a2e1f;
+    font-size: 17px;
+}
+
+/* 第七步：技术支持（Support） */
+.support {
+    height: 300px;
+    background-color: #f5f5f5;
+}
+
+.support .other {
+    height: 300px;
+}
+
+.support .other li {
+    margin-top: 50px;
+    text-align: center;
+    border-right: 1px solid #f5f5f5;
+}
+
+.support .other li a div {
+    margin-top: 20px;
+}
+
+.support .other li a span {
+    text-align: center;
+}
+
+.support .other li:last-child {
+    /* 作用：清除a标签的边框线，就是最后一个li标签里面的a标签。 */
+    border: 0;
+}
+
+.support .other li:first-child {
+    float: left;
+
+    width: 400px;
+    height: 300px;
+}
+
+.support .other li:nth-child(2) {
+    float: left;
+
+    margin-left: 20px;
+    width: 400px;
+    height: 300px;
+}
+
+.support .other li:last-child {
+    float: right;
+
+    width: 400px;
+    height: 300px;
+}
