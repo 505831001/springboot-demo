@@ -10,8 +10,12 @@ spring:
     suffix: .html
     servlet:
       content-type: text/html
-  mvc:
-    static-path-pattern: /static/**
+  # 此配置适用于Resources目录下
+  #  mvc:
+  #    static-path-pattern: /static/**
+  # 此配置适用于WebApp目录下
+  resources:
+    static-locations: classpath:/resources/, classpath:/static/, classpath:/public/
 
 
 
