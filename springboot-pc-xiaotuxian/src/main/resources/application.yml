@@ -1,0 +1,21 @@
+server:
+  port: 8848
+
+spring:
+  thymeleaf:
+    enabled: true
+    prefix: classpath:/templates/
+    encoding: UTF-8
+    cache: false
+    suffix: .html
+    servlet:
+      content-type: text/html
+  # 此配置适用于Resources目录下
+  #  mvc:
+  #    static-path-pattern: /static/**
+  # 此配置适用于WebApp目录下
+  resources:
+    static-locations: classpath:/resources/, classpath:/static/, classpath:/public/
+
+
+
