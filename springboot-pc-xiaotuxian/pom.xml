@@ -67,7 +67,7 @@
     </dependencies>
 
     <build>
-        <finalName>springboot-thymeleaf</finalName>
+        <finalName>springboot-pc-xiaotuxian</finalName>
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
