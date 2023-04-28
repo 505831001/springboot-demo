@@ -42,4 +42,9 @@ public class HtmlPageController {
     public String center() {
         return "center";
     }
+
+    @RequestMapping(value = "/product")
+    public String product() {
+        return "product";
+    }
 }
