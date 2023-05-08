@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>异步脚本和XML请求页面</title>
+    <script>
+        function btnOnClick() {
+            // 1.创建ajax引擎对象XMLHttpRequest
+            const object = new XMLHttpRequest();
+            // 2.再给XMLHttpRequest对象绑定监听对象变化的事件（onreadystatechange在准备状态更改时），并且认为这个是事件设置的一个响应函数，这个响应函数就叫做回调函数。服务器给客户端响应之后会自动调用这个函数。
+            object.onreadystatechange = function () {
+                if (object.readyState === 4 && object.status === 200) {
+                    // ReadyState 属性改变时，就会调用该函数。
+                    // response 响应数据是所有的any。
+                    // responseText 响应数据是字符串形式string。
+                    // responseType 响应数据是json/text/document/blob/arraybuffer/""
+                    // 5.接收服务器响应的结果。获取服务器响应的数据（0:请求未初始化。1:服务器已经建立连接。2:请求已经接收。3:请求处理之中。4:请求已经完成，并且响应已经就绪。）
+                    document.querySelector("#database").innerHTML = object.responseText;
+                }
+            }
+            // 3.设置ajax发送到服务的路径。绑定要发送到服务器的地址
+            object.open("GET", "/jsAjax", true);
+            // 4.发送ajax请求。把ajax请求发送到服务器
+            object.send();
+        }
+    </script>
+</head>
+<body>
+    <input type="button" value="发送AsyncJSAndXML请求服务器" onclick="btnOnClick()"/>
+    <br>
+    <span id="database">请求之前的内容</span>
+</body>
+</html>

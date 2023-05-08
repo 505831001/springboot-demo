@@ -47,4 +47,14 @@ public class HtmlPageController {
     public String product() {
         return "product";
     }
+
+    @RequestMapping(value = "/ajax")
+    public String ajax() {
+        return "ajax";
+    }
+
+    @RequestMapping(value = "/jquery")
+    public String jquery() {
+        return "jquery";
+    }
 }

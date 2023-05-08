@@ -1,0 +1,343 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>JQuery框架封装Ajax异步请求页面</title>
+    <style type="text/css">
+        p {
+            text-align: center;
+            font-size: 24px;
+        }
+
+        table {
+            margin: 0 auto;
+            border: 0;
+        }
+
+        table tr {
+            height: 40px;
+            border: 0;
+        }
+
+        table tr td {
+            padding: 0 14px;
+            border: 1px solid #999
+        }
+
+        .error {
+            color: red
+        }
+
+        .content {
+            width: 643px;
+        }
+
+        input[type='text'] {
+            width: 530px;
+            height: 40px;
+            font-size: 14px;
+        }
+
+        input[type='button'] {
+            width: 100px;
+            height: 46px;
+            background: #38f;
+            border: 0;
+            color: #fff;
+            font-size: 15px
+        }
+
+        .show {
+            position: absolute;
+            width: 535px;
+            border: 1px solid #999;
+            border-top: 0;
+            display: none;
+        }
+    </style>
+    <script src="./js/jquery-3.4.1.js"></script>
+    <script type="text/javascript">
+        function btnOnClick() {
+            // 使用jQuery框架封装ajax异步请求方式
+            // 语法：jQuery.get(url, data, callback, type)
+            // 语法：$.get(url, data, callback, type)
+            // 参数：url:请求服务器的路径。data:发送到服务器的数据，格式使用键值对形式。callback:回调函数，服务器响应成功，ajax自动调用这个回调函数。type:返回内容格式string/json/text/xml/html/_default。
+            $.get(
+                // url:请求服务器的路径。
+                "/jQueryGet",
+                // data:发送到服务器的数据，格式使用键值对形式。
+                "username=LiuWeiWei&password=12345678",
+                // callback:回调函数，服务器响应成功，ajax自动调用这个回调函数。
+                function (data) {
+                    document.querySelector("#data").innerHTML = data;
+                    console.log(data);
+                },
+                // type:返回内容格式string/json/text/xml/html/_default。
+                "text"
+            );
+        }
+
+        function postOnClick() {
+            $.post(
+                // url:请求服务器的路径。
+                "/jQueryPost",
+                // data:发送到服务器的数据，格式使用键值对形式。
+                "username=LiuWeiWei&password=12345678",
+                // callback:回调函数，服务器响应成功，ajax自动调用这个回调函数。
+                function (data) {
+                    $("#base").html(data);
+                    console.log(data);
+                },
+                // type:预设服务器返回的数据类型text/json
+                "text"
+            );
+        }
+
+        // 使用jQuery框架封装的AJAX请求方式
+        function ajaxOnClick() {
+            $.ajax({
+                // url:请求服务器的地址
+                url: "/jQueryAjax",
+                // async:设置异步请求方式，值true异步，值false同步
+                async: true,
+                // data:发送到服务器的数据，格式使用键值对key=value&key=value
+                data: "username=LiuWeiWei&password=12345678",
+                // type:设置请求方式，get请求，post请求
+                type: "post",
+                // dataType:预设服务器返回的数据类型text/json
+                dataType: "text",
+                // success:请求成功后执行的回调函数
+                success: function (data) {
+                    $("#database").html(data);
+                },
+                // error:请求失败后执行的回调函数
+                error: function () {
+                    $("#database").html("Request to server failed");
+                }
+            });
+        }
+
+        // 使用jQuery框架封装的AJAX请求方式
+        function ajaxOnClickJson() {
+            $.ajax({
+                // url:请求服务器的地址
+                url: "/jQueryAjaxJson",
+                // async:设置异步请求方式，值true异步，值false同步
+                async: true,
+                // data:发送到服务器的数据，格式使用键值对key=value&key=value
+                data: "username=LiuWeiWei&password=12345678",
+                // type:设置请求方式，get请求，post请求
+                type: "post",
+                // dataType:预设服务器返回的数据类型text/json
+                dataType: "json",
+                // success:请求成功后执行的回调函数
+                success: function (data) {
+                    // 要么返回 [object Object]
+                    // 要么返回 [array Array]
+                    // 要么返回 [list List]
+                    $("#json").text(data);
+                    console.log(data);
+                },
+                // error:请求失败后执行的回调函数
+                error: function () {
+                    $("#json").html("Request to server failed");
+                }
+            });
+        }
+
+        // 1.1 定义页面加载事件，让页面加载完毕后，再执行
+        $(document).ready(function () {
+            // 1.2 失去焦点事件.blur()
+            $("#username").blur(function () {
+                // 1.3 对字段进行各种判断校验
+                if ($("#username").val().trim() === "") {
+                    return false;
+                }
+                console.log($("#username").val());
+                // 1.4 发送jquery框架中封装的ajax请求并且响应json数据
+                $.ajax({
+                    url: "/validateForm",
+                    async: true,
+                    data: "username=" + $("#username").val().trim(),
+                    type: "post",
+                    dataType: "json",
+                    success: function (data) {
+                        console.log(data);
+                        if (data === "true") {
+                            console.log("200");
+                        } else {
+                            console.log("500");
+                        }
+                    },
+                    error: function () {
+                        console.log("Request to server failed");
+                    }
+                });
+            });
+            $("#realname").blur(function () {
+                console.log($("#realname").val());
+            });
+            $("#password").blur(function () {
+                console.log($("#password").val());
+            });
+            $("#confirms").blur(function () {
+                console.log($("#confirms").val());
+            });
+        });
+
+        // 内容自动补全案例需求分析：
+        // 1.定义页面加载事件
+        // 2.给id是keyword属性的文本框添加一个键盘弹起事件
+        // 3.在事件的响应函数中
+        // 3.1.清空id为show的div块级元素中的所有子级元素
+        // 3.2.对关键字进行一个非空判断
+        // 3.3.基于jquery框架发送ajax请求并且响应json数据
+        // 3.4.在ajax的回调函数中
+        // 3.4.1.遍历数组，获取每一个Product对象
+        // 3.4.2.获取对象中的商品名称字段
+        // 3.4.3.根据商品名称创建div元素对象
+        // 3.4.4.把div添加到id为show属性的div块级元素当中
+        $(document).ready(function () {
+            $("#keyword").keyup(function () {
+                const keyword = $("#keyword").val().trim();
+                console.log(keyword);
+                // keyword.empty();
+                if (keyword === "") {
+                    $("#show").hide();
+                    return;
+                }
+                // console.log($("#show").val().trim());
+                $.ajax({
+                    url: "/search",
+                    async: true,
+                    data: "keyword=" + $("#keyword").val().trim(),
+                    type: "get",
+                    dataType: "json",
+                    success: function (data) {
+                        console.log(data);
+                        $(data).each(function (index, element) {
+                            const username = element.username;
+                            const password = element.password;
+                            console.log("Account:" + username + ",Password:" + password);
+                            const $div = $("<div onmouseover='over(this)' onmouseout='out(this)'>" + username + "</div>");
+                            $("#show").append($div).show();
+                        });
+                    },
+                    error: function () {
+                        console.log("Request to server failed");
+                    }
+                });
+            });
+        });
+        // 封装公共函数（鼠标移入事件）
+        function over(tbUser) {
+            $(tbUser).css("backgroundColor", "grey");
+        }
+        // 封装公共函数（鼠标移出事件）
+        function out(tbUser) {
+            $(tbUser).css("backgroundColor", "white");
+        }
+    </script>
+</head>
+<body>
+<input type="button" value="发送jQuery框架封装Ajax请求GET服务器" onclick="btnOnClick()"/>
+<br>
+<span id="data">请求之前的内容</span>
+<hr>
+<input type="button" value="发送jQuery框架封装Ajax请求POST服务器" onclick="postOnClick()"/>
+<br>
+<span id="base">请求之前的内容</span>
+<hr>
+<input type="button" value="发送jQuery框架封装Ajax请求AJAX服务器" onclick="ajaxOnClick()"/>
+<br>
+<span id="database">请求之前的内容</span>
+<hr>
+<input type="button" value="发送jQuery框架封装Ajax请求AJAXJSON服务器" onclick="ajaxOnClickJson()"/>
+<br>
+<span id="json">请求之前的内容</span>
+<hr>
+<p>员工信息录入</p>
+<form name="empForm" id="empForm" method="post" action="test.html">
+    <table border=1>
+        <tr>
+            <td>realname字段校验（required不能为空）</td>
+            <td><input type="text" id="realname" name="realname"/></td>
+        </tr>
+        <tr>
+            <td>username字段校验（required不能为空，rangelength长度在5至8之间）</td>
+            <td><input type="text" id="username" name="username"/></td>
+        </tr>
+        <tr>
+            <td>password字段校验（required不能为空，minlength长度最小在6以上，maxlength长度最大在12以下）</td>
+            <td><input type="password" id="password" name="password"/></td>
+        </tr>
+        <tr>
+            <td>confirms字段校验（required不能为空，minlength长度最小在6以上，maxlength长度最大在12以下，equalTo与密码保持一致）</td>
+            <td><input type="password" id="confirms" name="confirms"/></td>
+        </tr>
+        <tr>
+            <td>gender字段校验radio单选框（required不能为空）</td>
+            <td>
+                <input type="radio" id="gender_male" value="m" name="gender"/>&nbsp;男士
+                <input type="radio" id="gender_female" value="f" name="gender"/>&nbsp;女士
+                <label for="gender" style="display: none;" class="error">必须选择一个性别</label>
+            </td>
+        </tr>
+        <tr>
+            <td>age字段校验（required不能为空，range数值在0至100等于之间）</td>
+            <td><input type="text" id="age" name="age"/></td>
+        </tr>
+        <tr>
+            <td>edu字段校验select+option下拉框（required不能为空）</td>
+            <td>
+                <select name="edu" id="edu">
+                    <option value="">请选择你的学历</option>
+                    <option value="a">专科</option>
+                    <option value="b">本科</option>
+                    <option value="c">研究生</option>
+                    <option value="e">硕士</option>
+                    <option value="d">博士</option>
+                </select>
+            </td>
+        </tr>
+        <tr>
+            <td>birthday字段校验（required不能为空，dateISO日期格式不正确，date日期非法）</td>
+            <td><input type="text" id="birthday" name="birthday" value=""/></td>
+        </tr>
+        <tr>
+            <td>checkbox字段校验checkbox多选框（required不能为空）</td>
+            <td colspan="2">
+                <input type="checkbox" name="checkbox" id="qq1"/>&nbsp;乒乓球 &nbsp;
+                <input type="checkbox" name="checkbox" id="qq2" value="1"/>&nbsp;羽毛球
+                <input type="checkbox" name="checkbox" id="qq3" value="2"/>&nbsp;上网
+                <input type="checkbox" name="checkbox" id="qq4" value="3"/>&nbsp;旅游
+                <input type="checkbox" name="checkbox" id="qq5" value="4"/>&nbsp;购物
+                <label class="error" for="checkbox" style="display: none;">必须选一个</label>
+            </td>
+        </tr>
+        <tr>
+            <td align="left">email字段校验（required不能为空，email邮箱格式不正确）</td>
+            <td><input type="text" id="email" name="email"/></td>
+        </tr>
+        <tr>
+            <td align="left">card字段校验（required不能为空，cardlength长度在15至18之间，card15十五位校验，card18位校验）</td>
+            <td><input type="text" id="card" name="card"/></td>
+        </tr>
+        <tr>
+            <td></td>
+            <td><input type="submit" name="firstname" id="firstname" value="保存"></td>
+        </tr>
+    </table>
+</form>
+<hr>
+<div class="content">
+    <input type="text" name="keyword" id="keyword">
+    <input type="button" value="搜索">
+    <div class="show" id="show"></div>
+</div>
+<hr>
+</body>
+</html>
