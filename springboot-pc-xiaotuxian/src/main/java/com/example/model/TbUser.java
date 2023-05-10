@@ -20,7 +20,13 @@ import java.io.Serializable;
 public class TbUser implements Serializable {
     private static final long serialVersionUID = 1L;
 
+    private Integer id;
     private String username;
     private String password;
-
+    private String gender;
+    private String phone;
+    private String email;
+    private String address;
+    private String deptCode;
+    private String deptName;
 }

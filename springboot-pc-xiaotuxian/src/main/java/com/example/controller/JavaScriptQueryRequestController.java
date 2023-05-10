@@ -130,8 +130,8 @@ public class JavaScriptQueryRequestController {
     public String search(@RequestParam String keyword) throws IOException {
         System.out.println("Fuzzy query fields:" + keyword);
         List<TbUser> list = new ArrayList<>();
-        list.add(new TbUser("LWeiWei", "12345678"));
-        list.add(new TbUser("Jessica", "12345678"));
+        list.add(TbUser.builder().username("LWeiWei").password("12345678").build());
+        list.add(TbUser.builder().username("Jessica").password("12345678").build());
         String json = new ObjectMapper().writeValueAsString(list);
         return json;
     }
@@ -149,12 +149,12 @@ public class JavaScriptQueryRequestController {
      * @return json
      * @throws IOException
      */
-    @GetMapping(value = "/search")
-    public void search(@RequestParam String keyword, HttpServletRequest request, HttpServletResponse response) throws IOException {
+    @GetMapping(value = "/search/plus")
+    public void searchPlus(@RequestParam String keyword, HttpServletRequest request, HttpServletResponse response) throws IOException {
         System.out.println("Fuzzy query fields:" + keyword);
         List<TbUser> list = new ArrayList<>();
-        list.add(new TbUser("LWeiWei", "12345678"));
-        list.add(new TbUser("Jessica", "12345678"));
+        list.add(TbUser.builder().username("LWeiWei").password("12345678").build());
+        list.add(TbUser.builder().username("Jessica").password("12345678").build());
         response.setContentType("text/html;charset=utf-8");
         response.getWriter().write(new ObjectMapper().writeValueAsString(list));
     }
@@ -175,8 +175,8 @@ public class JavaScriptQueryRequestController {
     @GetMapping(value = "/search/cors")
     public void searchCors(@RequestParam String keyword, HttpServletRequest request, HttpServletResponse response) throws IOException {
         List<TbUser> list = new ArrayList<>();
-        list.add(new TbUser("LWeiWei", "12345678"));
-        list.add(new TbUser("Jessica", "12345678"));
+        list.add(TbUser.builder().username("LWeiWei").password("12345678").build());
+        list.add(TbUser.builder().username("Jessica").password("12345678").build());
         response.setContentType("text/html;charset=utf-8");
         // CORS 解决方案
         response.setHeader("Access-Control-Allow-Origin", "*");
@@ -200,8 +200,8 @@ public class JavaScriptQueryRequestController {
     @GetMapping(value = "/search/jsonp")
     public void searchJsonP(@RequestParam String keyword, HttpServletRequest request, HttpServletResponse response) throws IOException {
         List<TbUser> list = new ArrayList<>();
-        list.add(new TbUser("LWeiWei", "12345678"));
-        list.add(new TbUser("Jessica", "12345678"));
+        list.add(TbUser.builder().username("LWeiWei").password("12345678").build());
+        list.add(TbUser.builder().username("Jessica").password("12345678").build());
         response.setContentType("text/html;charset=utf-8");
         // JSONP 解决方案
         String callback = request.getParameter("callback");

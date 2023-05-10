@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Edit Employee Page</title>
+    <link rel="stylesheet" href="../css/bootstrap.min.css">
+    <script src="../js/jquery-3.3.1.js"></script>
+    <script src="../js/bootstrap.min.js"></script>
+    <script>
+
+    </script>
+</head>
+
+<body>
+<div class="container">
+    <center><h1>Update Employee</h1></center>
+    <center>
+        <form action="/user/update" method="post">
+            <div class="form-group" style="width: 45%" align="left">
+                <label for="username">Account</label>
+                <!-- 隐藏ID输入框 -->
+                <input type="text" class="form-control" id="id" name="id"/>
+                <input type="text" class="form-control" id="username" name="username" placeholder="请输入用户名"/>
+            </div>
+            <div class="form-group" style="width: 45%" align="left">
+                <label for="phone">Phone</label>
+                <input type="text" class="form-control" id="phone" name="phone" placeholder="请输入电话"/>
+            </div>
+            <div class="form-group" style="width: 45%" align="left">
+                <label for="email">E-Mail</label>
+                <input type="email" class="form-control" id="email" name="email" placeholder="请输入email"/>
+            </div>
+            <div class="form-group" style="width: 45%" align="left">
+                <label for="address">Address</label>
+                <input type="text" class="form-control" id="address" name="address" placeholder="请输入地址"/>
+            </div>
+            <div class="form-group" style="width: 45%" align="left">
+                <label for="dept">Department</label>
+                <select class="form-control" id="dept" name="deptCode">
+                    <option value="10086">移动部</option>
+                    <option value="10010">联通部</option>
+                    <option value="12306">铁路部</option>
+                </select>
+            </div>
+            <div class="form-group" style="width: 45%" align="left">
+                <label>Gender</label><br>
+                <label><input type="radio" name="gender" value="男士"/>&nbsp;男士&nbsp;</label>
+                <label><input type="radio" name="gender" value="女士"/>&nbsp;女士&nbsp;</label>
+            </div>
+            <div class="form-group" style="width: 45%" align="left">
+                <label>Hobby</label><br>
+                <label><input type="checkbox" name="hobby" value="约会"/>&nbsp;约会&nbsp;</label>
+                <label><input type="checkbox" name="hobby" value="男士"/>&nbsp;男士&nbsp;</label>
+                <label><input type="checkbox" name="hobby" value="运动"/>&nbsp;运动&nbsp;</label>
+                <label><input type="checkbox" name="hobby" value="学习"/>&nbsp;学习&nbsp;</label>
+                <label><input type="checkbox" name="hobby" value="追剧"/>&nbsp;追剧&nbsp;</label>
+            </div>
+            <center>
+                <button type="submit" class="btn btn-primary" id="sub">提交</button>
+                <button type="reset"  class="btn btn-default" id="res">重置</button>
+                <button type="button" class="btn btn-default" id="btn">返回</button>
+            </center>
+        </form>
+    </center>
+</div>
+
+<script type="text/javascript">
+    // 1.加载事件（创建一个页面加载事件（类似于window.load()加载事件））
+    $(document).ready(function () {
+        const url = window.document.URL;
+        if (url == null || url === "") {
+            // 结束函数，直接返回
+            return;
+        }
+        // 取出URL中的ID
+        const id = url.split("=")[1];
+        // 2.基于JQuery框架发送Ajax请求查询ID相关对象返回JSON数据
+        $.ajax({
+            url: "/user/selectById",
+            async: true,
+            data: "id=" + id,
+            type: "get",
+            dataType: "json",
+            success: function (data) {
+                console.log(data);
+                $("#id").val(data.id);
+                $("#username").val(data.username);
+                $("#phone").val(data.phone);
+                $("#email").val(data.email);
+                $("#address").val(data.address);
+                const $deptArray = $("option");
+                $deptArray.each(function (index, object) {
+                    if (object.value === data.deptCode) {
+                        $(object).prop("selected", true);
+                    }
+                });
+                if (data.gender === "男士") {
+                    $(":radio[value='男士']").prop("checked", true);
+                } else {
+                    $(":radio[value='女士']").prop("checked", true);
+                }
+            },
+            error: function () {
+                console.log();
+            }
+        });
+    });
+</script>
+</body>
+</html>

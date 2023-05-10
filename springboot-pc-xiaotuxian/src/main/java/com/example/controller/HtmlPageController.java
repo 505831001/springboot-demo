@@ -57,4 +57,24 @@ public class HtmlPageController {
     public String jquery() {
         return "jquery";
     }
+
+    @RequestMapping(value = "/home")
+    public String home() {
+        return "home";
+    }
+
+    @RequestMapping(value = "/user-insert")
+    public String userInsert() {
+        return "user-insert";
+    }
+
+    @RequestMapping(value = "/user-update")
+    public String userUpdate() {
+        return "user-update";
+    }
+
+    @RequestMapping(value = "/user-select")
+    public String userSelect() {
+        return "user-select";
+    }
 }

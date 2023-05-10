@@ -1,0 +1,224 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Enterprise Employee Information Page</title>
+    <link rel="stylesheet" href="../css/bootstrap.min.css">
+    <script src="../js/jquery-3.3.1.js"></script>
+    <script src="../js/bootstrap.min.js"></script>
+    <style type="text/css">
+        h1 {
+            text-align: center;
+        }
+
+        th, td {
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>Enterprise Employee Information List</h1>
+    <table class="table table-bordered  table-hover">
+        <tr>
+            <td colspan="8">
+                <a href="../page/user-insert.html" class="btn btn-primary">新增</a>
+            </td>
+            <td colspan="9">
+                <a href="#" class="btn btn-primary" onclick="batchDelete()">批量删除</a>
+            </td>
+        </tr>
+        <tr class="bg-success">
+            <th>选择</th>
+            <th>编号</th>
+            <th>姓名</th>
+            <th>性别</th>
+            <th>电话</th>
+            <th>邮箱</th>
+            <th>地址</th>
+            <th>部门</th>
+            <th>操作</th>
+        </tr>
+    </table>
+
+    <nav aria-label="Page navigation">
+        <ul class="pagination">
+            <li>
+                <a href="#" aria-label="Prev" onclick="prevPage()">
+                    <span aria-hidden="true">&laquo;</span>
+                </a>
+            </li>
+            <li>
+                <a href="#" aria-label="Next" onclick="nextPage()">
+                    <span aria-hidden="true">&raquo;</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</div>
+
+<script type="text/javascript">
+    // 1.加载事件（创建一个分页加载事件（比如：window.load()页面加载事件））
+    $(document).ready(function () {
+        query(1);
+    });
+
+    // 封装成公共函数（页面加载事件需要调用，当前页需要调用，上一页需要调用，下一页需要调用）
+    function query(current) {
+        // 2.基于JQuery框架发送Ajax请求响应JSON数据
+        $.ajax({
+            url: "/user/selectByPage",
+            async: true,
+            data: {
+                current: current,
+                size: 5
+            },
+            type: "get",
+            dataType: "json",
+            success: function (data) {
+                // console.log('当前页数：' + data.currentPageNumber);
+                // console.log('当前行数：' + data.rows);
+                // console.log('所有页数：' + data.totalPage);
+                // console.log('数据列表：' + data.list);
+                // 遍历数据list渲染表格table
+                $(data.list).each(function (index, object) {
+                    const number = index + 1;
+                    // console.log("页面第" + number + "行职员：" + object.username);
+                    // 创建tr行
+                    const $tr = $(
+                        "<tr>\n" +
+                        "<td><input type='checkbox' value='" + object.id + "'/></td>\n" +
+                        "<td>" + number + "</td>\n" +
+                        "<td>" + object.username + "</td>\n" +
+                        "<td>" + object.gender + "</td>\n" +
+                        "<td>" + object.phone + "</td>\n" +
+                        "<td>" + object.email + "</td>\n" +
+                        "<td>" + object.address + "</td>\n" +
+                        "<td>" + object.deptName + "</td>\n" +
+                        "<td>" +
+                        "<a href='#' class='btn btn-primary' onclick='deleteById(this," + object.id + ")'>删除</a>" +
+                        "&nbsp&nbsp" +
+                        "<a href='../page/user-update.html?id=" + object.id + "' class='btn btn-primary'>编辑</a>" +
+                        "</td>\n" +
+                        "</tr>");
+                    // 添加tr行到table表格中
+                    $("table").append($tr);
+                });
+                // 遍历页数pages渲染分页栏li
+                for (let i = 0; i < data.totalPage; i++) {
+                    // 创建li标签（totalPage有多少页就创建多少个li标签）
+                    const $li = $("<li name='current'><a href='#' onclick='currentPage($(this).html())'>" + (i + 1) + "</a></li>");
+                    // 从最后开始创建
+                    $("li:last").before($li);
+                    // 给当前页的li标签添加一个属性class属性值为active
+                    if (data.currentPageNumber === (i + 1)) {
+                        $li.attr("class", "active");
+                    }
+                }
+            },
+            error: function () {
+                console.log();
+            }
+        });
+    }
+
+    // 点击事件（当前页（上一页prevPage()调用当前页、下一页nextPage()调用当前页）
+    function currentPage(current) {
+        // 清空之前的tr数据
+        $("tr:gt(1)").remove();
+        // 清空之前的li数据
+        $("li[name='current']").remove();
+        // 根据页码查询
+        query(current);
+    }
+
+    //点击事件（上一页）
+    function prevPage() {
+        const current = $("li[class='active']").text();
+        if (current <= 1) {
+            return;
+        }
+        currentPage(current - 1);
+    }
+
+    // 点击事件（下一页）
+    function nextPage() {
+        const current = $("li[class='active']").text();
+        console.log(current);
+        if (current >= ($("li").length - 2)) {
+            return;
+        }
+        currentPage(parseInt(current) + 1);
+    }
+
+    // 公共函数（跳转）
+    function reload() {
+        window.location.href = "/index";
+    }
+
+    // 注意：此函数参数无需定义，直接随便使用代号就行，匹配对应参数个数即可。AV8D，动次打次。
+    function deleteById(param1, param2) {
+        console.log(param1);
+        console.log(param2);
+        $.ajax({
+            url: "/user/delete",
+            async: true,
+            data: "id=" + param2,
+            type: "get",
+            dataType: "json",
+            success: function (data) {
+                console.log(data);
+                const flag = window.confirm("Are you sure you want to delete the data?");
+                if (flag === false) {
+                    // 结束方法，不删除
+                    return;
+                }
+                $(param1).parent().parent().remove();
+            },
+            error: function () {
+                console.log("Failed to delete data!");
+            }
+        });
+    }
+
+    // 1.注册事件（批量删除功能点击事件）
+    function batchDelete() {
+        // 获得所有checkbox属性值为checked选中状态
+        const $checkedArr = $(":checkbox:checked");
+        let ids = "";
+        // 统计checkbox属性值为checked选择中状态中的值value添加到列表中
+        $checkedArr.each(function (index, element) {
+            ids += element.value + ",";
+        });
+        console.log(ids);
+        if (ids == null || ids === "") {
+            return;
+        } else {
+            ids = ids.substring(0, ids.lastIndexOf(","));
+            console.log(ids);
+        }
+        // 2.基于jQuery框架发送Ajax请求响应JSON数据
+        $.ajax({
+            url: "/user/batch/delete",
+            async: true,
+            data: "ids=" + ids,
+            type: "get",
+            dataType: "json",
+            success: function (data) {
+                console.log(data);
+                if (data === 1) {
+                    // 重点：删除行input的父级元素td的父级元素tr行数据
+                    $checkedArr.parent().parent().remove();
+                }
+            },
+            error: function () {
+                console.log();
+            }
+        });
+    }
+</script>
+</body>
+</html>

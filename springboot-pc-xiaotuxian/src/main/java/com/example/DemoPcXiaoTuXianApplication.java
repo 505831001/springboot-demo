@@ -1,6 +1,7 @@
 package com.example;
 
 import lombok.extern.slf4j.Slf4j;
+import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.Banner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -20,6 +21,7 @@ import org.springframework.core.env.ConfigurableEnvironment;
  * @since 2021-01-08
  */
 @SpringBootApplication
+@MapperScan(basePackages = "com.example.dao")
 @Slf4j
 public class DemoPcXiaoTuXianApplication {
     public static void main(String[] args) {

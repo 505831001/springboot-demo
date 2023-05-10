@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>New Employee Page</title>
+    <link rel="stylesheet" href="../css/bootstrap.min.css">
+    <script src="../js/jquery-3.3.1.js"></script>
+    <script src="../js/bootstrap.min.js"></script>
+</head>
+
+<body>
+<div class="container">
+    <center><h1>Create Employee</h1></center>
+    <!-- 提交/user-insert接口 -->
+    <form action="/user/insert" method="post">
+        <div class="form-group">
+            <label for="name">Account</label>
+            <input type="text" class="form-control" id="name" name="username" placeholder="请输入用户名">
+        </div>
+        <div class="form-group">
+            <label for="name">Phone</label>
+            <input type="text" class="form-control" id="tel" name="phone" placeholder="请输入电话">
+        </div>
+        <div class="form-group">
+            <label for="email">E-Mail</label>
+            <input type="email" class="form-control" id="email" name="email" placeholder="请输入email">
+        </div>
+        <div class="form-group">
+            <label for="address">Address</label>
+            <input type="text" class="form-control" id="address" name="address" placeholder="请输入地址">
+        </div>
+        <div class="form-group">
+            <label>Department</label>
+            <select name="deptCode" class="form-control">
+                <option value="10086">移动部</option>
+                <option value="10010">联通部</option>
+                <option value="12306">铁路部</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="name">Gender</label><br>
+            <label><input type="radio" name="gender" value="男士" checked/>&nbsp;GG&nbsp;</label>
+            <label><input type="radio" name="gender" value="女士"/>&nbsp;MM&nbsp;</label>
+        </div>
+        <div class="form-group">
+            <label for="name">Hobby</label><br>
+            <label><input type="checkbox" name="hobby" value="约会" checked/>&nbsp;约会&nbsp;</label>
+            <label><input type="checkbox" name="hobby" value="运动"/>&nbsp;运动&nbsp;</label>
+            <label><input type="checkbox" name="hobby" value="学习"/>&nbsp;学习&nbsp;</label>
+            <label><input type="checkbox" name="hobby" value="追剧"/>&nbsp;追剧&nbsp;</label>
+        </div>
+        <center>
+            <button type="submit" class="btn btn-primary" id="sub">提交</button>
+            <button type="reset"  class="btn btn-default" id="res">重置</button>
+            <button type="button" class="btn btn-default" id="but">返回</button>
+        </center>
+    </form>
+</div>
+
+<script>
+    $(document).ready(function () {
+
+    });
+
+</script>
+</body>
+
+</html>
